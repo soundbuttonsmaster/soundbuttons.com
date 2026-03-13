@@ -1,65 +1,219 @@
-import Image from "next/image";
+import { headers } from "next/headers"
+import type { Metadata } from "next"
+import { apiClient } from "@/lib/api/client"
+import { getActiveCategories } from "@/lib/constants/categories"
+import { SITE } from "@/lib/constants/site"
+import HomePageClient from "@/components/home/HomePageClient"
 
-export default function Home() {
+export const revalidate = 60
+
+export const metadata: Metadata = {
+  title: "Sound Buttons - 9,99,999+ Meme Soundboard Unblocked",
+  description:
+    "Play thousands of sound buttons with the best meme soundboard, buttons, prank, funny sound effect, and high-quality audio in unblocked soundboards.",
+  keywords: [
+    "sound buttons",
+    "meme sounds",
+    "sound effects",
+    "soundboard",
+    "unblocked sound buttons",
+    "free sound effects",
+    "viral sounds",
+    "meme soundboard",
+    "audio effects",
+  ],
+  authors: [{ name: "SoundButtons.com", url: SITE.baseUrl }],
+  creator: "SoundButtons.com",
+  publisher: "SoundButtons.com",
+  metadataBase: new URL(SITE.baseUrl),
+  alternates: {
+    canonical: SITE.baseUrl,
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: SITE.baseUrl,
+    siteName: "SoundButtons.com",
+    title: "Sound Buttons - 9,99,999+ Meme Soundboard Unblocked",
+    description:
+      "Play thousands of sound buttons with the best meme soundboard, buttons, prank, funny sound effect, and high-quality audio in unblocked soundboards.",
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "Sound Buttons - Meme Soundboard Unblocked",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@soundbuttons",
+    creator: "@soundbuttons",
+    title: "Sound Buttons - 9,99,999+ Meme Soundboard Unblocked",
+    description:
+      "Play thousands of sound buttons with the best meme soundboard, buttons, prank, funny sound effect, and high-quality audio in unblocked soundboards.",
+    images: ["/og.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+}
+
+export default async function HomePage() {
+  const headersList = await headers()
+  const userAgent = headersList.get("user-agent") ?? ""
+  const mobileHint = headersList.get("sec-ch-ua-mobile")
+  const isMobile =
+    mobileHint === "?1" ||
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(
+      userAgent
+    )
+
+  const trendingCount = isMobile ? 16 : 44
+  const newCount = 22
+
+  let trendingSounds: Awaited<
+    ReturnType<typeof apiClient.getTrendingSounds>
+  >["data"] = []
+  let newSounds: Awaited<
+    ReturnType<typeof apiClient.getNewSounds>
+  >["data"] = []
+  let trendingMeta = {
+    current_page: 1,
+    last_page: 1,
+    total_items: 0,
+  }
+
+  try {
+    const [trendingResult, newResult] = await Promise.allSettled([
+      apiClient.getTrendingSounds(1, trendingCount),
+      apiClient.getNewSounds(1, newCount),
+    ])
+
+    if (trendingResult.status === "fulfilled") {
+      trendingSounds = trendingResult.value.data
+      trendingMeta = trendingResult.value.meta
+    }
+    if (newResult.status === "fulfilled") {
+      newSounds = newResult.value.data
+    }
+  } catch {
+    // ignore
+  }
+
+  const categories = getActiveCategories()
+  const BASE = SITE.baseUrl
+
+  const webSiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "SoundButtons.com",
+    url: `${BASE}/`,
+    description:
+      "Sound buttons is the Ultimate collection of unblocked soundboard, sound buttons, meme soundboard, with billion's of sound effects and meme buttons.",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: `${BASE}/search/{search_term_string}`,
+      "query-input": "required name=search_term_string",
+    },
+  }
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: `${BASE}/` },
+      { "@type": "ListItem", position: 2, name: "New", item: `${BASE}/new` },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: "Trending",
+        item: `${BASE}/trends`,
+      },
+      ...categories.map((cat, i) => ({
+        "@type": "ListItem",
+        position: 4 + i,
+        name: `${cat.name} Soundboard`,
+        item: `${BASE}/categories/${cat.slug}`,
+      })),
+    ],
+  }
+
+  const personOrgSchema = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Person",
+        name: "Siya P",
+        jobTitle: "Founder & Creator",
+        worksFor: { "@type": "Organization", name: "SoundButtons.com" },
+        email: SITE.email,
+        telephone: "+1-555-847-2638",
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: "2847 Digital Avenue, Suite 102",
+          addressLocality: "San Francisco",
+          addressRegion: "CA",
+          postalCode: "94105",
+          addressCountry: "US",
+        },
+        sameAs: [BASE],
+      },
+      {
+        "@type": "Organization",
+        name: "SoundButtons.com",
+        url: `${BASE}/`,
+        logo: `${BASE}/og.png`,
+        contactPoint: {
+          "@type": "ContactPoint",
+          telephone: "+1-555-847-2638",
+          contactType: "Customer Service",
+          email: SITE.email,
+          areaServed: "Worldwide",
+          availableLanguage: ["en", "es", "fr", "pt"],
+        },
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: "2847 Digital Avenue, Suite 102",
+          addressLocality: "San Francisco",
+          addressRegion: "CA",
+          postalCode: "94105",
+          addressCountry: "US",
+        },
+        founder: { "@type": "Person", name: "Siya P" },
+      },
+    ],
+  }
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personOrgSchema) }}
+      />
+      <HomePageClient
+        initialTrendingSounds={trendingSounds}
+        initialNewSounds={newSounds}
+        initialTrendingMeta={trendingMeta}
+        isMobileDevice={isMobile}
+      />
+    </>
+  )
 }
