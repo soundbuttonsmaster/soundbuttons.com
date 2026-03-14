@@ -12,9 +12,9 @@ export const revalidate = 86400
 const BASE = SITE.baseUrl
 
 export const metadata: Metadata = {
-  title: "Sound Button Categories – Browse All | SoundButtons.com",
+  title: { absolute: "Sound Button Categories – Browse All | SoundButtons.com" },
   description:
-    "Browse all sound button categories on SoundButtons.com! From memes to music, games to comedy, find and explore thousands of sound effects organized by category.",
+    "Browse all sound button categories on SoundButtons.com! From memes to music, gaming to comedy, find and explore thousands of organized sound effects.",
   robots: {
     index: true,
     follow: true,
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     type: "website",
     title: "Sound Button Categories – Browse All | SoundButtons.com",
     description:
-      "Browse all sound button categories on SoundButtons.com! From memes to music, games to comedy, find and explore thousands of sound effects.",
+      "Browse all sound button categories on SoundButtons.com! From memes to music, gaming to comedy, find and explore thousands of organized sound effects.",
     url: `${BASE}/categories`,
     siteName: "SoundButtons.com",
     images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: "Sound Button Categories" }],
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     creator: "@soundbuttons",
     title: "Sound Button Categories – Browse All | SoundButtons.com",
     description:
-      "Browse all sound button categories on SoundButtons.com! From memes to music, games to comedy.",
+      "Browse all sound button categories on SoundButtons.com! From memes to music, gaming to comedy, find and explore thousands of organized sound effects.",
     images: [`${BASE}/og.png`],
   },
 }
@@ -50,7 +50,7 @@ const collectionPageSchema = {
   "@type": "CollectionPage",
   name: "Sound Button Categories – Browse All | SoundButtons.com",
   description:
-    "Browse all sound button categories on SoundButtons.com! From memes to music, games to comedy, find and explore thousands of sound effects organized by category.",
+    "Browse all sound button categories on SoundButtons.com! From memes to music, gaming to comedy, find and explore thousands of organized sound effects.",
   url: `${BASE}/categories`,
   inLanguage: "en",
   publisher: {

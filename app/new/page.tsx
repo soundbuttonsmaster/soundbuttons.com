@@ -11,7 +11,7 @@ const PAGE_SIZE = 35
 const BASE = SITE.baseUrl
 
 export const metadata: Metadata = {
-  title: "New Sound Buttons: Fresh Meme Soundboard Audio Updated Daily",
+  title: { absolute: "New Sound Buttons: Fresh Meme Soundboard Audio Updated Daily" },
   description:
     "Discover the latest sound buttons and soundboard with fresh, trending audio clips updated daily to play, download, and share for memes, gaming, and entertainment!",
   keywords:

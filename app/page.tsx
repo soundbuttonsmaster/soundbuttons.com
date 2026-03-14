@@ -46,7 +46,7 @@ export const metadata: Metadata = {
         url: "/og.png",
         width: 1200,
         height: 630,
-        alt: "Sound Buttons - Meme Soundboard Unblocked",
+        alt: "Sound Buttons - 9,99,999+ Meme Soundboard Unblocked",
       },
     ],
   },

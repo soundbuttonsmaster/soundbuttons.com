@@ -5,7 +5,7 @@ import { SITE_NAV_LINKS } from "@/lib/constants/site-nav-links"
 const BASE = SITE.baseUrl
 
 export const metadata: Metadata = {
-  title: "Terms of Service | SoundButtons",
+  title: { absolute: "Terms of Service | SoundButtons" },
   description:
     "Terms of Service for SoundButtons.com - Review the guidelines for using our sound button platform.",
   robots: { index: true, follow: true },

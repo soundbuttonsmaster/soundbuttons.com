@@ -5,7 +5,7 @@ import { SITE_NAV_LINKS } from "@/lib/constants/site-nav-links"
 const BASE = SITE.baseUrl
 
 export const metadata: Metadata = {
-  title: "Privacy Policy - SoundButtons.com | Data Protection & Rights",
+  title: { absolute: "Privacy Policy - SoundButtons.com | Data Protection & Rights" },
   description:
     "Read our comprehensive privacy policy to learn how we handle your data, cookies, and user rights at SoundButtons.com. We're committed to protecting your privacy and personal information.",
   keywords:

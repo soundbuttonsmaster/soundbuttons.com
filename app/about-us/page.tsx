@@ -5,7 +5,7 @@ import { SITE_NAV_LINKS } from "@/lib/constants/site-nav-links"
 const BASE = SITE.baseUrl
 
 export const metadata: Metadata = {
-  title: "About Us - Our Mission & Story | SoundButtons.com",
+  title: { absolute: "About Us - Our Mission & Story | SoundButtons.com" },
   description:
     "Learn more about SoundButtons.com, our mission to bring people together through sound, and how you can discover, play, and share the best sound buttons online. Join our community of creators and sound enthusiasts!",
   keywords:

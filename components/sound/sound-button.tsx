@@ -11,6 +11,7 @@ import { useAuth } from '@/lib/auth/auth-context';
 import { apiClient } from '@/lib/api/client';
 import ShareModal from '@/components/share/share-modal';
 import { getSoundDetailPath } from '@/lib/utils/slug';
+import { getDisplaySoundName } from '@/lib/utils';
 
 interface CompactSoundButtonProps {
   sound: Sound;
@@ -643,7 +644,7 @@ const CompactSoundButton: React.FC<CompactSoundButtonProps> = ({ sound, isAboveT
         <div
           className={`sound-button-container w-full h-full ${isPressed ? 'pressed' : ''}`}
           role="button"
-          aria-label={`Play ${sound.name}`}
+          aria-label={`Play ${getDisplaySoundName(sound.name ?? "")}`}
           onClick={(e) => {
             e.preventDefault();
             // Ignore click that follows a touch (mobile fires click ~300ms after touch)
@@ -907,13 +908,13 @@ const CompactSoundButton: React.FC<CompactSoundButtonProps> = ({ sound, isAboveT
             display: 'block',
             flexShrink: 0
           }}
-          aria-label={`${sound.name} - view details`}
+          aria-label={`${getDisplaySoundName(sound.name ?? "")} - view details`}
         >
           <span
             className="sound-title-2line text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-200 hover:text-primary transition-colors cursor-pointer leading-tight text-center px-0.5 block w-full"
             style={{ lineHeight: 1.25 }}
           >
-            {sound.name}
+            {getDisplaySoundName(sound.name ?? "")}
           </span>
         </Link>
       )}

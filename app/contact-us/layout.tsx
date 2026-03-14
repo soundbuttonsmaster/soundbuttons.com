@@ -5,7 +5,7 @@ import { SITE_NAV_LINKS } from "@/lib/constants/site-nav-links"
 const BASE = SITE.baseUrl
 
 export const metadata: Metadata = {
-  title: "Contact Us - SoundButtons.com | Get Support & Feedback",
+  title: { absolute: "Contact Us - SoundButtons.com | Get Support & Feedback" },
   description:
     "Contact the SoundButtons.com team with your questions, feedback, or support requests. We're here to help! Get in touch for technical support, feature requests, or general inquiries.",
   keywords:

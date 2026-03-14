@@ -7,6 +7,7 @@ import type { Sound } from "@/lib/types/sound"
 import { getCategoryById } from "@/lib/constants/categories"
 import { SITE } from "@/lib/constants/site"
 import { generateSlug } from "@/lib/utils/slug"
+import { toTitleCase, getNameForTitle } from "@/lib/utils"
 
 function isMobileDevice(userAgent: string | null): boolean {
   if (!userAgent) return false
@@ -26,7 +27,12 @@ function buildDescription(soundName: string): string {
 }
 
 function buildKeywords(soundName: string): string {
-  return `${soundName}, ${soundName} sound button, ${soundName} meme sound, ${soundName} sound effect, ${soundName} download, ${soundName} mp3, sound buttons, meme sounds, sound effects, soundboard, unblocked sound buttons, free sound effects`
+  return `${soundName}, ${soundName} sound button, ${soundName} meme sound, ${soundName} sound effect, ${soundName} download, ${soundName} mp3, sound buttons, meme sounds, sound effects, soundboard, unblocked sound buttons, free sound effects, viral sounds, meme soundboard, audio effects, sound buttons unblocked, soundboard download, funny sounds, notification sounds, ringtone sounds, sound buttons for school, sound buttons for discord, sound buttons for tiktok, sound buttons for youtube, sound buttons for streaming, sound buttons for gaming, sound buttons for pranks, sound buttons for memes, sound buttons for reactions, sound buttons for content creation, sound buttons for social media, sound buttons for videos, sound buttons for podcasts, sound buttons for live streams, sound buttons for comedy, sound buttons for entertainment`
+}
+
+function getFaqSuffix(soundName: string): string {
+  const hasSoundButton = /sound\s*button|sound\s*effect/i.test(soundName)
+  return hasSoundButton ? "" : " sound button"
 }
 
 export async function generateMetadata({ params }: SoundPageProps): Promise<Metadata> {
@@ -43,7 +49,7 @@ export async function generateMetadata({ params }: SoundPageProps): Promise<Meta
 
   const canonicalSlug = generateSlug(sound.name)
   const canonicalUrl = `${SITE.baseUrl}/${canonicalSlug}/${sound.id}`
-  const title = `${sound.name} - Sound Effect Button | SoundButtons.com`
+  const title = `${toTitleCase(getNameForTitle(sound.name))} Sound Effect Download: Instant Soundboard Button`
   const description = buildDescription(sound.name)
   const keywords = buildKeywords(sound.name)
 
@@ -141,26 +147,27 @@ export default async function SoundDetailPage({ params }: SoundPageProps) {
   const canonicalUrl = `${SITE.baseUrl}/${canonicalSlug}/${sound.id}`
 
   const description = buildDescription(sound.name)
+  const faqSuffix = getFaqSuffix(sound.name)
   const faqs = [
     {
-      q: `What is the ${sound.name} sound button?`,
-      a: `The ${sound.name} sound button is a popular audio clip you can play, download, and use in your memes, videos, and streams.`,
+      q: `What is the ${sound.name}${faqSuffix}?`,
+      a: `The ${sound.name}${faqSuffix} is a popular audio clip you can play, download, and use in your memes, videos, and streams.`,
     },
     {
-      q: `How can I download the ${sound.name} sound button?`,
-      a: `Simply click the download button on this page to save the ${sound.name} sound button as an MP3 file to your device.`,
+      q: `How can I download the ${sound.name}${faqSuffix}?`,
+      a: `Simply click the download button on this page to save the ${sound.name}${faqSuffix} as an MP3 file to your device.`,
     },
     {
-      q: `Can I use the ${sound.name} sound button for free?`,
-      a: `Yes! The ${sound.name} sound button is free to play, download, and share for personal use.`,
+      q: `Can I use the ${sound.name}${faqSuffix} for free?`,
+      a: `Yes! The ${sound.name}${faqSuffix} is free to play, download, and share for personal use.`,
     },
     {
-      q: `Where is the ${sound.name} sound button from?`,
-      a: `The ${sound.name} sound button is part of our unblocked soundboard collection, perfect for memes, reactions, and content creation.`,
+      q: `Where is the ${sound.name}${faqSuffix} from?`,
+      a: `The ${sound.name}${faqSuffix} is part of our unblocked soundboard collection, perfect for memes, reactions, and content creation.`,
     },
     {
-      q: `Can I use the ${sound.name} sound button on my phone?`,
-      a: `Absolutely! The ${sound.name} sound button works on all devices, including smartphones, tablets, and desktops.`,
+      q: `Can I use the ${sound.name}${faqSuffix} on my phone?`,
+      a: `Absolutely! The ${sound.name}${faqSuffix} works on all devices, including smartphones, tablets, and desktops.`,
     },
   ]
 
@@ -237,7 +244,7 @@ export default async function SoundDetailPage({ params }: SoundPageProps) {
   const webPageSchema = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    name: `${sound.name} - Sound Effect Button`,
+    name: `${toTitleCase(getNameForTitle(sound.name))} Sound Effect Download: Instant Soundboard Button`,
     description,
     url: canonicalUrl,
     isPartOf: { "@type": "WebSite", name: "SoundButtons.com", url: `${SITE.baseUrl}/` },

@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const canonicalUrl = `${BASE}/categories/${slug}`
 
   return {
-    title,
+    title: { absolute: title },
     description,
     robots: {
       index: true,

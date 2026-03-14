@@ -4,7 +4,7 @@ import { SITE } from "@/lib/constants/site"
 const BASE = SITE.baseUrl
 
 export const metadata: Metadata = {
-  title: "Forgot Password - Sound Buttons | Reset Your Account Password",
+  title: { absolute: "Forgot Password - Sound Buttons | Reset Your Account Password" },
   description:
     "Reset your Sound Buttons account password. Enter your email address to receive password reset instructions and regain access to your soundboard account.",
   robots: { index: false, follow: false },

@@ -11,7 +11,7 @@ const PAGE_SIZE = 44
 const BASE = SITE.baseUrl
 
 export const metadata: Metadata = {
-  title: "Trending Sound Buttons & Viral Meme Soundboard",
+  title: { absolute: "Trending Sound Buttons & Viral Meme Soundboard" },
   description:
     "Discover the most popular trending sound buttons and viral meme soundboard and sound effects on SoundButtons.com.",
   keywords:

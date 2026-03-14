@@ -15,6 +15,13 @@ function slugToQuery(slug: string): string {
   return slug.replace(/-/g, " ").replace(/\s+/g, " ").trim()
 }
 
+function toTitleCase(str: string): string {
+  return str
+    .split(/\s+/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ")
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -34,7 +41,7 @@ export async function generateMetadata({
     // ignore
   }
 
-  const title = `${totalItems > 0 ? totalItems + "+ " : ""}${searchQuery} Soundboard - Sound Effect Buttons | SoundButtons.com`
+  const title = `${toTitleCase(searchQuery)} Soundboard: Play Instant Sound Effect Button`
   const description = `Discover ${totalItems > 0 ? totalItems : ""} ${searchQuery} soundboards for your meme sound buttons! Perfect for unblocked sound buttons, sound effects, and creating viral content.`
   const keywords = `${searchQuery}, ${searchQuery} sound buttons, ${searchQuery} sound effects, ${searchQuery} meme, ${searchQuery} audio, ${searchQuery} download, sound buttons, sound effects, meme soundboard`
   const canonicalUrl = `${BASE}/search/${query}`
@@ -68,7 +75,7 @@ export async function generateMetadata({
           width: 1200,
           height: 630,
           type: "image/png",
-          alt: `${searchQuery} Sound Buttons - SoundButtons.com`,
+          alt: `${toTitleCase(searchQuery)} Sound Buttons - SoundButtons.com`,
         },
       ],
       locale: "en_US",
@@ -121,7 +128,7 @@ export default async function SearchResultsPage({
 
   const canonicalUrl = `${BASE}/search/${querySlug}`
 
-  const searchDetailTitle = `${meta.total_items}+ ${sanitizedQuery} Soundboard - Sound Effect Buttons`
+  const searchDetailTitle = `${toTitleCase(sanitizedQuery)} Soundboard: Play Instant Sound Effect Button`
   const searchDetailDescription = `Discover ${sanitizedQuery} soundboards for your meme sound buttons! Perfect for unblocked sound buttons, sound effects, and creating viral content.`
 
   const searchDetailSchema = {
@@ -160,7 +167,7 @@ export default async function SearchResultsPage({
         itemListElement: [
           { "@type": "ListItem", position: 1, name: "Home", item: `${BASE}/` },
           { "@type": "ListItem", position: 2, name: "Search", item: `${BASE}/search` },
-          { "@type": "ListItem", position: 3, name: `${sanitizedQuery} Sound Buttons`, item: canonicalUrl },
+          { "@type": "ListItem", position: 3, name: `${toTitleCase(sanitizedQuery)} Sound Buttons`, item: canonicalUrl },
         ],
       },
     ],

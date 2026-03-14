@@ -8,7 +8,7 @@ export const revalidate = 300
 const BASE = SITE.baseUrl
 
 export const metadata: Metadata = {
-  title: "Play Random Sound – Fun Sound Button Generator",
+  title: { absolute: "Play Random Sound – Fun Sound Button Generator" },
   description:
     "Play random sounds with one click! Discover fun, trending, and new sound buttons for everyone. Try your luck and enjoy endless sound surprises on SoundButtons.com.",
   robots: { index: true, follow: true },
@@ -57,7 +57,7 @@ export default async function PlayRandomPage() {
     "@type": "WebPage",
     name: "Play Random Sound - Fun Sound Button Generator",
     description:
-      "Play a random sound with a single click! Discover fun, trending, and new sound buttons for everyone. Try your luck and enjoy endless sound surprises on SoundButtons.com.",
+      "Play a random sound with a single click! Discover fun, trending, and new sound buttons for kids and everyone. Try your luck and enjoy endless sound surprises on SoundButtons.com.",
     url: `${BASE}/play-random`,
     publisher: {
       "@type": "Organization",

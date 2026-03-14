@@ -42,6 +42,8 @@ const staticPages = [
 const soundPages = [
   { name: "New Sounds", path: "/new" },
   { name: "Trending Sounds", path: "/trends" },
+  { name: "Meme Buttons", path: "/meme-buttons" },
+  { name: "Meme Soundboard", path: "/meme-soundboard" },
   { name: "Create Sound", path: "/create-sound" },
   { name: "Text to Sound", path: "/text-to-sound" },
   { name: "Soundboard", path: "/soundboard" },

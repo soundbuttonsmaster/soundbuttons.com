@@ -5,7 +5,7 @@ import { SITE } from "@/lib/constants/site"
 const BASE = SITE.baseUrl
 
 export const metadata: Metadata = {
-  title: "Page Not Found (404) | SoundButtons.com - Sound Buttons & Sound Effects",
+  title: { absolute: "Page Not Found (404) | SoundButtons.com - Sound Buttons & Sound Effects" },
   description:
     "The page you're looking for doesn't exist. Explore our collection of thousands of free sound buttons, sound effects, and meme soundboards instead!",
   robots: { index: false, follow: true },

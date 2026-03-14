@@ -13,6 +13,7 @@ import { SITE } from "@/lib/constants/site"
 import { useAuth } from "@/lib/auth/auth-context"
 import { apiClient } from "@/lib/api/client"
 import { getSoundDetailPath } from "@/lib/utils/slug"
+import { getDisplaySoundName, getSoundFaqSuffix } from "@/lib/utils"
 
 interface SoundDetailClientProps {
   sound: Sound
@@ -122,7 +123,7 @@ export default function SoundDetailClient({
               </li>
               <li aria-hidden="true">/</li>
               <li className="font-medium text-slate-900 dark:text-white" aria-current="page">
-                {sound.name}
+                {getDisplaySoundName(sound.name)}
               </li>
             </ol>
           </nav>
@@ -132,7 +133,7 @@ export default function SoundDetailClient({
             <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800/90">
               <div className="px-4 pb-2 pt-4 sm:px-5 sm:pt-5">
                 <h1 className="mb-2 text-center text-xl font-bold text-slate-900 dark:text-white sm:text-2xl">
-                  {sound.name} Sound Buttons
+                  {getDisplaySoundName(sound.name)} Sound Buttons
                 </h1>
                 <div className="flex flex-wrap items-center justify-center gap-2 text-xs">
                   <Link
@@ -224,13 +225,13 @@ export default function SoundDetailClient({
               <section className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800/90 sm:p-5">
                 <h2 className="mb-2 text-base font-semibold text-slate-900 dark:text-white">About This Sound</h2>
                 <p className="mb-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-                  The <strong className="text-slate-800 dark:text-slate-200">{sound.name}</strong> sound button is a
+                  The <strong className="text-slate-800 dark:text-slate-200">{getDisplaySoundName(sound.name)}</strong>{getSoundFaqSuffix(sound.name)} is a
                   popular audio clip perfect for your soundboard, content creation, and entertainment. This high-quality
                   sound effect is part of {SITE.domain}&apos;s collection of free, unblocked sound buttons that work on
                   all devices - from smartphones to desktop computers.
                 </p>
                 <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-                  Play and download the <strong className="text-slate-800 dark:text-slate-200">{sound.name}</strong> sound
+                  Play and download the <strong className="text-slate-800 dark:text-slate-200">{getDisplaySoundName(sound.name)}</strong> sound
                   effect buttons instantly! Ideal for memes, pranks, gaming, editing, and sharing fun moments with
                   everyone.
                 </p>
@@ -241,7 +242,7 @@ export default function SoundDetailClient({
                 <ol className="list-inside list-decimal space-y-1.5 text-sm text-slate-600 dark:text-slate-300">
                   <li>
                     <strong className="text-slate-800 dark:text-slate-200">Play instantly:</strong> Click the sound
-                    button above to play the {sound.name} sound immediately in your browser.
+                    button above to play the {getDisplaySoundName(sound.name)} sound immediately in your browser.
                   </li>
                   <li>
                     <strong className="text-slate-800 dark:text-slate-200">Download for free:</strong> Click the
