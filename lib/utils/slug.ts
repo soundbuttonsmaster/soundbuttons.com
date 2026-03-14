@@ -15,3 +15,9 @@ export function getSoundDetailPath(name: string, id: number): string {
   const baseSlug = generateSlug(name) || `sound`
   return `/${baseSlug}/${id}`
 }
+
+/** Path for sound effect detail: /sound-effects/slug/id */
+export function getSoundEffectDetailPath(name: string, id: number): string {
+  const baseSlug = generateSlug(name) || `sound-effect`
+  return `/sound-effects/${baseSlug}/${id}`
+}

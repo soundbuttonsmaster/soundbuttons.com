@@ -68,6 +68,7 @@ export default function Footer() {
               <li><Link href="/reviews" className="text-gray-300 hover:text-white transition-colors">User Reviews</Link></li>
               <li><Link href="/games" className="text-gray-300 hover:text-white transition-colors">Games</Link></li>
               <li><Link href="/kids-soundboard" className="text-gray-300 hover:text-white transition-colors">Kids Soundboard</Link></li>
+              <li><Link href="/sound-effects" className="text-gray-300 hover:text-white transition-colors">Sound Effects</Link></li>
               <li><Link href="/login" className="text-gray-300 hover:text-white transition-colors">Sign In</Link></li>
               <li><Link href="/register" className="text-gray-300 hover:text-white transition-colors">Create Account</Link></li>
             </ul>

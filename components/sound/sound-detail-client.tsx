@@ -21,6 +21,12 @@ interface SoundDetailClientProps {
   isMobileDevice?: boolean
   categorySlug: string
   categoryName: string
+  /** Override category link (e.g. /sound-effects) */
+  categoryHref?: string
+  /** Override share/detail path (e.g. /sound-effects/slug/id) */
+  shareUrl?: string
+  /** Custom detail path for related sounds */
+  getRelatedDetailPath?: (sound: Sound) => string
 }
 
 function parseViews(value: unknown): number {
@@ -43,6 +49,9 @@ export default function SoundDetailClient({
   isMobileDevice,
   categorySlug,
   categoryName,
+  categoryHref,
+  shareUrl: shareUrlProp,
+  getRelatedDetailPath,
 }: SoundDetailClientProps) {
   const { token } = useAuth()
   const [isFavorited, setIsFavorited] = useState(false)
@@ -50,8 +59,10 @@ export default function SoundDetailClient({
   const [showShareModal, setShowShareModal] = useState(false)
   const [showEmbedModal, setShowEmbedModal] = useState(false)
 
-  const soundDetailPath = getSoundDetailPath(sound.name, sound.id)
-  const shareUrl = typeof window !== "undefined" ? `${window.location.origin}${soundDetailPath}` : `${SITE.baseUrl}${soundDetailPath}`
+  const soundDetailPath = shareUrlProp ? (shareUrlProp.startsWith("http") ? shareUrlProp.replace(/^https?:\/\/[^/]+/, "") : shareUrlProp) : getSoundDetailPath(sound.name, sound.id)
+  const shareUrl = shareUrlProp ?? (typeof window !== "undefined" ? `${window.location.origin}${soundDetailPath}` : `${SITE.baseUrl}${soundDetailPath}`)
+  const embedPath = `/embed${getSoundDetailPath(sound.name, sound.id)}`
+  const categoryLink = categoryHref ?? `/categories/${categorySlug}`
 
   useEffect(() => {
     if (token) {
@@ -115,7 +126,7 @@ export default function SoundDetailClient({
               <li aria-hidden="true">/</li>
               <li>
                 <Link
-                  href={`/categories/${categorySlug}`}
+                  href={categoryLink}
                   className="transition-colors hover:text-slate-900 dark:hover:text-white"
                 >
                   {categoryName}
@@ -137,7 +148,7 @@ export default function SoundDetailClient({
                 </h1>
                 <div className="flex flex-wrap items-center justify-center gap-2 text-xs">
                   <Link
-                    href={`/categories/${categorySlug}`}
+                    href={categoryLink}
                     className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 font-medium text-slate-700 transition-colors hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600"
                   >
                     {categoryName}
@@ -208,7 +219,7 @@ export default function SoundDetailClient({
                 <SoundList
                   title="You Might Like"
                   sounds={relatedSounds}
-                  viewAllLink="/new"
+                  viewAllLink={categoryHref ?? "/new"}
                   useCompactView={true}
                   maxCols={8}
                   showLoadMore={false}
@@ -216,6 +227,7 @@ export default function SoundDetailClient({
                   initialCount={isMobileDevice ? 16 : 40}
                   maxLines={isMobileDevice ? 4 : 5}
                   isMobileDevice={isMobileDevice}
+                  getDetailPath={getRelatedDetailPath}
                 />
               </div>
             )}
@@ -276,7 +288,7 @@ export default function SoundDetailClient({
                 <h2 className="mb-3 text-base font-semibold text-slate-900 dark:text-white">Explore More Sounds</h2>
                 <div className="flex flex-wrap gap-2">
                   <Link
-                    href={`/categories/${categorySlug}`}
+                    href={categoryLink}
                     className="inline-flex h-9 items-center rounded-lg bg-slate-900 px-3 text-sm font-medium text-white transition-colors hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
                   >
                     More {categoryName} Sounds
@@ -338,12 +350,12 @@ export default function SoundDetailClient({
                     className="mb-3 w-full resize-none rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs font-mono text-slate-900 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
                     rows={3}
                     onFocus={(e) => e.currentTarget.select()}
-                    value={`<iframe src="${SITE.baseUrl}/embed${soundDetailPath}" width="300" height="90" style="max-width:100%;border:0;" loading="lazy"></iframe>`}
+                    value={`<iframe src="${SITE.baseUrl}${embedPath}" width="300" height="90" style="max-width:100%;border:0;" loading="lazy"></iframe>`}
                     aria-label="Embed code for this sound"
                   />
                   <Button
                     onClick={() => {
-                      const code = `<iframe src="${SITE.baseUrl}/embed${soundDetailPath}" width="300" height="90" style="max-width:100%;border:0;" loading="lazy"></iframe>`
+                      const code = `<iframe src="${SITE.baseUrl}${embedPath}" width="300" height="90" style="max-width:100%;border:0;" loading="lazy"></iframe>`
                       navigator.clipboard.writeText(code).then(() => setShowEmbedModal(false)).catch(() => {})
                     }}
                     className="h-10 w-full rounded-lg bg-slate-900 text-sm font-medium text-white transition-colors hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"

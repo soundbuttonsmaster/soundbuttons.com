@@ -20,6 +20,8 @@ interface CompactSoundButtonProps {
   hideLabel?: boolean;
   hideActions?: boolean;
   isMobileDevice?: boolean;
+  /** Override detail page path (e.g. /sound-effects/slug/id) */
+  detailPath?: string;
 }
 
 // Global audio context
@@ -174,7 +176,7 @@ const createAudio = (audioUrl: string): HTMLAudioElement => {
   return audio;
 };
 
-const CompactSoundButton: React.FC<CompactSoundButtonProps> = ({ sound, isAboveTheFold = false, customSize, hideLabel = false, hideActions = false, isMobileDevice = false }) => {
+const CompactSoundButton: React.FC<CompactSoundButtonProps> = ({ sound, isAboveTheFold = false, customSize, hideLabel = false, hideActions = false, isMobileDevice = false, detailPath: detailPathProp }) => {
   const router = useRouter();
   const { token } = useAuth();
   const [isPlaying, setIsPlaying] = useState(false);
@@ -233,8 +235,8 @@ const CompactSoundButton: React.FC<CompactSoundButtonProps> = ({ sound, isAboveT
   }, [sound.id, (sound as { is_favorited?: boolean }).is_favorited, token]);
 
   const detailUrl = React.useMemo(
-    () => getSoundDetailPath(sound.name ?? '', sound.id),
-    [sound.name, sound.id]
+    () => detailPathProp ?? getSoundDetailPath(sound.name ?? '', sound.id),
+    [detailPathProp, sound.name, sound.id]
   );
 
   const handlePlay = useCallback(async () => {
@@ -970,6 +972,7 @@ const CompactSoundButton: React.FC<CompactSoundButtonProps> = ({ sound, isAboveT
         soundId={sound.id}
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
+        shareUrl={detailPathProp ? (typeof window !== 'undefined' ? `${window.location.origin}${detailPathProp}` : undefined) : undefined}
       />
     </div>
   );

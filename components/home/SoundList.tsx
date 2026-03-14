@@ -37,6 +37,8 @@ interface SoundListProps {
   isMobileDevice?: boolean
   /** Cap desktop columns (e.g. 8 for "You Might Like" - my-instants) */
   maxCols?: number
+  /** Custom detail path for each sound (e.g. /sound-effects/slug/id) */
+  getDetailPath?: (sound: Sound) => string
 }
 
 export interface SoundListRef {
@@ -65,6 +67,7 @@ const SoundList = forwardRef<SoundListRef, SoundListProps>(
       onRainEffect,
       isMobileDevice: isMobileDeviceProp,
       maxCols,
+      getDetailPath,
     },
     ref
   ) => {
@@ -95,12 +98,10 @@ const SoundList = forwardRef<SoundListRef, SoundListProps>(
     }, [])
 
     useEffect(() => {
-      if (sounds.length > displayedSounds.length) {
-        startTransition(() => {
-          setDisplayedSounds(sounds)
-        })
-      }
-    }, [sounds, displayedSounds.length])
+      startTransition(() => {
+        setDisplayedSounds(sounds)
+      })
+    }, [sounds])
 
     const handleLoadMore = async () => {
       if (loading || !onLoadMore) return
@@ -419,13 +420,14 @@ const SoundList = forwardRef<SoundListRef, SoundListProps>(
                       const index = rowIndex * soundsPerRow + colIndex
                       return (
                         <Fragment key={`${sound.id}-${index}`}>
-                          {useCompactView ? (
+                          {                          useCompactView ? (
                             <SoundButton
                               sound={sound}
                               isAboveTheFold={
                                 index < (isMobileDevice ? 12 : 44)
                               }
                               isMobileDevice={isMobileDevice}
+                              detailPath={getDetailPath?.(sound)}
                             />
                           ) : useCardView && customCardComponent ? (
                             React.createElement(customCardComponent, {
@@ -443,6 +445,7 @@ const SoundList = forwardRef<SoundListRef, SoundListProps>(
                                   : index < 10
                               }
                               isMobileDevice={isMobileDevice}
+                              detailPath={getDetailPath?.(sound)}
                             />
                           )}
                         </Fragment>

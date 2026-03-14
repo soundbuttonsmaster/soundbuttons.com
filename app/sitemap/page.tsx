@@ -48,6 +48,7 @@ const soundPages = [
   { name: "Text to Sound", path: "/text-to-sound" },
   { name: "Soundboard", path: "/soundboard" },
   { name: "Kids Soundboard", path: "/kids-soundboard" },
+  { name: "Sound Effects", path: "/sound-effects" },
   { name: "Sound Buttons", path: "/sound-buttons" },
   { name: "Sound Buttons Unblocked", path: "/sound-buttons-unblocked" },
   { name: "Sound Buttons Unblocked for School", path: "/sound-buttons-unblocked-for-school" },
@@ -59,6 +60,8 @@ const soundPages = [
   { name: "Reviews", path: "/reviews" },
   { name: "Favorites", path: "/favorites" },
   { name: "Games", path: "/games" },
+  { name: "Tic Tac Toe", path: "/tic-tac-toe" },
+  { name: "Whack-a-Mole", path: "/whack-a-mole" },
 ]
 
 const accountPages = [
