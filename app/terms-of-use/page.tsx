@@ -17,13 +17,17 @@ export const metadata: Metadata = {
       "Terms of Service for SoundButtons.com - Review the guidelines for using our sound button platform.",
     url: `${BASE}/terms-of-use`,
     siteName: "SoundButtons.com",
+    images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: "Terms of Service | SoundButtons" }],
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
+    site: "@soundbuttons",
+    creator: "@soundbuttons",
     title: "Terms of Service | SoundButtons",
     description:
       "Terms of Service for SoundButtons.com - Review the guidelines for using our sound button platform.",
+    images: [`${BASE}/og.png`],
   },
 }
 

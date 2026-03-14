@@ -13,7 +13,7 @@ function isMobileDevice(userAgent: string | null): boolean {
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)
 }
 
-export const revalidate = 300
+export const revalidate = 60
 
 interface SoundPageProps {
   params: Promise<{ slug: string; id: string }>
@@ -43,7 +43,7 @@ export async function generateMetadata({ params }: SoundPageProps): Promise<Meta
 
   const canonicalSlug = generateSlug(sound.name)
   const canonicalUrl = `${SITE.baseUrl}/${canonicalSlug}/${sound.id}`
-  const title = `${sound.name} - Sound Effect Button`
+  const title = `${sound.name} - Sound Effect Button | SoundButtons.com`
   const description = buildDescription(sound.name)
   const keywords = buildKeywords(sound.name)
 
@@ -51,26 +51,49 @@ export async function generateMetadata({ params }: SoundPageProps): Promise<Meta
   const categorySlug = category?.slug ?? "memes"
 
   return {
-    title,
+    title: { absolute: title },
     description,
     keywords,
     authors: [{ name: "SoundButtons.com" }],
-    robots: "index, follow",
+    creator: "SoundButtons.com",
+    publisher: "SoundButtons.com",
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
+    },
     alternates: {
       canonical: canonicalUrl,
-      languages: { "x-default": canonicalUrl },
+      languages: {
+        en: canonicalUrl,
+        fr: `${SITE.baseUrl}/fr${canonicalUrl.replace(SITE.baseUrl, "")}`,
+        "x-default": canonicalUrl,
+      },
     },
     openGraph: {
       type: "music.song",
       title,
       description,
       url: canonicalUrl,
-      siteName: SITE.name,
-      images: [{ url: `${SITE.baseUrl}/og.png`, width: 1200, height: 630, alt: `${sound.name} - Sound Button` }],
-      audio: sound.sound_file,
+      siteName: "SoundButtons.com",
+      images: [
+        {
+          url: `${SITE.baseUrl}/og.png`,
+          width: 1200,
+          height: 630,
+          type: "image/png",
+          alt: `${sound.name} - SoundButtons.com`,
+          secureUrl: `${SITE.baseUrl}/og.png`,
+        },
+      ],
+      locale: "en_US",
+      alternateLocale: ["en_GB", "en_CA", "en_AU", "fr_FR"],
+      ...(sound.sound_file && { audio: sound.sound_file }),
     },
     twitter: {
       card: "summary_large_image",
+      site: "@soundbuttons",
+      creator: "@soundbuttons",
       title,
       description,
       images: [`${SITE.baseUrl}/og.png`],
@@ -99,13 +122,12 @@ export default async function SoundDetailPage({ params }: SoundPageProps) {
     permanentRedirect(`/${canonicalSlug}/${sound.id}`)
   }
 
-  let relatedSounds: Sound[] = []
-  const categoryId = sound.category_id ?? 13
+  let youMightLikeSounds: Sound[] = []
   try {
-    const { data } = await apiClient.getRelatedSounds(sound.id, categoryId)
-    relatedSounds = (data ?? []).filter((s) => s.id !== sound.id)
+    const { data } = await apiClient.getNewSounds(1, 50)
+    youMightLikeSounds = (data ?? []).filter((s) => s.id !== sound.id).slice(0, 40)
   } catch {
-    relatedSounds = []
+    youMightLikeSounds = []
   }
 
   try {
@@ -113,7 +135,7 @@ export default async function SoundDetailPage({ params }: SoundPageProps) {
   } catch {
     // ignore
   }
-
+  const categoryId = sound.category_id ?? 13
   const category = getCategoryById(categoryId)
   const categorySlug = category?.slug ?? "memes"
   const canonicalUrl = `${SITE.baseUrl}/${canonicalSlug}/${sound.id}`
@@ -152,6 +174,14 @@ export default async function SoundDetailPage({ params }: SoundPageProps) {
     ],
   }
 
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "SoundButtons.com",
+    url: `${SITE.baseUrl}/`,
+    logo: { "@type": "ImageObject", url: `${SITE.baseUrl}/og.png` },
+  }
+
   const audioSchema = {
     "@context": "https://schema.org",
     "@type": "AudioObject",
@@ -159,8 +189,10 @@ export default async function SoundDetailPage({ params }: SoundPageProps) {
     description,
     url: canonicalUrl,
     contentUrl: sound.sound_file,
+    image: `${SITE.baseUrl}/og.png`,
     encodingFormat: "audio/mpeg",
     inLanguage: "en",
+    datePublished: sound.created_at ?? undefined,
     interactionStatistic: {
       "@type": "InteractionCounter",
       interactionType: "https://schema.org/ListenAction",
@@ -168,19 +200,19 @@ export default async function SoundDetailPage({ params }: SoundPageProps) {
     },
     publisher: {
       "@type": "Organization",
-      name: SITE.name,
+      name: "SoundButtons.com",
       logo: { "@type": "ImageObject", url: `${SITE.baseUrl}/og.png` },
     },
   }
 
   const itemListSchema =
-    relatedSounds.length > 0
+    youMightLikeSounds.length > 0
       ? {
           "@context": "https://schema.org",
           "@type": "ItemList",
           name: "You might also like",
-          numberOfItems: relatedSounds.length,
-          itemListElement: relatedSounds.slice(0, 10).map((s, i) => ({
+          numberOfItems: youMightLikeSounds.length,
+          itemListElement: youMightLikeSounds.slice(0, 10).map((s, i) => ({
             "@type": "ListItem",
             position: i + 1,
             item: {
@@ -208,22 +240,23 @@ export default async function SoundDetailPage({ params }: SoundPageProps) {
     name: `${sound.name} - Sound Effect Button`,
     description,
     url: canonicalUrl,
-    isPartOf: { "@type": "WebSite", name: SITE.name, url: `${SITE.baseUrl}/` },
+    isPartOf: { "@type": "WebSite", name: "SoundButtons.com", url: `${SITE.baseUrl}/` },
     potentialAction: { "@type": "ListenAction", target: canonicalUrl },
   }
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(audioSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       {itemListSchema && (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }} />
       )}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }} />
       <SoundDetailClient
         sound={sound}
-        relatedSounds={relatedSounds}
+        relatedSounds={youMightLikeSounds}
         isMobileDevice={isMobile}
         categorySlug={categorySlug}
         categoryName={category?.name ?? sound.category_name ?? "Sounds"}

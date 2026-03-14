@@ -19,10 +19,14 @@ export const metadata: Metadata = {
   authors: [{ name: "SoundButtons.com" }],
   creator: "SoundButtons.com",
   publisher: "SoundButtons.com",
-  robots: { index: true, follow: true },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
+  },
   alternates: {
     canonical: `${BASE}/trends`,
-    languages: { en: `${BASE}/trends`, "x-default": `${BASE}/trends` },
+    languages: { en: `${BASE}/trends`, fr: `${BASE}/fr/trends`, "x-default": `${BASE}/trends` },
   },
   openGraph: {
     type: "website",
@@ -36,6 +40,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
+    site: "@soundbuttons",
+    creator: "@soundbuttons",
     title: "Trending Sound Buttons & Viral Meme Soundboard",
     description:
       "Discover the most popular trending sound buttons and viral meme soundboard and sound effects on SoundButtons.com.",

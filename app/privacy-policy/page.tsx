@@ -13,7 +13,11 @@ export const metadata: Metadata = {
   authors: [{ name: "SoundButtons.com" }],
   creator: "SoundButtons.com",
   publisher: "SoundButtons.com",
-  robots: { index: true, follow: true },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
+  },
   alternates: {
     canonical: `${BASE}/privacy-policy`,
     languages: { en: `${BASE}/privacy-policy`, "x-default": `${BASE}/privacy-policy` },
@@ -30,6 +34,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
+    site: "@soundbuttons",
+    creator: "@soundbuttons",
     title: "Privacy Policy - SoundButtons.com | Data Protection & Rights",
     description:
       "Read our comprehensive privacy policy to learn how we handle your data, cookies, and user rights at SoundButtons.com.",

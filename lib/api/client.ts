@@ -69,11 +69,13 @@ function extractSounds(res: SoundResponse): ProcessedSound[] {
   return raw.map(processSound)
 }
 
-function extractMeta(res: SoundResponse, page: number) {
+function extractMeta(res: SoundResponse, page: number, pageSize?: number) {
+  const total = res.total_items ?? res.count ?? 0
+  const perPage = pageSize ?? 21
   return {
     current_page: res.current_page ?? page,
-    last_page: (res.total_pages ?? Math.ceil((res.count ?? 0) / 21)) || 1,
-    total_items: res.total_items ?? res.count ?? 0,
+    last_page: (res.total_pages ?? Math.ceil(total / perPage)) || 1,
+    total_items: total,
   }
 }
 
@@ -102,7 +104,7 @@ export const apiClient = {
 
   /** Fetch single sound by ID */
   async getSoundById(id: number): Promise<{ data: ProcessedSound | null }> {
-    const res = await fetch(`${API_BASE_URL}/sounds/${id}`, { next: { revalidate: 300 } })
+    const res = await fetch(`${API_BASE_URL}/sounds/${id}`, { next: { revalidate: 60 } })
     if (!res.ok) return { data: null }
     const json = (await res.json()) as {
       status?: boolean
@@ -126,7 +128,7 @@ export const apiClient = {
   async getRelatedSounds(soundId: number, categoryId: number): Promise<{ data: ProcessedSound[] }> {
     const res = await fetch(
       `${API_BASE_URL}/sounds/related/${soundId}/${categoryId}`,
-      { next: { revalidate: 300 } }
+      { next: { revalidate: 60 } }
     )
     if (!res.ok) return { data: [] }
     const json = (await res.json()) as SoundResponse
@@ -152,7 +154,7 @@ export const apiClient = {
     const res = await fetch(url, { next: { revalidate: 60 } })
     if (!res.ok) return { data: [], meta: { current_page: page, last_page: 1, total_items: 0 } }
     const json = (await res.json()) as SoundResponse
-    return { data: extractSounds(json), meta: extractMeta(json, page) }
+    return { data: extractSounds(json), meta: extractMeta(json, page, pageSize) }
   },
 
   /** Fetch sounds by category name (e.g. "Reactions", "Memes") - API uses categoryName without "Soundboard" */

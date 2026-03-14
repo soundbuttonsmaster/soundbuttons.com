@@ -143,11 +143,11 @@ export default function SoundDetailClient({
                   </Link>
                   <span className="inline-flex items-center gap-1 text-slate-500 dark:text-slate-400">
                     <Eye className="h-3.5 w-3.5" />
-                    {viewCount.toLocaleString()} views
+                    {viewCount.toLocaleString("en-US")} views
                   </span>
                   {(sound.likes_count ?? 0) > 0 && (
                     <span className="text-slate-500 dark:text-slate-400">
-                      {(sound.likes_count ?? 0).toLocaleString()} likes
+                      {(sound.likes_count ?? 0).toLocaleString("en-US")} likes
                     </span>
                   )}
                 </div>
@@ -209,10 +209,11 @@ export default function SoundDetailClient({
                   sounds={relatedSounds}
                   viewAllLink="/new"
                   useCompactView={true}
+                  maxCols={8}
                   showLoadMore={false}
                   hasMoreSounds={false}
-                  initialCount={isMobileDevice ? 16 : 44}
-                  maxLines={isMobileDevice ? 4 : 4}
+                  initialCount={isMobileDevice ? 16 : 40}
+                  maxLines={isMobileDevice ? 4 : 5}
                   isMobileDevice={isMobileDevice}
                 />
               </div>

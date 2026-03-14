@@ -35,6 +35,8 @@ interface SoundListProps {
   }>
   onRainEffect?: (imageUrl: string) => void
   isMobileDevice?: boolean
+  /** Cap desktop columns (e.g. 8 for "You Might Like" - my-instants) */
+  maxCols?: number
 }
 
 export interface SoundListRef {
@@ -62,6 +64,7 @@ const SoundList = forwardRef<SoundListRef, SoundListProps>(
       customCardComponent,
       onRainEffect,
       isMobileDevice: isMobileDeviceProp,
+      maxCols,
     },
     ref
   ) => {
@@ -114,11 +117,11 @@ const SoundList = forwardRef<SoundListRef, SoundListProps>(
     const soundsPerRow = useCompactView
       ? isMobileDevice
         ? 4
-        : 11
+        : maxCols ?? 11
       : useCardView
         ? isMobileDevice
           ? 3
-          : 9
+          : maxCols ?? 9
         : 3
 
     const maxSounds = maxLines * soundsPerRow
@@ -402,9 +405,13 @@ const SoundList = forwardRef<SoundListRef, SoundListProps>(
                   <div
                     className={`sound-grid ${
                       useCompactView
-                        ? "grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-11 gap-0 sm:gap-2 lg:gap-3"
+                        ? maxCols === 8
+                          ? "grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-8 gap-0 sm:gap-2 lg:gap-3"
+                          : "grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-11 gap-0 sm:gap-2 lg:gap-3"
                         : useCardView
-                          ? "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-9 gap-2 sm:gap-3"
+                          ? maxCols === 8
+                            ? "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 xl:grid-cols-8 gap-2 sm:gap-3"
+                            : "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-9 gap-2 sm:gap-3"
                           : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2"
                     } sound-grid-container`}
                   >

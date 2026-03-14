@@ -13,7 +13,11 @@ export const metadata: Metadata = {
   authors: [{ name: "SoundButtons.com" }],
   creator: "SoundButtons.com",
   publisher: "SoundButtons.com",
-  robots: { index: true, follow: true },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
+  },
   alternates: {
     canonical: `${BASE}/contact-us`,
     languages: { en: `${BASE}/contact-us`, "x-default": `${BASE}/contact-us` },
@@ -31,6 +35,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
+    site: "@soundbuttons",
+    creator: "@soundbuttons",
     title: "Contact Us - SoundButtons.com | Get Support & Feedback",
     description:
       "Contact the SoundButtons.com team with your questions, feedback, or support requests. We're here to help! Get in touch for technical support, feature requests, or general inquiries.",

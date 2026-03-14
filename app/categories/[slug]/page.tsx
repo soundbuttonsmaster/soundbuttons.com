@@ -32,7 +32,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description,
-    robots: { index: true, follow: true },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
+    },
     alternates: {
       canonical: canonicalUrl,
       languages: { en: canonicalUrl, "x-default": canonicalUrl },
@@ -48,6 +52,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
+      site: "@soundbuttons",
+      creator: "@soundbuttons",
       title: `${category.name} - SoundButtons.Com`,
       description,
       images: [`${BASE}/og.png`],

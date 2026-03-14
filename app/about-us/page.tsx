@@ -10,7 +10,11 @@ export const metadata: Metadata = {
     "Learn more about SoundButtons.com, our mission to bring people together through sound, and how you can discover, play, and share the best sound buttons online. Join our community of creators and sound enthusiasts!",
   keywords:
     "about soundbuttons, soundbuttons mission, sound button community, about us soundbuttons, sound button platform, audio community, sound effects platform, meme sound community, gaming sound community, comedy sound community, music sound community, viral sound community, content creator platform, sound button creators, audio enthusiasts, sound button story, soundbuttons team, sound button mission, audio platform about, sound effects community, meme sound platform, gaming sound platform, comedy sound platform, music sound platform, viral sound platform, content creator community, sound button enthusiasts, audio creators, sound button platform about, sound effects about, meme sound about",
-  robots: { index: true, follow: true },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
+  },
   alternates: {
     canonical: `${BASE}/about-us`,
     languages: { en: `${BASE}/about-us`, "x-default": `${BASE}/about-us` },
@@ -19,17 +23,29 @@ export const metadata: Metadata = {
     type: "website",
     title: "About Us - Our Mission & Story | SoundButtons.com",
     description:
-      "Learn more about SoundButtons.com, our mission to bring people together through sound, and how you can discover, play, and share the best sound buttons online.",
+      "Learn more about SoundButtons.com, our mission to bring people together through sound, and how you can discover, play, and share the best sound buttons online. Join our community of creators and sound enthusiasts!",
     url: `${BASE}/about-us`,
     siteName: "SoundButtons.com",
-    images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: "About Us - SoundButtons.com" }],
+    images: [
+      {
+        url: `${BASE}/og.png`,
+        width: 1200,
+        height: 630,
+        type: "image/png",
+        alt: "About Us - Our Mission & Story | SoundButtons.com",
+        secureUrl: `${BASE}/og.png`,
+      },
+    ],
     locale: "en_US",
+    alternateLocale: ["en_GB", "en_CA", "en_AU"],
   },
   twitter: {
     card: "summary_large_image",
+    site: "@soundbuttons",
+    creator: "@soundbuttons",
     title: "About Us - Our Mission & Story | SoundButtons.com",
     description:
-      "Learn more about SoundButtons.com, our mission to bring people together through sound, and how you can discover, play, and share the best sound buttons online.",
+      "Learn more about SoundButtons.com, our mission to bring people together through sound, and how you can discover, play, and share the best sound buttons online. Join our community of creators and sound enthusiasts!",
     images: [`${BASE}/og.png`],
   },
 }

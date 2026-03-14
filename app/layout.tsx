@@ -17,8 +17,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Sound Buttons - Free Sound Effects & Soundboard",
-    template: "%s | Sound Buttons",
+    default: "Sound Buttons - 9,99,999+ Meme Soundboard Unblocked",
+    template: "%s | SoundButtons.com",
   },
   description:
     "Free sound effects and soundboard. Play, share, and download sound buttons.",

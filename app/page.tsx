@@ -1,14 +1,13 @@
 import { headers } from "next/headers"
 import type { Metadata } from "next"
 import { apiClient } from "@/lib/api/client"
-import { getActiveCategories } from "@/lib/constants/categories"
 import { SITE } from "@/lib/constants/site"
 import HomePageClient from "@/components/home/HomePageClient"
 
 export const revalidate = 60
 
 export const metadata: Metadata = {
-  title: "Sound Buttons - 9,99,999+ Meme Soundboard Unblocked",
+  title: { absolute: "Sound Buttons - 9,99,999+ Meme Soundboard Unblocked" },
   description:
     "Play thousands of sound buttons with the best meme soundboard, buttons, prank, funny sound effect, and high-quality audio in unblocked soundboards.",
   keywords: [
@@ -28,6 +27,11 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE.baseUrl),
   alternates: {
     canonical: SITE.baseUrl,
+    languages: {
+      en: SITE.baseUrl,
+      fr: `${SITE.baseUrl}/fr`,
+      "x-default": SITE.baseUrl,
+    },
   },
   openGraph: {
     type: "website",
@@ -110,7 +114,6 @@ export default async function HomePage() {
     // ignore
   }
 
-  const categories = getActiveCategories()
   const BASE = SITE.baseUrl
 
   const webSiteSchema = {
@@ -133,18 +136,14 @@ export default async function HomePage() {
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: `${BASE}/` },
       { "@type": "ListItem", position: 2, name: "New", item: `${BASE}/new` },
-      {
-        "@type": "ListItem",
-        position: 3,
-        name: "Trending",
-        item: `${BASE}/trends`,
-      },
-      ...categories.map((cat, i) => ({
-        "@type": "ListItem",
-        position: 4 + i,
-        name: `${cat.name} Soundboard`,
-        item: `${BASE}/categories/${cat.slug}`,
-      })),
+      { "@type": "ListItem", position: 3, name: "Trending", item: `${BASE}/trends` },
+      { "@type": "ListItem", position: 4, name: "Memes Soundboard", item: `${BASE}/categories/memes` },
+      { "@type": "ListItem", position: 5, name: "Games Soundboard", item: `${BASE}/categories/games` },
+      { "@type": "ListItem", position: 6, name: "Anime Soundboard", item: `${BASE}/categories/anime` },
+      { "@type": "ListItem", position: 7, name: "Reactions Soundboard", item: `${BASE}/categories/reactions` },
+      { "@type": "ListItem", position: 8, name: "Movies Soundboard", item: `${BASE}/categories/movies` },
+      { "@type": "ListItem", position: 9, name: "Meme Soundboard", item: `${BASE}/soundboard` },
+      { "@type": "ListItem", position: 10, name: "Meme Soundboard", item: `${BASE}/meme-soundboard` },
     ],
   }
 

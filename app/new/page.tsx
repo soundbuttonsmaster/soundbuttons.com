@@ -19,10 +19,14 @@ export const metadata: Metadata = {
   authors: [{ name: "SoundButtons.com" }],
   creator: "SoundButtons.com",
   publisher: "SoundButtons.com",
-  robots: { index: true, follow: true },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
+  },
   alternates: {
     canonical: `${BASE}/new`,
-    languages: { en: `${BASE}/new`, "x-default": `${BASE}/new` },
+    languages: { en: `${BASE}/new`, fr: `${BASE}/fr/new`, "x-default": `${BASE}/new` },
   },
   openGraph: {
     type: "website",
@@ -36,6 +40,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
+    site: "@soundbuttons",
+    creator: "@soundbuttons",
     title: "New Sound Buttons: Fresh Meme Soundboard Audio Updated Daily",
     description:
       "Discover the latest sound buttons and soundboard with fresh, trending audio clips updated daily to play, download, and share for memes, gaming, and entertainment!",
