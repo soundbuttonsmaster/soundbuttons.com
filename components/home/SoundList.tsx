@@ -4,18 +4,19 @@ import React, {
   useState,
   useEffect,
   Fragment,
+  startTransition,
   useDeferredValue,
   useRef,
   useImperativeHandle,
   forwardRef,
 } from "react"
+import { ChevronRight } from "lucide-react"
 import type { Sound } from "@/lib/types/sound"
 import SoundButton from "@/components/sound/sound-button"
-import { Button } from "@/components/ui/button"
 
 interface SoundListProps {
   title: string
-  sounds: (Sound & { sound_file: string })[]
+  sounds: Sound[]
   initialCount?: number
   loadMoreCount?: number
   viewAllLink?: string
@@ -27,6 +28,12 @@ interface SoundListProps {
   showLoadMore?: boolean
   showRedirectButton?: boolean
   showLoadingIndicator?: boolean
+  customCardComponent?: React.ComponentType<{
+    sound: Sound
+    isAboveTheFold?: boolean
+    onRainEffect?: (imageUrl: string) => void
+  }>
+  onRainEffect?: (imageUrl: string) => void
   isMobileDevice?: boolean
 }
 
@@ -47,29 +54,48 @@ const SoundList = forwardRef<SoundListRef, SoundListProps>(
       onLoadMore,
       hasMoreSounds = false,
       maxLines = 4,
+      useCardView = false,
       useCompactView = false,
       showLoadMore = true,
       showRedirectButton = false,
       showLoadingIndicator = true,
+      customCardComponent,
+      onRainEffect,
       isMobileDevice: isMobileDeviceProp,
     },
     ref
   ) => {
     const [loading, setLoading] = useState(false)
-    const [isMobileDevice, setIsMobileDevice] = useState(isMobileDeviceProp ?? false)
-    const [displayedSounds, setDisplayedSounds] = useState(sounds)
+    const [isMobileDevice, setIsMobileDevice] = useState(
+      isMobileDeviceProp ?? false
+    )
+    const [displayedSounds, setDisplayedSounds] = useState<Sound[]>(sounds)
+    const [isAutoPlaying, setIsAutoPlaying] = useState(false)
+    const [isRandomPlaying, setIsRandomPlaying] = useState(false)
+    const [currentAutoPlayIndex, setCurrentAutoPlayIndex] = useState(0)
+    const autoPlayTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+    const isAutoPlayingRef = useRef(false)
+    const isRandomPlayingRef = useRef(false)
+    const shuffledIndicesRef = useRef<number[]>([])
+    const currentRandomIndexRef = useRef(0)
+    const soundEndedHandlersRef = useRef<Map<number, (e: Event) => void>>(
+      new Map()
+    )
     const deferredSounds = useDeferredValue(displayedSounds)
 
     useEffect(() => {
       if (typeof window === "undefined") return
-      const handleResize = () => setIsMobileDevice(window.innerWidth <= 768)
+      const handleResize = () =>
+        setIsMobileDevice(window.innerWidth <= 768)
       window.addEventListener("resize", handleResize)
       return () => window.removeEventListener("resize", handleResize)
     }, [])
 
     useEffect(() => {
       if (sounds.length > displayedSounds.length) {
-        setDisplayedSounds(sounds)
+        startTransition(() => {
+          setDisplayedSounds(sounds)
+        })
       }
     }, [sounds, displayedSounds.length])
 
@@ -89,25 +115,233 @@ const SoundList = forwardRef<SoundListRef, SoundListProps>(
       ? isMobileDevice
         ? 4
         : 11
-      : 3
+      : useCardView
+        ? isMobileDevice
+          ? 3
+          : 9
+        : 3
 
     const maxSounds = maxLines * soundsPerRow
     const limitedSounds = deferredSounds.slice(0, maxSounds)
 
-    const rows: (Sound & { sound_file: string })[][] = []
+    const rows: Sound[][] = []
     for (let i = 0; i < limitedSounds.length; i += soundsPerRow) {
       rows.push(limitedSounds.slice(i, i + soundsPerRow))
     }
 
+    const handleAutoPlay = () => {
+      if (isRandomPlayingRef.current) {
+        isRandomPlayingRef.current = false
+        setIsRandomPlaying(false)
+        shuffledIndicesRef.current = []
+        currentRandomIndexRef.current = 0
+      }
+
+      if (isAutoPlayingRef.current) {
+        isAutoPlayingRef.current = false
+        setIsAutoPlaying(false)
+        setCurrentAutoPlayIndex(0)
+        if (autoPlayTimeoutRef.current) {
+          clearTimeout(autoPlayTimeoutRef.current)
+          autoPlayTimeoutRef.current = null
+        }
+        soundEndedHandlersRef.current.forEach((handler) => {
+          window.removeEventListener("sound-ended", handler as EventListener)
+        })
+        soundEndedHandlersRef.current.clear()
+        window.dispatchEvent(
+          new CustomEvent("pause-all-sounds", { detail: { exceptId: null } })
+        )
+        return
+      }
+
+      if (limitedSounds.length === 0) return
+
+      isAutoPlayingRef.current = true
+      setIsAutoPlaying(true)
+      setCurrentAutoPlayIndex(0)
+
+      const playNextSound = (index: number) => {
+        if (!isAutoPlayingRef.current && index > 0) return
+        if (index >= limitedSounds.length) {
+          isAutoPlayingRef.current = false
+          setIsAutoPlaying(false)
+          setCurrentAutoPlayIndex(0)
+          return
+        }
+
+        const sound = limitedSounds[index]
+        setCurrentAutoPlayIndex(index)
+        window.dispatchEvent(
+          new CustomEvent("play-sound-auto", { detail: { soundId: sound.id } })
+        )
+
+        const handleSoundEnded = (e: Event) => {
+          const customEvent = e as CustomEvent<{ soundId: number }>
+          if (customEvent.detail?.soundId === sound.id) {
+            window.removeEventListener("sound-ended", handleSoundEnded as EventListener)
+            soundEndedHandlersRef.current.delete(sound.id)
+            if (autoPlayTimeoutRef.current) {
+              clearTimeout(autoPlayTimeoutRef.current)
+            }
+            if (isAutoPlayingRef.current) {
+              autoPlayTimeoutRef.current = setTimeout(() => {
+                playNextSound(index + 1)
+              }, 300)
+            }
+          }
+        }
+
+        soundEndedHandlersRef.current.set(sound.id, handleSoundEnded)
+        window.addEventListener("sound-ended", handleSoundEnded as EventListener)
+
+        if (autoPlayTimeoutRef.current) {
+          clearTimeout(autoPlayTimeoutRef.current)
+        }
+        autoPlayTimeoutRef.current = setTimeout(() => {
+          window.removeEventListener("sound-ended", handleSoundEnded as EventListener)
+          soundEndedHandlersRef.current.delete(sound.id)
+          if (isAutoPlayingRef.current) {
+            playNextSound(index + 1)
+          }
+        }, 5000)
+      }
+
+      playNextSound(0)
+    }
+
+    const handleRandomPlay = () => {
+      if (isAutoPlayingRef.current) {
+        isAutoPlayingRef.current = false
+        setIsAutoPlaying(false)
+        setCurrentAutoPlayIndex(0)
+      }
+
+      if (isRandomPlayingRef.current) {
+        isRandomPlayingRef.current = false
+        setIsRandomPlaying(false)
+        shuffledIndicesRef.current = []
+        currentRandomIndexRef.current = 0
+        if (autoPlayTimeoutRef.current) {
+          clearTimeout(autoPlayTimeoutRef.current)
+          autoPlayTimeoutRef.current = null
+        }
+        soundEndedHandlersRef.current.forEach((handler) => {
+          window.removeEventListener("sound-ended", handler as EventListener)
+        })
+        soundEndedHandlersRef.current.clear()
+        window.dispatchEvent(
+          new CustomEvent("pause-all-sounds", { detail: { exceptId: null } })
+        )
+        return
+      }
+
+      if (limitedSounds.length === 0) return
+
+      const indices = Array.from(
+        { length: limitedSounds.length },
+        (_, i) => i
+      )
+      for (let i = indices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1))
+        ;[indices[i], indices[j]] = [indices[j], indices[i]]
+      }
+
+      shuffledIndicesRef.current = indices
+      currentRandomIndexRef.current = 0
+      isRandomPlayingRef.current = true
+      setIsRandomPlaying(true)
+
+      const playNextRandomSound = () => {
+        if (!isRandomPlayingRef.current) return
+
+        if (
+          currentRandomIndexRef.current >= shuffledIndicesRef.current.length
+        ) {
+          const indices = Array.from(
+            { length: limitedSounds.length },
+            (_, i) => i
+          )
+          for (let i = indices.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1))
+            ;[indices[i], indices[j]] = [indices[j], indices[i]]
+          }
+          shuffledIndicesRef.current = indices
+          currentRandomIndexRef.current = 0
+        }
+
+        const randomIndex =
+          shuffledIndicesRef.current[currentRandomIndexRef.current]
+        const sound = limitedSounds[randomIndex]
+        setCurrentAutoPlayIndex(randomIndex)
+
+        window.dispatchEvent(
+          new CustomEvent("play-sound-auto", { detail: { soundId: sound.id } })
+        )
+
+        const handleSoundEnded = (e: Event) => {
+          const customEvent = e as CustomEvent<{ soundId: number }>
+          if (customEvent.detail?.soundId === sound.id) {
+            window.removeEventListener("sound-ended", handleSoundEnded as EventListener)
+            soundEndedHandlersRef.current.delete(sound.id)
+            if (autoPlayTimeoutRef.current) {
+              clearTimeout(autoPlayTimeoutRef.current)
+            }
+            if (isRandomPlayingRef.current) {
+              currentRandomIndexRef.current++
+              autoPlayTimeoutRef.current = setTimeout(() => {
+                playNextRandomSound()
+              }, 300)
+            }
+          }
+        }
+
+        soundEndedHandlersRef.current.set(sound.id, handleSoundEnded)
+        window.addEventListener("sound-ended", handleSoundEnded as EventListener)
+
+        if (autoPlayTimeoutRef.current) {
+          clearTimeout(autoPlayTimeoutRef.current)
+        }
+        autoPlayTimeoutRef.current = setTimeout(() => {
+          window.removeEventListener("sound-ended", handleSoundEnded as EventListener)
+          soundEndedHandlersRef.current.delete(sound.id)
+          if (isRandomPlayingRef.current) {
+            currentRandomIndexRef.current++
+            playNextRandomSound()
+          }
+        }, 5000)
+      }
+
+      playNextRandomSound()
+    }
+
+    useEffect(() => {
+      return () => {
+        if (autoPlayTimeoutRef.current) {
+          clearTimeout(autoPlayTimeoutRef.current)
+        }
+        soundEndedHandlersRef.current.forEach((handler) => {
+          window.removeEventListener("sound-ended", handler as EventListener)
+        })
+        soundEndedHandlersRef.current.clear()
+        isAutoPlayingRef.current = false
+        setIsAutoPlaying(false)
+        isRandomPlayingRef.current = false
+        setIsRandomPlaying(false)
+        shuffledIndicesRef.current = []
+        currentRandomIndexRef.current = 0
+      }
+    }, [])
+
+    useImperativeHandle(ref, () => ({
+      handleAutoPlay,
+      handleRandomPlay,
+      playRandomSound: handleRandomPlay,
+    }))
+
     const canLoadMore =
       showLoadMore &&
       (hasMoreSounds || displayedSounds.length < sounds.length)
-
-    useImperativeHandle(ref, () => ({
-      handleAutoPlay: () => {},
-      handleRandomPlay: () => {},
-      playRandomSound: () => {},
-    }))
 
     return (
       <section className="w-full py-2 sound-section-container">
@@ -117,42 +351,93 @@ const SoundList = forwardRef<SoundListRef, SoundListProps>(
           </h2>
           {viewAllLink && (
             <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2 ml-1 sm:ml-2 flex-nowrap flex-shrink-0">
-              <Button
-                className="px-3 py-1.5 text-sm font-semibold text-white rounded-lg transition-all whitespace-nowrap flex-shrink-0 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+              <button
+                type="button"
+                className={`btn-theme btn-auto-play hidden md:inline-flex flex-shrink-0 ${isAutoPlaying ? "btn-theme-active" : ""}`}
+                onClick={handleAutoPlay}
+              >
+                <span className="hidden sm:inline">
+                  {isAutoPlaying ? "Stop Auto" : "Auto Play"}
+                </span>
+                <span className="sm:hidden">
+                  {isAutoPlaying ? "Stop" : "Auto"}
+                </span>
+              </button>
+              <button
+                type="button"
+                className={`btn-theme btn-random-play hidden md:inline-flex flex-shrink-0 ${isRandomPlaying ? "btn-theme-active" : ""}`}
+                onClick={handleRandomPlay}
+              >
+                <span className="hidden sm:inline">
+                  {isRandomPlaying ? "Stop Random" : "Random Play"}
+                </span>
+                <span className="sm:hidden">
+                  {isRandomPlaying ? "Stop" : "Random"}
+                </span>
+              </button>
+              <button
+                type="button"
+                className="btn-theme btn-theme-arrow flex-shrink-0"
                 onClick={() => (window.location.href = viewAllLink)}
               >
-                <span className="hidden sm:inline">View All →</span>
-                <span className="sm:hidden">View →</span>
-              </Button>
+                <span className="hidden sm:inline">View All</span>
+                <span className="sm:hidden">View</span>
+                <span className="btn-arrow-dot"><ChevronRight className="w-3 h-3" strokeWidth={3} /></span>
+              </button>
             </div>
           )}
         </div>
         {displayedSounds.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground bg-gray-50 dark:bg-gray-800/50 rounded-xl">
+          <div className="text-center py-8 text-muted-foreground bg-muted rounded-xl">
             <p className="text-lg">No sounds found</p>
           </div>
         ) : (
           <>
             <div>
               {rows.map((row, rowIndex) => (
-                <div key={`row-${rowIndex}`} className="w-full sound-row-container">
+                <div
+                  key={`row-${rowIndex}`}
+                  className="w-full sound-row-container"
+                >
                   <div
-                    className={`sound-grid grid ${
+                    className={`sound-grid ${
                       useCompactView
-                        ? "grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-11 gap-0 sm:gap-2 md:gap-2 lg:gap-3"
-                        : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2"
+                        ? "grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-11 gap-0 sm:gap-2 lg:gap-3"
+                        : useCardView
+                          ? "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-9 gap-2 sm:gap-3"
+                          : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2"
                     } sound-grid-container`}
                   >
                     {row.map((sound, colIndex) => {
                       const index = rowIndex * soundsPerRow + colIndex
                       return (
                         <Fragment key={`${sound.id}-${index}`}>
-                          <SoundButton
-                            sound={sound}
-                            isAboveTheFold={
-                              index < (isMobileDevice ? 12 : 44)
-                            }
-                          />
+                          {useCompactView ? (
+                            <SoundButton
+                              sound={sound}
+                              isAboveTheFold={
+                                index < (isMobileDevice ? 12 : 44)
+                              }
+                              isMobileDevice={isMobileDevice}
+                            />
+                          ) : useCardView && customCardComponent ? (
+                            React.createElement(customCardComponent, {
+                              sound,
+                              isAboveTheFold:
+                                index < (isMobileDevice ? 12 : 18),
+                              onRainEffect,
+                            })
+                          ) : (
+                            <SoundButton
+                              sound={sound}
+                              isAboveTheFold={
+                                useCardView
+                                  ? index < (isMobileDevice ? 12 : 18)
+                                  : index < 10
+                              }
+                              isMobileDevice={isMobileDevice}
+                            />
+                          )}
                         </Fragment>
                       )
                     })}
@@ -162,25 +447,36 @@ const SoundList = forwardRef<SoundListRef, SoundListProps>(
             </div>
             {canLoadMore && (
               <div className="mt-6 flex justify-center load-more-container">
-                <Button
+                <button
+                  type="button"
                   onClick={handleLoadMore}
                   disabled={loading}
-                  className="text-white transition-all border-0 px-5 py-2 text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+                  className="btn-theme btn-theme-arrow px-4"
                 >
-                  {loading && showLoadingIndicator
-                    ? "Loading..."
-                    : `Load More ${title}`}
-                </Button>
+                  {loading && showLoadingIndicator ? (
+                    <div className="flex items-center gap-2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent" />
+                      <span>Loading...</span>
+                    </div>
+                  ) : (
+                    <>
+                      <span>Load More Sounds</span>
+                      <span className="btn-arrow-dot"><ChevronRight className="w-3 h-3" strokeWidth={3} /></span>
+                    </>
+                  )}
+                </button>
               </div>
             )}
             {showRedirectButton && viewAllLink && (
               <div className="mt-6 flex justify-center load-more-container">
-                <Button
+                <button
+                  type="button"
                   onClick={() => (window.location.href = viewAllLink)}
-                  className="text-white transition-all border-0 px-5 py-2 text-sm font-semibold rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+                  className="btn-theme btn-theme-arrow px-4"
                 >
-                  View All {title} →
-                </Button>
+                  <span>View All {title}</span>
+                  <span className="btn-arrow-dot"><ChevronRight className="w-3 h-3" strokeWidth={3} /></span>
+                </button>
               </div>
             )}
           </>

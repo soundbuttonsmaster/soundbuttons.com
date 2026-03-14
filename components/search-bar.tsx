@@ -33,29 +33,20 @@ export default function SearchBar({
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="relative w-full max-w-lg flex gap-2"
-      style={{ minHeight: "40px" }}
-    >
-      <div className="relative flex-1">
+    <form onSubmit={handleSubmit} className="flex w-full gap-2 rounded-xl border-2 border-slate-300 bg-white shadow-sm transition focus-within:border-slate-500 focus-within:ring-2 focus-within:ring-slate-400/20 dark:border-slate-600 dark:bg-slate-800/50 dark:focus-within:border-slate-500 dark:focus-within:ring-slate-500/20">
+      <div className="relative flex flex-1 min-w-0 items-center">
+        <Search className="absolute left-3.5 h-4 w-4 shrink-0 text-slate-400 dark:text-slate-500" />
         <input
-          type="text"
+          type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={placeholder}
-          className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-500 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-400"
-          style={{ height: "40px", boxSizing: "border-box" }}
-        />
-        <Search
-          className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
-          style={{ pointerEvents: "none" }}
+          className="w-full min-w-0 rounded-l-lg bg-transparent py-2.5 pl-10 pr-3 text-slate-900 placeholder-slate-500 focus:outline-none dark:text-slate-100 dark:placeholder-slate-400"
         />
       </div>
       <button
         type="submit"
-        className="shrink-0 rounded-lg bg-sky-700 px-4 py-2 text-sm font-medium text-white hover:bg-sky-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 dark:bg-sky-600 dark:hover:bg-sky-700 transition-colors"
-        style={{ height: "40px", boxSizing: "border-box" }}
+        className="shrink-0 rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
       >
         Search
       </button>

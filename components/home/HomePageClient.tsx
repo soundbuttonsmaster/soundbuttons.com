@@ -1,11 +1,10 @@
 "use client"
 
 import { useState, useCallback } from "react"
-import Header from "@/components/layout/header"
-import Footer from "@/components/layout/footer"
 import SearchBar from "@/components/search-bar"
 import SoundList from "@/components/home/SoundList"
 import AutoLoadingNewSoundsSection from "@/components/home/AutoLoadingNewSoundsSection"
+import AboutContent from "@/components/home/AboutContent"
 import { apiClient } from "@/lib/api/client"
 import type { Sound } from "@/lib/types/sound"
 
@@ -55,7 +54,6 @@ export default function HomePageClient({
 
   return (
     <>
-      <Header />
       <section className="hero-section-lcp" suppressHydrationWarning>
         <div className="hero-container-lcp">
           <div className="hero-inner-lcp">
@@ -70,7 +68,7 @@ export default function HomePageClient({
               Chromebook, or tablet.
             </p>
             <div className="flex justify-center mt-2 px-2">
-              <div className="flex justify-center max-w-2xl md:max-w-3xl w-full shadow-lg">
+              <div className="flex justify-center max-w-3xl md:max-w-4xl lg:max-w-5xl w-full shadow-lg">
                 <SearchBar placeholder="Search Sound buttons..." />
               </div>
             </div>
@@ -88,12 +86,11 @@ export default function HomePageClient({
                 initialCount={isMobileDevice ? 16 : 44}
                 loadMoreCount={isMobileDevice ? 8 : 22}
                 viewAllLink="/trends"
-                onLoadMore={isMobileDevice ? undefined : loadMoreTrending}
+                onLoadMore={loadMoreTrending}
                 hasMoreSounds={currentTrendingPage < totalTrendingPages}
                 maxLines={4}
                 useCompactView
-                showLoadMore={!isMobileDevice}
-                showRedirectButton
+                showLoadMore
                 showLoadingIndicator={false}
                 isMobileDevice={isMobileDevice}
               />
@@ -107,9 +104,9 @@ export default function HomePageClient({
             </div>
           </div>
         </main>
-      </div>
 
-      <Footer />
+        <AboutContent />
+      </div>
     </>
   )
 }

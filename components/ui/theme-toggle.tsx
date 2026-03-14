@@ -17,26 +17,17 @@ export function ThemeToggle() {
 
   return (
     <button
-      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className="rounded-md p-2 text-slate-600 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
-      aria-label="Toggle theme"
-      style={{
-        width: "36px",
-        height: "36px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        flexShrink: 0,
-        position: "relative",
-      }}
+      onClick={() => setTheme(isDark ? "light" : "dark")}
+      className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-white"
+      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
     >
       <Sun
-        className="h-5 w-5 absolute transition-opacity duration-200"
+        className="h-4 w-4 absolute transition-opacity duration-200"
         style={{ opacity: mounted && isDark ? 1 : 0, pointerEvents: "none" }}
         aria-hidden
       />
       <Moon
-        className="h-5 w-5 absolute transition-opacity duration-200"
+        className="h-4 w-4 absolute transition-opacity duration-200"
         style={{
           opacity: mounted && !isDark ? 1 : mounted ? 0 : 1,
           pointerEvents: "none",

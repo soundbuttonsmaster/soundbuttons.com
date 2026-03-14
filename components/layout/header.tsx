@@ -1,18 +1,29 @@
 "use client"
 
 import Link from "next/link"
-import { Menu, X, ChevronDown, ChevronRight } from "lucide-react"
-import { useState, useEffect, useRef } from "react"
-import { usePathname } from "next/navigation"
+import { Menu, X, ChevronDown, ChevronRight, Search } from "lucide-react"
+import { useState, useEffect, useRef, FormEvent } from "react"
+import { usePathname, useRouter } from "next/navigation"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
-import SearchBar from "@/components/search-bar"
 import { getActiveCategories } from "@/lib/constants/categories"
+import { NAV_BEFORE_CATEGORIES, NAV_AFTER_CATEGORIES } from "@/lib/constants/nav-links"
+
+function generateSlug(query: string): string {
+  return query
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s_-]+/g, "-")
+    .replace(/^-+|-+$/g, "") || ""
+}
 
 export default function Header() {
   const pathname = usePathname()
+  const router = useRouter()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false)
   const [mobileSubmenuOpen, setMobileSubmenuOpen] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState("")
+  const dropdownRef = useRef<HTMLDivElement>(null)
   const categories = getActiveCategories()
 
   useEffect(() => {
@@ -24,181 +35,186 @@ export default function Header() {
   useEffect(() => {
     if (mobileMenuOpen) document.body.style.overflow = "hidden"
     else document.body.style.overflow = "unset"
-    return () => { document.body.style.overflow = "unset" }
+    return () => {
+      document.body.style.overflow = "unset"
+    }
   }, [mobileMenuOpen])
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setCategoryDropdownOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
 
   const toggleMobileSubmenu = (menu: string) => {
     setMobileSubmenuOpen(mobileSubmenuOpen === menu ? null : menu)
   }
 
+  const handleSearchSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      const slug = generateSlug(searchQuery.trim())
+      if (slug) router.push(`/search/${slug}`)
+    }
+  }
+
   const navLinkClass =
-    "flex items-center gap-1 text-sm font-medium text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-white whitespace-nowrap shrink-0"
+    "px-2 py-1.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800"
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950">
-        <div className="flex h-14 w-full items-center gap-4 px-4 lg:px-6">
-          <div className="flex flex-shrink-0 items-center min-w-0">
-            <Link href="/" className="shrink-0">
-              <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-white whitespace-nowrap lg:text-xl">
-                SOUND BUTTONS
-              </span>
-            </Link>
-          </div>
+      <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:bg-slate-950/95 dark:supports-[backdrop-filter]:dark:bg-slate-950/80 border-slate-200 dark:border-slate-800">
+        <div className="relative flex h-14 w-full items-center justify-between gap-4 px-4 sm:px-6">
+          {/* Logo - left */}
+          <Link href="/" className="flex shrink-0 items-center">
+            <span className="text-base font-bold tracking-tight text-slate-900 dark:text-white sm:text-lg">
+              SOUND BUTTONS
+            </span>
+          </Link>
 
-          <nav className="hidden min-w-0 flex-1 justify-center md:flex">
-            <div className="flex items-center gap-3 lg:gap-4">
-              <Link href="/" className={navLinkClass}>
-                Home
+          {/* Desktop Nav - ABSOLUTE CENTER, all links in DOM for Google sitelinks */}
+          <nav
+            className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 md:flex md:items-center md:gap-0.5"
+            aria-label="Main navigation"
+          >
+            {NAV_BEFORE_CATEGORIES.map((link) => (
+              <Link key={link.href} href={link.href} className={navLinkClass}>
+                {link.name}
               </Link>
-              <Link href="/new" className={navLinkClass}>
-                New
-              </Link>
-              <Link href="/trends" className={navLinkClass}>
-                Trending
-              </Link>
-              <div
-                className="relative"
-                onMouseEnter={() => setCategoryDropdownOpen(true)}
-                onMouseLeave={() => setCategoryDropdownOpen(false)}
+            ))}
+            {/* Categories dropdown - all 18 category links in DOM for SEO */}
+            <div ref={dropdownRef} className="relative inline-block">
+              <button
+                type="button"
+                onClick={() => setCategoryDropdownOpen(!categoryDropdownOpen)}
+                aria-expanded={categoryDropdownOpen}
+                aria-haspopup="true"
+                className={`${navLinkClass} flex items-center gap-0.5`}
               >
-                <button
-                  type="button"
-                  className={`${navLinkClass} flex items-center gap-1`}
-                >
-                  Categories
-                  <ChevronDown
-                    className={`h-4 w-4 transition-transform ${categoryDropdownOpen ? "rotate-180" : ""}`}
-                  />
-                </button>
-                <div
-                  className={`absolute left-1/2 top-full w-48 -translate-x-1/2 rounded-lg border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-800 z-50 max-h-96 overflow-y-auto pt-2 transition-opacity duration-200 ${
-                    categoryDropdownOpen
-                      ? "opacity-100 pointer-events-auto"
-                      : "opacity-0 pointer-events-none"
-                  }`}
-                  onMouseEnter={() => setCategoryDropdownOpen(true)}
-                  onMouseLeave={() => setCategoryDropdownOpen(false)}
-                >
-                  <div className="py-2">
-                    {categories.map((category) => (
-                      <Link
-                        key={category.id}
-                        href={`/categories/${category.slug}`}
-                        className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700 transition-colors"
-                        onClick={() => setCategoryDropdownOpen(false)}
-                      >
-                        {category.name}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
+                Categories
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform ${categoryDropdownOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+              <div
+                role="menu"
+                className={`absolute left-1/2 top-full z-50 mt-1 max-h-[70vh] w-64 -translate-x-1/2 overflow-y-auto rounded-lg border bg-white py-2 shadow-xl dark:border-slate-700 dark:bg-slate-900 ${
+                  categoryDropdownOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+                } transition-opacity duration-200`}
+              >
+                {categories.map((cat) => (
+                  <Link
+                    key={cat.id}
+                    href={`/categories/${cat.slug}`}
+                    role="menuitem"
+                    className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                    onClick={() => setCategoryDropdownOpen(false)}
+                  >
+                    {cat.name}
+                  </Link>
+                ))}
               </div>
-              <Link href="/play-random" className={navLinkClass}>
-                Play Random
-              </Link>
             </div>
+            {NAV_AFTER_CATEGORIES.map((link) => (
+              <Link key={link.href} href={link.href} className={navLinkClass}>
+                {link.name}
+              </Link>
+            ))}
           </nav>
 
-          <div className="flex-1 min-w-0 md:hidden" aria-hidden />
-
-          <div className="header-right flex flex-shrink-0 items-center justify-end gap-3 md:gap-4">
-            <div className="hidden w-44 min-w-0 md:block lg:w-52">
-              <SearchBar placeholder="Search Sound buttons..." />
-            </div>
-            <span
-              className="hidden text-slate-300 dark:text-slate-600 md:inline"
-              aria-hidden
+          {/* Right section: Search + Join + Theme + Mobile menu */}
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+            {/* Search - desktop */}
+            <form
+              onSubmit={handleSearchSubmit}
+              className="hidden sm:flex sm:items-center sm:gap-1.5 sm:rounded-lg sm:border sm:border-slate-300 sm:bg-slate-50 sm:px-2.5 sm:py-1.5 sm:focus-within:ring-2 sm:focus-within:ring-slate-400/20 dark:border-slate-600 dark:bg-slate-800/50 dark:focus-within:ring-slate-500/20 sm:min-w-[140px] sm:max-w-[180px] lg:max-w-[200px]"
             >
-              |
-            </span>
+              <Search className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-500" />
+              <input
+                type="search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search sounds..."
+                className="w-full min-w-0 bg-transparent text-sm text-slate-900 placeholder-slate-400 focus:outline-none dark:text-slate-100 dark:placeholder-slate-500"
+              />
+            </form>
             <Link
               href="/register"
-              className="hidden items-center gap-1 text-sm font-semibold text-white whitespace-nowrap rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 px-3 py-1.5 transition-all hover:from-blue-600 hover:to-purple-700 md:inline-flex"
+              className="hidden shrink-0 rounded-lg bg-slate-900 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200 sm:inline-flex"
             >
               Join Free
             </Link>
-            <span
-              className="hidden text-slate-300 dark:text-slate-600 md:inline"
-              aria-hidden
-            >
-              |
-            </span>
             <ThemeToggle />
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 md:hidden"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 md:hidden"
               aria-label="Toggle menu"
             >
-              {mobileMenuOpen ? (
-                <X className="h-5 w-5" />
-              ) : (
-                <Menu className="h-5 w-5" />
-              )}
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
         </div>
       </header>
 
+      {/* Mobile overlay */}
       {mobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          className="fixed inset-0 z-40 bg-black/50 md:hidden"
           onClick={() => setMobileMenuOpen(false)}
+          aria-hidden
         />
       )}
 
+      {/* Mobile menu panel */}
       <div
-        className={`fixed top-0 right-0 h-full w-full max-w-sm bg-white dark:bg-slate-950 shadow-2xl z-50 transform transition-transform duration-300 ease-in-out md:hidden ${
+        className={`fixed top-0 right-0 z-50 h-full w-full max-w-xs transform bg-white shadow-2xl transition-transform duration-300 dark:bg-slate-950 md:hidden ${
           mobileMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="flex flex-col h-full">
-          <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
-              Menu
-            </h2>
+        <div className="flex h-full flex-col">
+          <div className="flex items-center justify-between border-b border-slate-200 p-4 dark:border-slate-800">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Menu</h2>
             <button
               onClick={() => setMobileMenuOpen(false)}
-              className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-600 dark:text-slate-300"
+              className="rounded-lg p-2 text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
               aria-label="Close menu"
             >
               <X className="h-5 w-5" />
             </button>
           </div>
-
           <div className="flex-1 overflow-y-auto">
-            <nav className="p-4 space-y-2">
-              <div className="mb-4">
-                <SearchBar placeholder="Search Sound buttons..." />
-              </div>
-
-              <Link
-                href="/"
-                className="block py-3 px-4 text-lg font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Home
-              </Link>
-              <Link
-                href="/new"
-                className="block py-3 px-4 text-lg font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                New
-              </Link>
-              <Link
-                href="/trends"
-                className="block py-3 px-4 text-lg font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Trending
-              </Link>
-
+            <nav className="space-y-1 p-4">
+              <form onSubmit={handleSearchSubmit} className="mb-4">
+                <div className="flex gap-2 rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 dark:border-slate-600 dark:bg-slate-800/50">
+                  <Search className="h-4 w-4 shrink-0 self-center text-slate-400" />
+                  <input
+                    type="search"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search sounds..."
+                    className="min-w-0 flex-1 bg-transparent text-slate-900 placeholder-slate-500 focus:outline-none dark:text-slate-100"
+                  />
+                </div>
+              </form>
+              {NAV_BEFORE_CATEGORIES.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="block rounded-lg px-4 py-3 text-base font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {link.name}
+                </Link>
+              ))}
               <div>
                 <button
                   onClick={() => toggleMobileSubmenu("categories")}
-                  className="w-full flex items-center justify-between py-3 px-4 text-lg font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                  className="flex w-full items-center justify-between rounded-lg px-4 py-3 text-base font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                 >
                   Categories
                   <ChevronRight
@@ -206,39 +222,41 @@ export default function Header() {
                   />
                 </button>
                 {mobileSubmenuOpen === "categories" && (
-                  <div className="ml-4 mt-2 space-y-1">
-                    {categories.map((category) => (
+                  <div className="ml-4 mt-1 space-y-1 border-l border-slate-200 pl-4 dark:border-slate-700">
+                    {categories.map((cat) => (
                       <Link
-                        key={category.id}
-                        href={`/categories/${category.slug}`}
-                        className="block py-2 px-4 text-base text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                        key={cat.id}
+                        href={`/categories/${cat.slug}`}
+                        className="block py-2 text-sm text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
                         onClick={() => setMobileMenuOpen(false)}
                       >
-                        {category.name}
+                        {cat.name}
                       </Link>
                     ))}
                   </div>
                 )}
               </div>
-              <Link
-                href="/play-random"
-                className="block py-3 px-4 text-lg font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Play Random
-              </Link>
-
-              <div className="border-t border-slate-200 dark:border-slate-700 p-4 space-y-2">
+              {NAV_AFTER_CATEGORIES.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="block rounded-lg px-4 py-3 text-base font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {link.name}
+                </Link>
+              ))}
+              <div className="border-t border-slate-200 pt-4 dark:border-slate-800">
                 <Link
                   href="/login"
-                  className="block py-3 px-4 text-lg font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                  className="block rounded-lg px-4 py-3 text-base font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Sign In
                 </Link>
                 <Link
                   href="/register"
-                  className="block py-3 px-4 text-lg font-semibold text-white bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg text-center"
+                  className="mt-2 block rounded-lg bg-slate-900 px-4 py-3 text-center text-base font-medium text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Create Free Account

@@ -100,13 +100,155 @@ export const apiClient = {
     return { data: extractSounds(json), meta: extractMeta(json, page) }
   },
 
-  getSoundAudioUrl(sound: { sound_file?: string }): string {
-    if (sound.sound_file?.startsWith("http")) return sound.sound_file
-    return `${MEDIA_BASE_URL}/${sound.sound_file?.replace(/^\//, "") || ""}`
+  /** Fetch single sound by ID */
+  async getSoundById(id: number): Promise<{ data: ProcessedSound | null }> {
+    const res = await fetch(`${API_BASE_URL}/sounds/${id}`, { next: { revalidate: 300 } })
+    if (!res.ok) return { data: null }
+    const json = (await res.json()) as {
+      status?: boolean
+      sound?: ApiSound & { category?: number; category_name?: string; category_id?: number }
+      data?: { sound?: ApiSound & { category?: number; category_name?: string; category_id?: number } }
+    }
+    let raw = json.sound ?? json.data?.sound
+    if (!raw) return { data: null }
+    const processed = processSound(raw)
+    const ext = raw as { category?: number; category_name?: string; category_id?: number }
+    if (!processed.category_id && typeof ext.category === "number") {
+      ;(processed as ProcessedSound & { category_id?: number }).category_id = ext.category
+    }
+    if (ext.category_name) {
+      ;(processed as ProcessedSound & { category_name?: string }).category_name = ext.category_name
+    }
+    return { data: processed }
   },
 
-  getSoundDownloadUrl(sound: { sound_file?: string }): string {
-    const base = this.getSoundAudioUrl(sound)
+  /** Fetch related sounds by sound ID and category ID */
+  async getRelatedSounds(soundId: number, categoryId: number): Promise<{ data: ProcessedSound[] }> {
+    const res = await fetch(
+      `${API_BASE_URL}/sounds/related/${soundId}/${categoryId}`,
+      { next: { revalidate: 300 } }
+    )
+    if (!res.ok) return { data: [] }
+    const json = (await res.json()) as SoundResponse
+    return { data: extractSounds(json) }
+  },
+
+  /** Increment sound views (fire-and-forget) */
+  async updateViews(soundId: number): Promise<void> {
+    try {
+      await fetch(`${API_BASE_URL}/sounds/views/${soundId}`, { method: "POST" })
+    } catch {
+      // ignore
+    }
+  },
+
+  /** Search sounds */
+  async searchSounds(
+    query: string,
+    page = 1,
+    pageSize = 50
+  ): Promise<{ data: ProcessedSound[]; meta: { current_page: number; last_page: number; total_items: number } }> {
+    const url = `${API_BASE_URL}/sounds/search/${encodeURIComponent(query)}?page=${page}&limit=${pageSize}`
+    const res = await fetch(url, { next: { revalidate: 60 } })
+    if (!res.ok) return { data: [], meta: { current_page: page, last_page: 1, total_items: 0 } }
+    const json = (await res.json()) as SoundResponse
+    return { data: extractSounds(json), meta: extractMeta(json, page) }
+  },
+
+  /** Fetch sounds by category name (e.g. "Reactions", "Memes") - API uses categoryName without "Soundboard" */
+  async getSoundsByCategory(
+    categoryName: string,
+    page = 1,
+    pageSize = 35
+  ): Promise<{ data: ProcessedSound[]; meta: { current_page: number; last_page: number; total_items: number } }> {
+    const url = `${API_BASE_URL}/sounds/category/${encodeURIComponent(categoryName)}/sounds?page=${page}&limit=${pageSize}`
+    const res = await fetch(url, { next: { revalidate: 300 } })
+    if (!res.ok) return { data: [], meta: { current_page: page, last_page: 1, total_items: 0 } }
+    const json = (await res.json()) as SoundResponse & {
+      data?: { sounds?: ApiSound[]; current_page?: number; total_pages?: number; total_items?: number }
+      count?: number
+    }
+    const nested = json.data && typeof json.data === "object" && "sounds" in json.data
+    const soundsRes = nested ? (json.data as { sounds?: ApiSound[] }) : json
+    const metaRes = nested && json.data ? json.data : json
+    return {
+      data: extractSounds(soundsRes as SoundResponse),
+      meta: extractMeta(metaRes as SoundResponse, page),
+    }
+  },
+
+  /** URL for streaming/playback - soundbuttonsapi uses download endpoint */
+  getSoundAudioUrl(soundOrId: { sound_file?: string } | number): string {
+    if (typeof soundOrId === "number") {
+      return `${API_BASE_URL}/sounds/download/${soundOrId}`
+    }
+    if (soundOrId.sound_file?.startsWith("http")) return soundOrId.sound_file
+    return `${MEDIA_BASE_URL}/${soundOrId.sound_file?.replace(/^\//, "") || ""}`
+  },
+
+  /** Fetch direct playback URL - soundbuttonsapi: return same as getSoundAudioUrl (no S3) */
+  async getSoundAudioPlaybackUrl(id: number): Promise<string> {
+    return `${API_BASE_URL}/sounds/download/${id}`
+  },
+
+  /** URL for download */
+  async favoriteSound(token: string, soundId: number): Promise<{ status: number }> {
+    const res = await fetch(`${API_BASE_URL}/favorites/add`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${token}`,
+      },
+      body: JSON.stringify({ soundId }),
+    })
+    const data = await res.json().catch(() => ({}))
+    return { status: res.status, ...data }
+  },
+
+  async unfavoriteSound(token: string, soundId: number): Promise<{ status: number }> {
+    const res = await fetch(`${API_BASE_URL}/favorites/remove`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${token}`,
+      },
+      body: JSON.stringify({ soundId }),
+    })
+    const data = await res.json().catch(() => ({}))
+    return { status: res.status, ...data }
+  },
+
+  async likeSound(token: string, soundId: number): Promise<{ status: number }> {
+    return Promise.resolve({ status: 200 })
+  },
+
+  async unlikeSound(token: string, soundId: number): Promise<{ status: number }> {
+    return Promise.resolve({ status: 200 })
+  },
+
+  getSoundDownloadUrl(soundOrId: { sound_file?: string } | number): string {
+    const base =
+      typeof soundOrId === "number"
+        ? `${API_BASE_URL}/sounds/download/${soundOrId}`
+        : this.getSoundAudioUrl(soundOrId as { sound_file?: string })
     return `${base}${base.includes("?") ? "&" : "?"}download=true`
+  },
+
+  /** Request password reset - sends email with reset link */
+  async requestPasswordReset(email: string): Promise<{ success: boolean; message?: string }> {
+    try {
+      const res = await fetch(`${API_BASE_URL}/password-reset/request`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      })
+      const data = (await res.json().catch(() => ({}))) as { message?: string }
+      if (res.ok) {
+        return { success: true, message: data.message || "Password reset email sent successfully" }
+      }
+      return { success: false, message: data.message || "Failed to send password reset email" }
+    } catch {
+      return { success: false, message: "Network error" }
+    }
   },
 }
