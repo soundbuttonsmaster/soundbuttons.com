@@ -1,0 +1,68 @@
+<meta name="author" content="SoundButtons.com" />
+<meta property="og:url" content="https://soundbuttons.com/" />
+<meta name="rating" content="general" />
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+<meta name="target" content="all" />
+<meta name="creator" content="SoundButtons.com" />
+<meta property="og:type" content="website" />
+<meta name="coverage" content="worldwide" />
+<meta name="keywords" content="sound buttons, meme sounds, sound effects, soundboard, unblocked sound buttons, free sound effects, viral sounds, meme soundboard, audio effects" />
+<meta name="language" content="en" />
+<meta property="og:image" content="https://soundbuttons.com/og.png" />
+<meta property="og:title" content="Sound Buttons - 9,99,999+ Meme Soundboard Unblocked" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="copyright" content="© 2025 SoundButtons.com" />
+<meta name="generator" content="Next.js" />
+<meta property="og:locale" content="en_US" />
+<meta name="publisher" content="SoundButtons.com" />
+<meta name="description" content="Play thousands of sound buttons with the best sound, buttons, meme, prank, sound effect, and high-quality audio in one powerful soundboard unblocked" />
+<meta name="theme-color" content="#2563eb" />
+<meta name="distribution" content="global" />
+<meta property="og:image:alt" content="Sound Buttons - 9,99,999+ Meme Soundboard Unblocked" />
+<meta property="og:site_name" content="SoundButtons.com" />
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:site" content="@soundbuttons" />
+<meta property="twitter:image" content="https://soundbuttons.com/og.png" />
+<meta property="twitter:title" content="Sound Buttons - 9,99,999+ Meme Soundboard Unblocked" />
+<meta property="og:description" content="Play thousands of sound buttons with the best sound, buttons, meme, prank, sound effect, and high-quality audio in one powerful soundboard unblocked" />
+<meta property="og:image:width" content="1200" />
+<meta name="MobileOptimized" content="width" />
+<meta property="og:image:height" content="630" />
+<meta property="twitter:creator" content="@soundbuttons" />
+<meta name="HandheldFriendly" content="true" />
+<meta name="format-detection" content="telephone=no" />
+<meta property="twitter:image:alt" content="Sound Buttons - 9,99,999+ Meme Soundboard Unblocked" />
+<meta property="twitter:description" content="Play thousands of sound buttons with the best sound, buttons, meme, prank, sound effect, and high-quality audio in one powerful soundboard unblocked" />
+<meta name="msapplication-config" content="/browserconfig.xml" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="msapplication-TileColor" content="#2563eb" />
+<meta name="apple-mobile-web-app-title" content="SoundButtons" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+
+[
+  {
+    "url": "https://soundbuttons.com/",
+    "name": "SoundButtons.com",
+    "@type": "WebSite",
+    "@context": "https://schema.org",
+    "description": "Sound buttons is the Ultimate collection of unblocked soundboard, sound buttons, meme soundboard, with billion's of sound effects and meme buttons.",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://soundbuttons.com/search/{search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  },
+  {
+    "@type": "BreadcrumbList",
+    "@context": "https://schema.org",
+    "itemListElement": [
+      {
+        "item": "https://soundbuttons.com/",
+        "name": "Home",
+        "@type": "ListItem",
+        "position": 1
+      }
+    ]
+  }
+]

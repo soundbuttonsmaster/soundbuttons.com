@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     description:
       "Read what our users say about SoundButtons.com. Share your own experience and rate our service to help us improve.",
     url: `${BASE}/reviews`,
-    siteName: "SoundButtons.com",
+    siteName: "Sound Buttons",
     images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: "User Reviews" }],
     locale: "en_US",
   },

@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     description:
       "Play random sounds with one click! Discover fun, trending, and new sound buttons for everyone. Try your luck and enjoy endless sound surprises on SoundButtons.com.",
     url: `${BASE}/play-random`,
-    siteName: "SoundButtons.com",
+    siteName: "Sound Buttons",
     images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: "Play Random Sound" }],
     locale: "en_US",
   },

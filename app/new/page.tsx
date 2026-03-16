@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     description:
       "Discover the latest sound buttons and soundboard with fresh, trending audio clips updated daily to play, download, and share for memes, gaming, and entertainment!",
     url: `${BASE}/new`,
-    siteName: "SoundButtons.com",
+    siteName: "Sound Buttons",
     images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: "New Sound Buttons - Latest Sound Effects" }],
     locale: "en_US",
   },

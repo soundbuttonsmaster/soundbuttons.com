@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     description:
       "Convert your text into fun audio using Text to Sound Button on SoundButtons. Create, play, and share custom sound effects easily and enjoy endless audio fun.",
     url: `${BASE}/text-to-sound`,
-    siteName: "SoundButtons.com",
+    siteName: "Sound Buttons",
     images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: "Text to Sound Button" }],
     locale: "en_US",
   },

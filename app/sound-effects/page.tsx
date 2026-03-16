@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     description:
       "Download high-quality sound effects for your meme soundboard! Perfect for unblocked sound buttons, viral content, and free downloads.",
     url: `${BASE}/sound-effects`,
-    siteName: "SoundButtons.com",
+    siteName: "Sound Buttons",
     images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: "Sound Effects Library" }],
     locale: "en_US",
   },

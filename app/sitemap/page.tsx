@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     description:
       "Navigate SoundButtons.com through our sitemap. Find all our pages including sound categories and more.",
     url: `${BASE}/sitemap`,
-    siteName: "SoundButtons.com",
+    siteName: "Sound Buttons",
     locale: "en_US",
   },
   twitter: {

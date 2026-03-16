@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     description:
       "Play the most fun and challenging Tic Tac Toe game with sound buttons! Pick your sound and color, play against a smart bot, and enjoy winner effects. Try now!",
     url: `${BASE}/tic-tac-toe`,
-    siteName: "SoundButtons.com",
+    siteName: "Sound Buttons",
     images: [{ url: `${BASE}/og.png`, width: 512, height: 512, alt: "Tic Tac Toe" }],
     locale: "en_US",
   },

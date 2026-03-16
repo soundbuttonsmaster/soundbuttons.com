@@ -4,7 +4,7 @@ import type { Metadata } from "next"
 import { apiClient } from "@/lib/api/client"
 import { SITE } from "@/lib/constants/site"
 import { SITE_NAV_LINKS } from "@/lib/constants/site-nav-links"
-import { CATEGORIES, getCategoryBySlug } from "@/lib/constants/categories"
+import { CATEGORIES, getCategoryBySlug, getParentCategory, getSubcategories } from "@/lib/constants/categories"
 import CategoryDetailClient from "./CategoryDetailClient"
 
 export const revalidate = 300
@@ -46,7 +46,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: `${category.name} - SoundButtons.Com`,
       description,
       url: canonicalUrl,
-      siteName: "SoundButtons.com",
+      siteName: "Sound Buttons",
       images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: category.name }],
       locale: "en_US",
     },
@@ -75,6 +75,9 @@ export default async function CategoryDetailPage({ params }: Props) {
   const category = getCategoryBySlug(slug)
   if (!category) notFound()
 
+  const subcategories = getSubcategories(slug)
+  const parentCategory = getParentCategory(category)
+
   const headersList = await headers()
   const userAgent = headersList.get("user-agent") ?? ""
   const mobileHint = headersList.get("sec-ch-ua-mobile")
@@ -98,11 +101,18 @@ export default async function CategoryDetailPage({ params }: Props) {
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: `${BASE}/` },
-      { "@type": "ListItem", position: 2, name: "Categories", item: `${BASE}/categories` },
-      { "@type": "ListItem", position: 3, name: category.name, item: canonicalUrl },
-    ],
+    itemListElement: parentCategory
+      ? [
+          { "@type": "ListItem", position: 1, name: "Home", item: `${BASE}/` },
+          { "@type": "ListItem", position: 2, name: "Categories", item: `${BASE}/categories` },
+          { "@type": "ListItem", position: 3, name: parentCategory.name, item: `${BASE}/categories/${parentCategory.slug}` },
+          { "@type": "ListItem", position: 4, name: category.name, item: canonicalUrl },
+        ]
+      : [
+          { "@type": "ListItem", position: 1, name: "Home", item: `${BASE}/` },
+          { "@type": "ListItem", position: 2, name: "Categories", item: `${BASE}/categories` },
+          { "@type": "ListItem", position: 3, name: category.name, item: canonicalUrl },
+        ],
   }
 
   const siteNavSchema = SITE_NAV_LINKS.map((link) => ({
@@ -191,6 +201,8 @@ export default async function CategoryDetailPage({ params }: Props) {
       />
       <CategoryDetailClient
         category={category}
+        subcategories={subcategories}
+        parentCategory={parentCategory ?? null}
         initialSounds={initialSounds}
         initialMeta={meta}
         isMobileDevice={isMobile}

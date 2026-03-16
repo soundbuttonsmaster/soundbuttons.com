@@ -1,32 +1,47 @@
 "use client"
 
-import { useState, useCallback, useEffect, useRef } from "react"
+import { useState, useCallback, useEffect, useRef, useMemo } from "react"
 import Link from "next/link"
 import { ChevronRight } from "lucide-react"
 import PageHero from "@/components/layout/page-hero"
 import SearchBar from "@/components/search-bar"
 import SoundList from "@/components/home/SoundList"
 import { apiClient } from "@/lib/api/client"
+import { getStrings } from "@/lib/i18n/strings"
 import type { Sound } from "@/lib/types/sound"
 import type { Category } from "@/lib/constants/categories"
+import type { Locale } from "@/lib/i18n/strings"
 
 const PAGE_SIZE = 35
 
 interface CategoryDetailClientProps {
   category: Category
+  subcategories?: Category[]
+  parentCategory?: Category | null
+  /** e.g. "" for en, "/es" for Spanish - used for breadcrumb and subcategory links */
+  categoriesBasePath?: string
   initialSounds: Sound[]
   initialMeta: { current_page: number; last_page: number; total_items: number }
   isMobileDevice: boolean
   faqs: { question: string; answer: string }[]
+  locale?: Locale
 }
 
 export default function CategoryDetailClient({
   category,
+  subcategories = [],
+  parentCategory = null,
+  categoriesBasePath = "",
   initialSounds,
   initialMeta,
   isMobileDevice,
   faqs,
+  locale = "en",
 }: CategoryDetailClientProps) {
+  const cat = useMemo(() => getStrings(locale).category, [locale])
+  const nav = useMemo(() => getStrings(locale).nav, [locale])
+  const common = useMemo(() => getStrings(locale).common, [locale])
+  const base = categoriesBasePath || ""
   const [sounds, setSounds] = useState<Sound[]>(initialSounds)
   const [page, setPage] = useState(initialMeta.current_page)
   const [loading, setLoading] = useState(false)
@@ -86,7 +101,7 @@ export default function CategoryDetailClient({
       >
         <div className="flex justify-center mt-2 px-2">
           <div className="flex justify-center max-w-3xl md:max-w-4xl lg:max-w-5xl w-full shadow-lg">
-            <SearchBar placeholder="Search Sound buttons..." />
+            <SearchBar placeholder={nav.searchPlaceholder} />
           </div>
         </div>
       </PageHero>
@@ -95,12 +110,49 @@ export default function CategoryDetailClient({
         <div className="w-full max-w-7xl mx-auto px-4">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
-            <Link href="/categories" className="hover:text-foreground transition-colors">
-              Categories
+            <Link href={`${base}/categories`} className="hover:text-foreground transition-colors">
+              {cat.categories}
             </Link>
             <ChevronRight className="h-4 w-4 shrink-0" />
-            <span className="text-foreground font-medium">{category.name}</span>
+            {parentCategory ? (
+              <>
+                <Link
+                  href={`${base}/categories/${parentCategory.slug}`}
+                  className="hover:text-foreground transition-colors"
+                >
+                  {parentCategory.name}
+                </Link>
+                <ChevronRight className="h-4 w-4 shrink-0" />
+                <span className="text-foreground font-medium">{category.name}</span>
+              </>
+            ) : (
+              <span className="text-foreground font-medium">{category.name}</span>
+            )}
           </nav>
+
+          {/* Subcategories (sbmain: e.g. Animal Sounds Subcategories) */}
+          {subcategories.length > 0 && (
+            <section className="mb-10">
+              <h2 className="text-xl font-bold text-foreground mb-4">{displayName} {cat.subcategories}</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                {subcategories.map((sub) => {
+                  const subDisplayName = sub.name.replace(/ Soundboard$/, "")
+                  return (
+                    <Link
+                      key={sub.id}
+                      href={`${base}/categories/${sub.slug}`}
+                      className="group flex items-center justify-between rounded-lg border border-border bg-card p-4 hover:bg-accent/50 hover:border-primary/30 transition-all"
+                    >
+                      <span className="font-medium text-foreground group-hover:text-primary transition-colors">
+                        {subDisplayName}
+                      </span>
+                      <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-primary transition-colors" />
+                    </Link>
+                  )
+                })}
+              </div>
+            </section>
+          )}
 
           {sounds.length > 0 ? (
             <>
@@ -133,7 +185,7 @@ export default function CategoryDetailClient({
                         onClick={loadMoreSounds}
                         className="px-6 py-2 rounded-lg bg-primary text-primary-foreground font-medium hover:opacity-90 transition"
                       >
-                        Load more sounds
+                        {common.loadMore}
                       </button>
                     </>
                   )}
@@ -183,17 +235,17 @@ export default function CategoryDetailClient({
 
           <div className="mt-12 max-w-none">
             <p className="text-muted-foreground">
-              Explore more with our{" "}
-              <Link href="/new" className="text-primary underline hover:opacity-80">
-                new sounds
+              {cat.exploreMore}{" "}
+              <Link href={`${base}/new`} className="text-primary underline hover:opacity-80">
+                {cat.newSounds}
               </Link>
               ,{" "}
-              <Link href="/trends" className="text-primary underline hover:opacity-80">
-                trending sounds
+              <Link href={`${base}/trends`} className="text-primary underline hover:opacity-80">
+                {cat.trending}
               </Link>
               , and{" "}
-              <Link href="/categories" className="text-primary underline hover:opacity-80">
-                all categories
+              <Link href={`${base}/categories`} className="text-primary underline hover:opacity-80">
+                {cat.allCategories}
               </Link>
               .
             </p>

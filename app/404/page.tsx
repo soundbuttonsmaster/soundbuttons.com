@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     description:
       "The page you're looking for doesn't exist. Explore our collection of thousands of free sound buttons, sound effects, and meme soundboards instead!",
     url: `${BASE}/404`,
-    siteName: "SoundButtons.com",
+    siteName: "Sound Buttons",
     images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: "Page Not Found | SoundButtons.com" }],
   },
   twitter: {

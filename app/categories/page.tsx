@@ -3,7 +3,7 @@ import Link from "next/link"
 import { ChevronRight } from "lucide-react"
 import PageHero from "@/components/layout/page-hero"
 import SearchBar from "@/components/search-bar"
-import { CATEGORIES } from "@/lib/constants/categories"
+import { getTopLevelCategories } from "@/lib/constants/categories"
 import { SITE } from "@/lib/constants/site"
 import { SITE_NAV_LINKS } from "@/lib/constants/site-nav-links"
 
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     description:
       "Browse all sound button categories on SoundButtons.com! From memes to music, gaming to comedy, find and explore thousands of organized sound effects.",
     url: `${BASE}/categories`,
-    siteName: "SoundButtons.com",
+    siteName: "Sound Buttons",
     images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: "Sound Button Categories" }],
     locale: "en_US",
   },
@@ -108,7 +108,7 @@ export default function CategoriesPage() {
       <div className="py-8 bg-background">
         <div className="w-full max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {CATEGORIES.map((cat) => {
+            {getTopLevelCategories().map((cat) => {
               const displayName = cat.name.replace(/ Soundboard$/, "")
               return (
                 <Link

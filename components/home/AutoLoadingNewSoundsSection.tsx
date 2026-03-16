@@ -12,12 +12,15 @@ import { useRouter } from "next/navigation"
 import { ChevronRight } from "lucide-react"
 import SoundButton from "@/components/sound/sound-button"
 import { apiClient } from "@/lib/api/client"
+import { getStrings } from "@/lib/i18n/strings"
 import type { Sound } from "@/lib/types/sound"
+import type { Locale } from "@/lib/i18n/strings"
 
 interface AutoLoadingNewSoundsSectionProps {
   initialSounds: Sound[]
   isMobileDevice: boolean
   title?: string
+  locale?: Locale
 }
 
 export interface AutoLoadingNewSoundsSectionRef {
@@ -29,8 +32,12 @@ export interface AutoLoadingNewSoundsSectionRef {
 const AutoLoadingNewSoundsSection = forwardRef<
   AutoLoadingNewSoundsSectionRef,
   AutoLoadingNewSoundsSectionProps
->(({ initialSounds, isMobileDevice, title = "New Sound Buttons" }, ref) => {
+>(({ initialSounds, isMobileDevice, title, locale = "en" }, ref) => {
   const router = useRouter()
+  const home = getStrings(locale).home
+  const sectionTitle = title ?? home.newTitle
+  const viewAllLabel = home.viewAll
+  const newPath = locale === "en" ? "/new" : `/${locale}/new`
   const initialDisplayCount = isMobileDevice ? 8 : 22
   const [sounds, setSounds] = useState<Sound[]>(
     initialSounds.slice(0, initialDisplayCount)
@@ -316,7 +323,7 @@ const AutoLoadingNewSoundsSection = forwardRef<
       <div className="flex flex-row items-center justify-between mb-4 gap-1 sm:gap-2 w-full overflow-hidden sound-section-header">
         <h2 className="text-base sm:text-lg md:text-xl font-bold flex items-center flex-shrink-0 min-w-0">
           <span className="text-lg sm:text-xl md:text-2xl mr-1 sm:mr-2"></span>
-          <span className="whitespace-nowrap truncate">{title}</span>
+          <span className="whitespace-nowrap truncate">{sectionTitle}</span>
         </h2>
         <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2 ml-1 sm:ml-2 flex-nowrap flex-shrink-0">
           <button
@@ -348,10 +355,10 @@ const AutoLoadingNewSoundsSection = forwardRef<
           <button
             type="button"
             className="btn-theme btn-theme-arrow flex-shrink-0"
-            onClick={() => router.push("/new")}
+            onClick={() => router.push(newPath)}
           >
-            <span className="hidden sm:inline">View All</span>
-            <span className="sm:hidden">View</span>
+            <span className="hidden sm:inline">{viewAllLabel}</span>
+            <span className="sm:hidden">{viewAllLabel.split(" ")[0]}</span>
             <span className="btn-arrow-dot"><ChevronRight className="w-3 h-3" strokeWidth={3} /></span>
           </button>
         </div>
@@ -461,7 +468,7 @@ const AutoLoadingNewSoundsSection = forwardRef<
                       </div>
                     ) : (
                       <>
-                        <span>Load More Sounds</span>
+                        <span>{home.loadMoreSounds}</span>
                         <span className="btn-arrow-dot"><ChevronRight className="w-3 h-3" strokeWidth={3} /></span>
                       </>
                     )}

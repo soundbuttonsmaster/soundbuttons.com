@@ -73,7 +73,7 @@ export const metadata: Metadata = {
     description:
       "Discover kids games sound buttons on SoundButtons! Play fun, safe, and interactive sound effects perfect for children.",
     url: `${BASE}/games`,
-    siteName: "SoundButtons.com",
+    siteName: "Sound Buttons",
     images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: "Kids Games" }],
     locale: "en_US",
   },

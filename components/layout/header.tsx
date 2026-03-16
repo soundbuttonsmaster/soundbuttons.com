@@ -2,11 +2,12 @@
 
 import Link from "next/link"
 import { Menu, X, ChevronDown, ChevronRight, Search } from "lucide-react"
-import { useState, useEffect, useRef, FormEvent } from "react"
+import { useState, useEffect, useRef, FormEvent, useMemo } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
-import { getActiveCategories } from "@/lib/constants/categories"
-import { NAV_BEFORE_CATEGORIES, NAV_AFTER_CATEGORIES } from "@/lib/constants/nav-links"
+import { LanguageChanger } from "@/components/ui/language-changer"
+import { getTopLevelCategories } from "@/lib/constants/categories"
+import { getStrings, getLocaleFromPathname, getLocalePrefix } from "@/lib/i18n/strings"
 
 function generateSlug(query: string): string {
   return query
@@ -24,7 +25,28 @@ export default function Header() {
   const [mobileSubmenuOpen, setMobileSubmenuOpen] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const dropdownRef = useRef<HTMLDivElement>(null)
-  const categories = getActiveCategories()
+  const categories = getTopLevelCategories()
+
+  const locale = getLocaleFromPathname(pathname ?? "")
+  const localePrefix = getLocalePrefix(pathname ?? "")
+  const nav = useMemo(() => getStrings(locale).nav, [locale])
+
+  const navBeforeLinks = useMemo(
+    () => [
+      { name: nav.home, href: `${localePrefix || ""}/` },
+      { name: nav.soundEffects, href: `${localePrefix}/categories/sound-effects` },
+      { name: nav.new, href: `${localePrefix}/new` },
+      { name: nav.trending, href: `${localePrefix}/trends` },
+    ],
+    [nav, localePrefix]
+  )
+  const navAfterLinks = useMemo(
+    () => [
+      { name: nav.memeSoundboard, href: `${localePrefix}/categories/memes` },
+      { name: nav.playRandom, href: `${localePrefix}/play-random` },
+    ],
+    [nav, localePrefix]
+  )
 
   useEffect(() => {
     setMobileMenuOpen(false)
@@ -58,7 +80,7 @@ export default function Header() {
     e.preventDefault()
     if (searchQuery.trim()) {
       const slug = generateSlug(searchQuery.trim())
-      if (slug) router.push(`/search/${slug}`)
+      if (slug) router.push(`${localePrefix}/search/${slug}`)
     }
   }
 
@@ -70,7 +92,7 @@ export default function Header() {
       <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:bg-slate-950/95 dark:supports-[backdrop-filter]:dark:bg-slate-950/80 border-slate-200 dark:border-slate-800">
         <div className="relative flex h-14 w-full items-center justify-between gap-4 px-4 sm:px-6">
           {/* Logo - left */}
-          <Link href="/" className="flex shrink-0 items-center">
+          <Link href={localePrefix || "/"} className="flex shrink-0 items-center">
             <span className="text-base font-bold tracking-tight text-slate-900 dark:text-white sm:text-lg">
               SOUND BUTTONS
             </span>
@@ -81,12 +103,12 @@ export default function Header() {
             className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 md:flex md:items-center md:gap-0.5"
             aria-label="Main navigation"
           >
-            {NAV_BEFORE_CATEGORIES.map((link) => (
+            {navBeforeLinks.map((link) => (
               <Link key={link.href} href={link.href} className={navLinkClass}>
                 {link.name}
               </Link>
             ))}
-            {/* Categories dropdown - all 18 category links in DOM for SEO */}
+            {/* Categories dropdown */}
             <div ref={dropdownRef} className="relative inline-block">
               <button
                 type="button"
@@ -95,7 +117,7 @@ export default function Header() {
                 aria-haspopup="true"
                 className={`${navLinkClass} flex items-center gap-0.5`}
               >
-                Categories
+                {nav.categories}
                 <ChevronDown
                   className={`h-4 w-4 transition-transform ${categoryDropdownOpen ? "rotate-180" : ""}`}
                 />
@@ -109,7 +131,7 @@ export default function Header() {
                 {categories.map((cat) => (
                   <Link
                     key={cat.id}
-                    href={`/categories/${cat.slug}`}
+                    href={`${localePrefix}/categories/${cat.slug}`}
                     role="menuitem"
                     className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                     onClick={() => setCategoryDropdownOpen(false)}
@@ -119,7 +141,7 @@ export default function Header() {
                 ))}
               </div>
             </div>
-            {NAV_AFTER_CATEGORIES.map((link) => (
+            {navAfterLinks.map((link) => (
               <Link key={link.href} href={link.href} className={navLinkClass}>
                 {link.name}
               </Link>
@@ -138,16 +160,17 @@ export default function Header() {
                 type="search"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search sounds..."
+                placeholder={nav.searchPlaceholder}
                 className="w-full min-w-0 bg-transparent text-sm text-slate-900 placeholder-slate-400 focus:outline-none dark:text-slate-100 dark:placeholder-slate-500"
               />
             </form>
             <Link
-              href="/register"
+              href={`${localePrefix}/register`}
               className="hidden shrink-0 rounded-lg bg-slate-900 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200 sm:inline-flex"
             >
-              Join Free
+              {nav.joinFree}
             </Link>
+            <LanguageChanger />
             <ThemeToggle />
             <button
               type="button"
@@ -178,7 +201,7 @@ export default function Header() {
       >
         <div className="flex h-full flex-col">
           <div className="flex items-center justify-between border-b border-slate-200 p-4 dark:border-slate-800">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Menu</h2>
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">{nav.menu}</h2>
             <button
               onClick={() => setMobileMenuOpen(false)}
               className="rounded-lg p-2 text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
@@ -196,12 +219,12 @@ export default function Header() {
                     type="search"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search sounds..."
+                    placeholder={nav.searchPlaceholder}
                     className="min-w-0 flex-1 bg-transparent text-slate-900 placeholder-slate-500 focus:outline-none dark:text-slate-100"
                   />
                 </div>
               </form>
-              {NAV_BEFORE_CATEGORIES.map((link) => (
+              {navBeforeLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
@@ -216,7 +239,7 @@ export default function Header() {
                   onClick={() => toggleMobileSubmenu("categories")}
                   className="flex w-full items-center justify-between rounded-lg px-4 py-3 text-base font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                 >
-                  Categories
+                  {nav.categories}
                   <ChevronRight
                     className={`h-5 w-5 transition-transform ${mobileSubmenuOpen === "categories" ? "rotate-90" : ""}`}
                   />
@@ -226,7 +249,7 @@ export default function Header() {
                     {categories.map((cat) => (
                       <Link
                         key={cat.id}
-                        href={`/categories/${cat.slug}`}
+                        href={`${localePrefix}/categories/${cat.slug}`}
                         className="block py-2 text-sm text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
                         onClick={() => setMobileMenuOpen(false)}
                       >
@@ -236,7 +259,7 @@ export default function Header() {
                   </div>
                 )}
               </div>
-              {NAV_AFTER_CATEGORIES.map((link) => (
+              {navAfterLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
@@ -248,18 +271,18 @@ export default function Header() {
               ))}
               <div className="border-t border-slate-200 pt-4 dark:border-slate-800">
                 <Link
-                  href="/login"
+                  href={`${localePrefix}/login`}
                   className="block rounded-lg px-4 py-3 text-base font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Sign In
+                  {nav.login}
                 </Link>
                 <Link
-                  href="/register"
+                  href={`${localePrefix}/register`}
                   className="mt-2 block rounded-lg bg-slate-900 px-4 py-3 text-center text-base font-medium text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Create Free Account
+                  {nav.register}
                 </Link>
               </div>
             </nav>

@@ -2,14 +2,18 @@ import { headers } from "next/headers"
 import type { Metadata } from "next"
 import { apiClient } from "@/lib/api/client"
 import { SITE } from "@/lib/constants/site"
+import { generateSlug } from "@/lib/utils/slug"
 import HomePageClient from "@/components/home/HomePageClient"
 
 export const revalidate = 60
 
+const HOME_TITLE = "Sound Buttons - 9,99,999+ Meme Soundboard Unblocked"
+const HOME_DESCRIPTION =
+  "Play thousands of sound buttons with the best sound, buttons, meme, prank, sound effect, and high-quality audio in one powerful soundboard unblocked"
+
 export const metadata: Metadata = {
-  title: { absolute: "Sound Buttons - 9,99,999+ Meme Soundboard Unblocked" },
-  description:
-    "Play thousands of sound buttons with the best meme soundboard, buttons, prank, funny sound effect, and high-quality audio in unblocked soundboards.",
+  title: { absolute: HOME_TITLE },
+  description: HOME_DESCRIPTION,
   keywords: [
     "sound buttons",
     "meme sounds",
@@ -24,11 +28,14 @@ export const metadata: Metadata = {
   authors: [{ name: "SoundButtons.com", url: SITE.baseUrl }],
   creator: "SoundButtons.com",
   publisher: "SoundButtons.com",
+  generator: "Next.js",
   metadataBase: new URL(SITE.baseUrl),
   alternates: {
     canonical: SITE.baseUrl,
     languages: {
       en: SITE.baseUrl,
+      es: `${SITE.baseUrl}/es`,
+      pt: `${SITE.baseUrl}/pt`,
       fr: `${SITE.baseUrl}/fr`,
       "x-default": SITE.baseUrl,
     },
@@ -38,15 +45,15 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: SITE.baseUrl,
     siteName: "SoundButtons.com",
-    title: "Sound Buttons - 9,99,999+ Meme Soundboard Unblocked",
-    description:
-      "Play thousands of sound buttons with the best meme soundboard, buttons, prank, funny sound effect, and high-quality audio in unblocked soundboards.",
+    alternateLocale: ["fr_FR"],
+    title: HOME_TITLE,
+    description: HOME_DESCRIPTION,
     images: [
       {
         url: "/og.png",
         width: 1200,
         height: 630,
-        alt: "Sound Buttons - 9,99,999+ Meme Soundboard Unblocked",
+        alt: HOME_TITLE,
       },
     ],
   },
@@ -54,10 +61,9 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "@soundbuttons",
     creator: "@soundbuttons",
-    title: "Sound Buttons - 9,99,999+ Meme Soundboard Unblocked",
-    description:
-      "Play thousands of sound buttons with the best meme soundboard, buttons, prank, funny sound effect, and high-quality audio in unblocked soundboards.",
-    images: ["/og.png"],
+    title: HOME_TITLE,
+    description: HOME_DESCRIPTION,
+    images: [{ url: "/og.png", alt: HOME_TITLE }],
   },
   robots: {
     index: true,
@@ -69,6 +75,26 @@ export const metadata: Metadata = {
       "max-image-preview": "large",
       "max-snippet": -1,
     },
+  },
+  themeColor: "#2563eb",
+  formatDetection: { telephone: false },
+  appleWebApp: {
+    capable: true,
+    title: "SoundButtons",
+    statusBarStyle: "default",
+  },
+  other: {
+    rating: "general",
+    target: "all",
+    coverage: "worldwide",
+    copyright: "© 2025 SoundButtons.com",
+    distribution: "global",
+    language: "en",
+    "MobileOptimized": "width",
+    "HandheldFriendly": "true",
+    "mobile-web-app-capable": "yes",
+    "msapplication-TileColor": "#2563eb",
+    "msapplication-config": "/browserconfig.xml",
   },
 }
 
@@ -121,8 +147,7 @@ export default async function HomePage() {
     "@type": "WebSite",
     name: "SoundButtons.com",
     url: `${BASE}/`,
-    description:
-      "Sound buttons is the Ultimate collection of unblocked soundboard, sound buttons, meme soundboard, with billion's of sound effects and meme buttons.",
+    description: HOME_DESCRIPTION,
     potentialAction: {
       "@type": "SearchAction",
       target: `${BASE}/search/{search_term_string}`,
@@ -145,6 +170,21 @@ export default async function HomePage() {
       { "@type": "ListItem", position: 9, name: "Meme Soundboard", item: `${BASE}/soundboard` },
       { "@type": "ListItem", position: 10, name: "Meme Soundboard", item: `${BASE}/meme-soundboard` },
     ],
+  }
+
+  const allSoundsForList = [...trendingSounds, ...newSounds]
+  const itemListSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: HOME_TITLE,
+    description: HOME_DESCRIPTION,
+    numberOfItems: allSoundsForList.length,
+    itemListElement: allSoundsForList.map((sound, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: sound.name,
+      url: `${BASE}/${generateSlug(sound.name)}/${sound.id}`,
+    })),
   }
 
   const personOrgSchema = {
@@ -193,6 +233,83 @@ export default async function HomePage() {
     ],
   }
 
+  const webSiteIdSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${BASE}/#website`,
+    name: HOME_TITLE,
+    alternateName: ["SoundButtons", "SoundButtons.com", "Meme Soundboard"],
+    url: BASE,
+    description: HOME_DESCRIPTION,
+    inLanguage: "en-US",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${BASE}/search/{search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  }
+
+  const organizationIdSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${BASE}/#organization`,
+    name: "Sound Buttons",
+    url: BASE,
+    logo: {
+      "@type": "ImageObject",
+      url: `${BASE}/icons/icon-192x192.png`,
+      width: 192,
+      height: 192,
+    },
+    sameAs: [BASE],
+  }
+
+  const siteNavSchema = {
+    "@context": "https://schema.org",
+    "@graph": [
+      { "@type": "SiteNavigationElement", "@id": `${BASE}/#navigation`, name: "Home", url: `${BASE}/` },
+      {
+        "@type": "SiteNavigationElement",
+        "@id": `${BASE}/#navigation`,
+        name: "New Sound Buttons",
+        url: `${BASE}/new`,
+      },
+      {
+        "@type": "SiteNavigationElement",
+        "@id": `${BASE}/#navigation`,
+        name: "Trending Sound Buttons",
+        url: `${BASE}/trends`,
+      },
+      {
+        "@type": "SiteNavigationElement",
+        "@id": `${BASE}/#navigation`,
+        name: "Sound Button Categories",
+        url: `${BASE}/categories`,
+      },
+      {
+        "@type": "SiteNavigationElement",
+        "@id": `${BASE}/#navigation`,
+        name: "Meme Soundboard",
+        url: `${BASE}/meme-soundboard`,
+      },
+      {
+        "@type": "SiteNavigationElement",
+        "@id": `${BASE}/#navigation`,
+        name: "Sound Effects",
+        url: `${BASE}/sound-effects`,
+      },
+      {
+        "@type": "SiteNavigationElement",
+        "@id": `${BASE}/#navigation`,
+        name: "Play Random Sound",
+        url: `${BASE}/play-random`,
+      },
+    ],
+  }
+
   return (
     <>
       <script
@@ -205,7 +322,23 @@ export default async function HomePage() {
       />
       <script
         type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
+      />
+      <script
+        type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personOrgSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteIdSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationIdSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(siteNavSchema) }}
       />
       <HomePageClient
         initialTrendingSounds={trendingSounds}

@@ -253,4 +253,243 @@ export const apiClient = {
       return { success: false, message: "Network error" }
     }
   },
+
+  /** Login - returns token and user for auth context */
+  async login(
+    username: string,
+    password: string
+  ): Promise<{ success: true; token: string; user: { id: number; username: string; email: string; full_name?: string } } | { success: false; message: string }> {
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      })
+      const data = (await res.json().catch(() => ({}))) as {
+        token?: string
+        user?: { id: number; username: string; email: string; full_name?: string }
+        message?: string
+        detail?: string
+      }
+      if (res.ok && data.token && data.user) {
+        return { success: true, token: data.token, user: data.user }
+      }
+      return { success: false, message: data.message || data.detail || "Login failed" }
+    } catch {
+      return { success: false, message: "Network error" }
+    }
+  },
+
+  /** Register - creates account and returns token and user */
+  async register(
+    email: string,
+    username: string,
+    password: string
+  ): Promise<{ success: true; token: string; user: { id: number; username: string; email: string; full_name?: string } } | { success: false; message: string }> {
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, username, password }),
+      })
+      const data = (await res.json().catch(() => ({}))) as {
+        token?: string
+        user?: { id: number; username: string; email: string; full_name?: string }
+        message?: string
+        detail?: string
+        email?: string[]
+        username?: string[]
+      }
+      if (res.ok && data.token && data.user) {
+        return { success: true, token: data.token, user: data.user }
+      }
+      const msg = data.message || data.detail || (Array.isArray(data.email) ? data.email[0] : null) || (Array.isArray(data.username) ? data.username[0] : null) || "Registration failed"
+      return { success: false, message: msg }
+    } catch {
+      return { success: false, message: "Network error" }
+    }
+  },
+
+  /** Confirm password reset with token from email */
+  async confirmPasswordReset(
+    token: string,
+    newPassword: string
+  ): Promise<{ success: boolean; message?: string }> {
+    try {
+      const res = await fetch(`${API_BASE_URL}/password-reset/confirm`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token, new_password: newPassword }),
+      })
+      const data = (await res.json().catch(() => ({}))) as { message?: string }
+      if (res.ok) return { success: true, message: data.message || "Password updated successfully" }
+      return { success: false, message: data.message || "Failed to reset password" }
+    } catch {
+      return { success: false, message: "Network error" }
+    }
+  },
+
+  /** Get user favorites (requires token) */
+  async getFavorites(
+    token: string,
+    page = 1,
+    pageSize = 50
+  ): Promise<{ data: ProcessedSound[]; meta: { current_page: number; last_page: number; total_items: number } }> {
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/favorites?page=${page}&limit=${pageSize}`,
+        { headers: { Authorization: `Token ${token}` }, next: { revalidate: 0 } }
+      )
+      if (!res.ok) return { data: [], meta: { current_page: page, last_page: 1, total_items: 0 } }
+      const json = (await res.json()) as SoundResponse & { data?: { sounds?: ApiSound[]; current_page?: number; total_pages?: number; total_items?: number } }
+      const nested = json.data && typeof json.data === "object" && "sounds" in json.data
+      const soundsRes = nested ? (json.data as { sounds?: ApiSound[] }) : json
+      const metaRes = nested && json.data ? json.data : json
+      return {
+        data: extractSounds(soundsRes as SoundResponse),
+        meta: extractMeta(metaRes as SoundResponse, page, pageSize),
+      }
+    } catch {
+      return { data: [], meta: { current_page: page, last_page: 1, total_items: 0 } }
+    }
+  },
+
+  /** Get current user profile (requires token) */
+  async getProfile(
+    token: string
+  ): Promise<{ success: true; user: { id: number; username: string; email: string; full_name?: string } } | { success: false; message: string }> {
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/me`, {
+        headers: { Authorization: `Token ${token}` } as HeadersInit,
+      })
+      const data = (await res.json().catch(() => ({}))) as { id?: number; username?: string; email?: string; full_name?: string; message?: string }
+      if (res.ok && data.id != null) {
+        return {
+          success: true,
+          user: {
+            id: data.id,
+            username: data.username ?? "",
+            email: data.email ?? "",
+            full_name: data.full_name,
+          },
+        }
+      }
+      return { success: false, message: (data as { message?: string }).message || "Failed to load profile" }
+    } catch {
+      return { success: false, message: "Network error" }
+    }
+  },
+
+  /** Update user profile (requires token) */
+  async updateProfile(
+    token: string,
+    payload: { email?: string; full_name?: string }
+  ): Promise<{ success: boolean; message?: string; user?: { id: number; username: string; email: string; full_name?: string } }> {
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/me`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", Authorization: `Token ${token}` } as HeadersInit,
+        body: JSON.stringify(payload),
+      })
+      const data = (await res.json().catch(() => ({}))) as { id?: number; username?: string; email?: string; full_name?: string; message?: string }
+      if (res.ok && data.id != null) {
+        return {
+          success: true,
+          user: {
+            id: data.id,
+            username: data.username ?? "",
+            email: data.email ?? "",
+            full_name: data.full_name,
+          },
+        }
+      }
+      return { success: false, message: (data as { message?: string }).message || "Failed to update profile" }
+    } catch {
+      return { success: false, message: "Network error" }
+    }
+  },
+
+  /** Get leaderboard entries */
+  async getLeaderboard(
+    page = 1,
+    pageSize = 50
+  ): Promise<{ data: { username: string; score: number; rank: number }[]; meta: { current_page: number; last_page: number; total_items: number } }> {
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/leaderboard?page=${page}&limit=${pageSize}`,
+        { next: { revalidate: 60 } }
+      )
+      if (!res.ok) return { data: [], meta: { current_page: page, last_page: 1, total_items: 0 } }
+      const json = (await res.json()) as {
+        results?: { username: string; score: number; rank: number }[]
+        data?: { username: string; score: number; rank: number }[]
+        current_page?: number
+        total_pages?: number
+        total_items?: number
+      }
+      const list = json.results ?? json.data ?? []
+      const total = json.total_items ?? (Array.isArray(list) ? list.length : 0)
+      return {
+        data: Array.isArray(list) ? list : [],
+        meta: {
+          current_page: json.current_page ?? page,
+          last_page: json.total_pages ?? 1,
+          total_items: total,
+        },
+      }
+    } catch {
+      return { data: [], meta: { current_page: page, last_page: 1, total_items: 0 } }
+    }
+  },
+
+  /** Get current user's sounds / my soundboard (requires token) */
+  async getMySounds(
+    token: string,
+    page = 1,
+    pageSize = 50
+  ): Promise<{ data: ProcessedSound[]; meta: { current_page: number; last_page: number; total_items: number } }> {
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/user/sounds?page=${page}&limit=${pageSize}`,
+        { headers: { Authorization: `Token ${token}` }, next: { revalidate: 0 } }
+      )
+      if (!res.ok) return { data: [], meta: { current_page: page, last_page: 1, total_items: 0 } }
+      const json = (await res.json()) as SoundResponse & { data?: { sounds?: ApiSound[]; current_page?: number; total_pages?: number; total_items?: number } }
+      const nested = json.data && typeof json.data === "object" && "sounds" in json.data
+      const soundsRes = nested ? (json.data as { sounds?: ApiSound[] }) : json
+      const metaRes = nested && json.data ? json.data : json
+      return {
+        data: extractSounds(soundsRes as SoundResponse),
+        meta: extractMeta(metaRes as SoundResponse, page, pageSize),
+      }
+    } catch {
+      return { data: [], meta: { current_page: page, last_page: 1, total_items: 0 } }
+    }
+  },
+
+  /** Upload sound (requires token) */
+  async uploadSound(
+    token: string,
+    formData: FormData
+  ): Promise<{ success: true; sound?: ProcessedSound } | { success: false; message: string }> {
+    try {
+      const res = await fetch(`${API_BASE_URL}/sounds/upload`, {
+        method: "POST",
+        headers: { Authorization: `Token ${token}` } as HeadersInit,
+        body: formData,
+      })
+      const data = (await res.json().catch(() => ({}))) as {
+        sound?: ApiSound
+        data?: { sound?: ApiSound }
+        message?: string
+      }
+      const raw = data.sound ?? data.data?.sound
+      if (res.ok && raw) {
+        return { success: true, sound: processSound(raw) }
+      }
+      return { success: false, message: (data as { message?: string }).message || "Upload failed" }
+    } catch {
+      return { success: false, message: "Network error" }
+    }
+  },
 }

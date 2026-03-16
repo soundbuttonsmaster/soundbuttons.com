@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     description:
       "Access sound buttons unblocked for school on SoundButtons. Play and download free sound effects safely, create fun buttons, and enjoy audio anywhere, anytime.",
     url: `${BASE}/sound-buttons-unblocked-for-school`,
-    siteName: "SoundButtons.com",
+    siteName: "Sound Buttons",
     images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: "Sound Buttons for School" }],
     locale: "en_US",
   },

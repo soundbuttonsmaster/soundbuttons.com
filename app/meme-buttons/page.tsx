@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     description:
       "Play the best meme buttons! Thousands of viral meme sounds, funny sound effects, and trending audio. Free meme sound buttons for Discord, TikTok, streaming.",
     url: `${BASE}/meme-buttons`,
-    siteName: "SoundButtons.com",
+    siteName: "Sound Buttons",
     images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: "Meme Buttons" }],
     locale: "en_US",
   },

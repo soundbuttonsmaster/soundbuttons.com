@@ -1,12 +1,14 @@
 "use client"
 
-import { useState, useCallback, useEffect, useRef } from "react"
+import { useState, useCallback, useEffect, useRef, useMemo } from "react"
 import Link from "next/link"
 import PageHero from "@/components/layout/page-hero"
 import SearchBar from "@/components/search-bar"
 import SoundList from "@/components/home/SoundList"
 import { apiClient } from "@/lib/api/client"
+import { getStrings } from "@/lib/i18n/strings"
 import type { Sound } from "@/lib/types/sound"
+import type { Locale } from "@/lib/i18n/strings"
 
 const PAGE_SIZE = 35
 
@@ -15,6 +17,7 @@ interface SearchResultsClientProps {
   initialSounds: Sound[]
   initialMeta: { current_page: number; last_page: number; total_items: number }
   isMobileDevice: boolean
+  locale?: Locale
 }
 
 export default function SearchResultsClient({
@@ -22,7 +25,11 @@ export default function SearchResultsClient({
   initialSounds,
   initialMeta,
   isMobileDevice,
+  locale = "en",
 }: SearchResultsClientProps) {
+  const searchStrings = useMemo(() => getStrings(locale).search, [locale])
+  const navStrings = useMemo(() => getStrings(locale).nav, [locale])
+  const localePrefix = locale === "en" ? "" : `/${locale}`
   const [sounds, setSounds] = useState<Sound[]>(initialSounds)
   const [page, setPage] = useState(initialMeta.current_page)
   const [loading, setLoading] = useState(false)
@@ -71,18 +78,21 @@ export default function SearchResultsClient({
     }
   }, [loadMoreSounds, hasMore, loading])
 
-  const popularSearches = ["meme", "fart", "game", "discord", "get out"]
+  const countStr = initialMeta.total_items.toLocaleString(locale === "en" ? "en-US" : locale === "es" ? "es-ES" : locale === "pt" ? "pt-BR" : "fr-FR")
+  const heroTitle = searchStrings.heroTitleTemplate.replace("{count}", countStr).replace("{query}", searchQuery)
+  const heroDescription = searchStrings.heroDescriptionTemplate.replace("{count}", countStr)
+  const listTitle = searchStrings.soundListTitleTemplate.replace("{query}", searchQuery)
 
   return (
     <>
       <PageHero
-        title={`${initialMeta.total_items.toLocaleString("en-US")} ${searchQuery} Sound Buttons`}
-        description={`Found ${initialMeta.total_items.toLocaleString("en-US")} sound buttons - free to play and download`}
+        title={heroTitle}
+        description={heroDescription}
       >
         <div className="flex justify-center mt-2 px-2">
           <div className="flex justify-center max-w-3xl md:max-w-4xl lg:max-w-5xl w-full shadow-lg">
             <SearchBar
-              placeholder={`Search for more... (e.g. ${popularSearches.join(", ")})`}
+              placeholder={searchStrings.searchMorePlaceholder}
             />
           </div>
         </div>
@@ -94,12 +104,12 @@ export default function SearchResultsClient({
             className="flex items-center gap-2 text-sm text-muted-foreground mb-6"
             aria-label="Breadcrumb"
           >
-            <Link href="/" className="hover:text-foreground transition-colors">
-              Home
+            <Link href={localePrefix || "/"} className="hover:text-foreground transition-colors">
+              {navStrings.home}
             </Link>
             <span>/</span>
-            <Link href="/search" className="hover:text-foreground transition-colors">
-              Search
+            <Link href={`${localePrefix}/search`} className="hover:text-foreground transition-colors">
+              {searchStrings.pageTitle}
             </Link>
             <span>/</span>
             <span className="text-foreground font-medium">{searchQuery}</span>
@@ -108,7 +118,7 @@ export default function SearchResultsClient({
           {sounds.length > 0 ? (
             <>
               <SoundList
-                title={`${searchQuery} Sound Buttons`}
+                title={listTitle}
                 sounds={sounds}
                 initialCount={isMobileDevice ? 20 : 35}
                 loadMoreCount={PAGE_SIZE}
@@ -126,10 +136,10 @@ export default function SearchResultsClient({
                   {loading ? (
                     <div className="flex items-center gap-2">
                       <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent" />
-                      <span className="text-muted-foreground">Loading more sounds...</span>
+                      <span className="text-muted-foreground">{searchStrings.loadingMore}</span>
                     </div>
                   ) : (
-                    <span className="text-muted-foreground">Scroll down for more sounds</span>
+                    <span className="text-muted-foreground">{searchStrings.scrollForMore}</span>
                   )}
                 </div>
               )}
@@ -206,23 +216,23 @@ export default function SearchResultsClient({
           ) : (
             <div className="text-center py-12">
               <p className="text-muted-foreground text-lg mb-4">
-                No sound buttons found for &quot;{searchQuery}&quot;
+                {searchStrings.noResults}
               </p>
               <p className="text-muted-foreground mb-6">
-                Try searching with different keywords or browse our categories
+                {searchStrings.tryDifferentSearch}
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Link
-                  href="/categories"
+                  href={`${localePrefix}/categories`}
                   className="px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
                 >
-                  Browse Categories
+                  {searchStrings.browseCategories}
                 </Link>
                 <Link
-                  href="/trends"
+                  href={`${localePrefix}/trends`}
                   className="px-6 py-3 border border-input rounded-lg hover:bg-accent transition-colors"
                 >
-                  Trending Sounds
+                  {searchStrings.trendingSounds}
                 </Link>
               </div>
             </div>

@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     description:
       "Discover fun and safe sound buttons designed especially for kids! Animal sounds, musical instruments, and educational audio effects.",
     url: `${BASE}/kids-soundboard`,
-    siteName: "SoundButtons.com",
+    siteName: "Sound Buttons",
     images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: "Kids Soundboard" }],
     locale: "en_US",
   },

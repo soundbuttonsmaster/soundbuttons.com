@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     description:
       "Play thousands of meme soundboard buttons unblocked! The best collection of meme soundboard, unblocked sound buttons, viral meme sounds, and funny sound effects.",
     url: `${BASE}/meme-soundboard`,
-    siteName: "SoundButtons.com",
+    siteName: "Sound Buttons",
     images: [
       {
         url: `${BASE}/og.png`,

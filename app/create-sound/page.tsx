@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     description:
       "Create Sound Button on SoundButtons to make your own fun and unique audio effects. Play, customize, and share sound buttons easily with friends anytime.",
     url: `${BASE}/create-sound`,
-    siteName: "SoundButtons.com",
+    siteName: "Sound Buttons",
     images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: "Create Sound Button" }],
     locale: "en_US",
   },

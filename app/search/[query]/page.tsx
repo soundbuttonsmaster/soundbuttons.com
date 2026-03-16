@@ -68,7 +68,7 @@ export async function generateMetadata({
       title,
       description,
       url: canonicalUrl,
-      siteName: "SoundButtons.com",
+      siteName: "Sound Buttons",
       images: [
         {
           url: `${BASE}/og.png`,

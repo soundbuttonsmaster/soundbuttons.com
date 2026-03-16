@@ -1,6 +1,11 @@
 import type { Metadata } from "next"
 import { SITE } from "@/lib/constants/site"
-import { SITE_NAV_LINKS } from "@/lib/constants/site-nav-links"
+import {
+  OLD_POLICY_NAV_ELEMENTS,
+  OLD_WEBSITE_SCHEMA,
+  OLD_ORGANIZATION_SCHEMA,
+  OLD_NAV_GRAPH_SCHEMA,
+} from "@/lib/constants/policy-page-schema"
 
 const BASE = SITE.baseUrl
 
@@ -16,38 +21,34 @@ export const metadata: Metadata = {
     description:
       "Terms of Service for SoundButtons.com - Review the guidelines for using our sound button platform.",
     url: `${BASE}/terms-of-use`,
-    siteName: "SoundButtons.com",
+    siteName: "Sound Buttons",
     images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: "Terms of Service | SoundButtons" }],
     locale: "en_US",
   },
-  twitter: {
-    card: "summary_large_image",
-    site: "@soundbuttons",
-    creator: "@soundbuttons",
-    title: "Terms of Service | SoundButtons",
-    description:
-      "Terms of Service for SoundButtons.com - Review the guidelines for using our sound button platform.",
-    images: [`${BASE}/og.png`],
-  },
 }
-
-const siteNavSchema = SITE_NAV_LINKS.map((link) => ({
-  "@context": "https://schema.org",
-  "@type": "SiteNavigationElement",
-  name: link.name,
-  url: link.url,
-}))
 
 export default function TermsOfUsePage() {
   return (
     <>
-      {siteNavSchema.map((schema, i) => (
+      {OLD_POLICY_NAV_ELEMENTS.map((schema, i) => (
         <script
           key={i}
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
         />
       ))}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(OLD_WEBSITE_SCHEMA) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(OLD_ORGANIZATION_SCHEMA) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(OLD_NAV_GRAPH_SCHEMA) }}
+      />
       <div className="py-8 px-4 flex flex-col items-center bg-background">
         <div className="prose prose-slate dark:prose-invert max-w-4xl">
           <h1 className="text-2xl font-bold mb-4 text-foreground">Terms of Service</h1>

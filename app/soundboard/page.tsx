@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     description:
       "Best free soundboard with 100,000+ sound buttons including meme soundboard unblocked, gaming sounds, Discord effects, viral audio - instant play & download.",
     url: `${BASE}/soundboard`,
-    siteName: "SoundButtons.com",
+    siteName: "Sound Buttons",
     images: [
       {
         url: `${BASE}/og.png`,

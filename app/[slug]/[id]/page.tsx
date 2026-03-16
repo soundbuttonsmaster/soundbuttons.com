@@ -72,6 +72,8 @@ export async function generateMetadata({ params }: SoundPageProps): Promise<Meta
       canonical: canonicalUrl,
       languages: {
         en: canonicalUrl,
+        es: `${SITE.baseUrl}/es${canonicalUrl.replace(SITE.baseUrl, "")}`,
+        pt: `${SITE.baseUrl}/pt${canonicalUrl.replace(SITE.baseUrl, "")}`,
         fr: `${SITE.baseUrl}/fr${canonicalUrl.replace(SITE.baseUrl, "")}`,
         "x-default": canonicalUrl,
       },
@@ -81,7 +83,7 @@ export async function generateMetadata({ params }: SoundPageProps): Promise<Meta
       title,
       description,
       url: canonicalUrl,
-      siteName: "SoundButtons.com",
+      siteName: "Sound Buttons",
       images: [
         {
           url: `${SITE.baseUrl}/og.png`,
@@ -199,7 +201,9 @@ export default async function SoundDetailPage({ params }: SoundPageProps) {
     image: `${SITE.baseUrl}/og.png`,
     encodingFormat: "audio/mpeg",
     inLanguage: "en",
-    datePublished: sound.created_at ?? undefined,
+    ...("created_at" in sound && sound.created_at
+      ? { datePublished: (sound as { created_at: string }).created_at }
+      : {}),
     interactionStatistic: {
       "@type": "InteractionCounter",
       interactionType: "https://schema.org/ListenAction",

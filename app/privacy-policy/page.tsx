@@ -1,6 +1,11 @@
 import type { Metadata } from "next"
 import { SITE } from "@/lib/constants/site"
-import { SITE_NAV_LINKS } from "@/lib/constants/site-nav-links"
+import {
+  OLD_POLICY_NAV_ELEMENTS,
+  OLD_WEBSITE_SCHEMA,
+  OLD_ORGANIZATION_SCHEMA,
+  OLD_NAV_GRAPH_SCHEMA,
+} from "@/lib/constants/policy-page-schema"
 
 const BASE = SITE.baseUrl
 
@@ -26,11 +31,12 @@ export const metadata: Metadata = {
     type: "website",
     title: "Privacy Policy - SoundButtons.com | Data Protection & Rights",
     description:
-      "Read our comprehensive privacy policy to learn how we handle your data, cookies, and user rights at SoundButtons.com.",
+      "Read our comprehensive privacy policy to learn how we handle your data, cookies, and user rights at SoundButtons.com. We're committed to protecting your privacy and personal information.",
     url: `${BASE}/privacy-policy`,
-    siteName: "SoundButtons.com",
+    siteName: "Sound Buttons",
     images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: "Privacy Policy - SoundButtons.com" }],
     locale: "en_US",
+    alternateLocale: ["en_GB"],
   },
   twitter: {
     card: "summary_large_image",
@@ -42,13 +48,6 @@ export const metadata: Metadata = {
     images: [`${BASE}/og.png`],
   },
 }
-
-const siteNavSchema = SITE_NAV_LINKS.map((link) => ({
-  "@context": "https://schema.org",
-  "@type": "SiteNavigationElement",
-  name: link.name,
-  url: link.url,
-}))
 
 const webPageSchema = {
   "@context": "https://schema.org",
@@ -68,17 +67,29 @@ const webPageSchema = {
 export default function PrivacyPolicyPage() {
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }}
-      />
-      {siteNavSchema.map((schema, i) => (
+      {OLD_POLICY_NAV_ELEMENTS.map((schema, i) => (
         <script
           key={i}
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
         />
       ))}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(OLD_WEBSITE_SCHEMA) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(OLD_ORGANIZATION_SCHEMA) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(OLD_NAV_GRAPH_SCHEMA) }}
+      />
       <div className="flex flex-col items-center py-8 bg-background">
         <div className="w-full max-w-2xl px-4">
             <h1 className="text-3xl font-bold mb-6 text-foreground">Privacy Policy</h1>

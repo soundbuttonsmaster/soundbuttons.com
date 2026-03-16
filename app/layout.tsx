@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { SITE } from "@/lib/constants/site";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { AuthProvider } from "@/lib/auth/auth-context";
 import ConditionalLayout from "@/components/layout/conditional-layout";
@@ -22,7 +23,7 @@ export const metadata: Metadata = {
   },
   description:
     "Free sound effects and soundboard. Play, share, and download sound buttons.",
-  metadataBase: new URL("https://soundbuttons.com"),
+  metadataBase: new URL(SITE.baseUrl),
   openGraph: {
     type: "website",
     locale: "en_US",

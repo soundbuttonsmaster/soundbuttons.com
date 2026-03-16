@@ -1,6 +1,11 @@
 import type { Metadata } from "next"
 import { SITE } from "@/lib/constants/site"
-import { SITE_NAV_LINKS } from "@/lib/constants/site-nav-links"
+import {
+  OLD_POLICY_NAV_ELEMENTS,
+  OLD_WEBSITE_SCHEMA,
+  OLD_ORGANIZATION_SCHEMA,
+  OLD_NAV_GRAPH_SCHEMA,
+} from "@/lib/constants/policy-page-schema"
 
 const BASE = SITE.baseUrl
 
@@ -25,7 +30,7 @@ export const metadata: Metadata = {
     description:
       "Learn more about SoundButtons.com, our mission to bring people together through sound, and how you can discover, play, and share the best sound buttons online. Join our community of creators and sound enthusiasts!",
     url: `${BASE}/about-us`,
-    siteName: "SoundButtons.com",
+    siteName: "Sound Buttons",
     images: [
       {
         url: `${BASE}/og.png`,
@@ -37,7 +42,7 @@ export const metadata: Metadata = {
       },
     ],
     locale: "en_US",
-    alternateLocale: ["en_GB", "en_CA", "en_AU"],
+    alternateLocale: ["en_AU"],
   },
   twitter: {
     card: "summary_large_image",
@@ -65,13 +70,6 @@ const aboutPageSchema = {
   },
 }
 
-const navSchema = SITE_NAV_LINKS.map((link) => ({
-  "@context": "https://schema.org",
-  "@type": "SiteNavigationElement",
-  name: link.name,
-  url: link.url,
-}))
-
 export default function AboutUsPage() {
   return (
     <>
@@ -79,13 +77,25 @@ export default function AboutUsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutPageSchema) }}
       />
-      {navSchema.map((schema, i) => (
+      {OLD_POLICY_NAV_ELEMENTS.map((schema, i) => (
         <script
           key={i}
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
         />
       ))}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(OLD_WEBSITE_SCHEMA) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(OLD_ORGANIZATION_SCHEMA) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(OLD_NAV_GRAPH_SCHEMA) }}
+      />
       <div className="flex flex-col items-center py-8 bg-background">
         <div className="w-full max-w-2xl px-4">
             <h1 className="text-3xl font-bold mb-6 text-foreground">About Us</h1>

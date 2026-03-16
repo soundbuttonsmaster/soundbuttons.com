@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: SoundEffectPageProps): Promis
       title,
       description,
       url: canonicalUrl,
-      siteName: "SoundButtons.com",
+      siteName: "Sound Buttons",
       images: [{ url: `${SITE.baseUrl}/og.png`, width: 1200, height: 630 }],
       ...(soundEffect.soundFile && {
         audio: soundEffectsApi.getSoundFileUrl(soundEffect),

@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     description:
       "Reset your Sound Buttons account password. Enter your email address to receive password reset instructions.",
     url: `${BASE}/forgot-password`,
-    siteName: "SoundButtons.com",
+    siteName: "Sound Buttons",
   },
   twitter: {
     card: "summary",

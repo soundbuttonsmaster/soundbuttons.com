@@ -1,13 +1,19 @@
 "use client"
 
 import Link from "next/link"
-import { CATEGORIES } from "@/lib/constants/categories"
+import { usePathname } from "next/navigation"
+import { getTopLevelCategories } from "@/lib/constants/categories"
 import { SITE } from "@/lib/constants/site"
+import { getStrings, getLocalePrefix } from "@/lib/i18n/strings"
 import { Mail, Heart, Music, Phone, MapPin, Facebook, Instagram, Youtube } from "lucide-react"
 
-const FOOTER_CATEGORIES = CATEGORIES.slice(0, 8)
+const FOOTER_CATEGORIES = getTopLevelCategories().slice(0, 8)
 
 export default function Footer() {
+  const pathname = usePathname()
+  const localePrefix = getLocalePrefix(pathname ?? "")
+  const f = getStrings(pathname?.startsWith("/es") ? "es" : pathname?.startsWith("/pt") ? "pt" : pathname?.startsWith("/fr") ? "fr" : "en").footer
+
   return (
     <footer className="bg-[rgb(15,23,42)] text-white pt-4 pb-8">
       <div className="max-w-7xl mx-auto px-4">
@@ -15,10 +21,10 @@ export default function Footer() {
           {/* Why Choose & Contact */}
           <div>
             <h3 className="text-lg font-bold mb-4 text-white border-b border-white/20 pb-2">
-              Why Choose SoundButtons.com?
+              {f.whyChoose}
             </h3>
             <p className="text-gray-300 mb-4 text-sm">
-              SoundButtons.com is a platform that allows you to create your own sound buttons from any device. It&apos;s a free platform that allows you to create your own sound buttons, meme soundboard, sound effects, and more from any device.
+              {f.whyChooseParagraph}
             </p>
             <div className="mb-2">
               <a
@@ -26,9 +32,9 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center text-white hover:text-gray-300 transition-colors duration-200 font-medium text-sm"
-                aria-label="Download App from Google Play Store"
+                aria-label={f.downloadAppGoogle}
               >
-                Download App From Google Play Store
+                {f.downloadAppGoogle}
               </a>
             </div>
             <div className="mb-4">
@@ -37,9 +43,9 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center text-white hover:text-gray-300 transition-colors duration-200 font-medium text-sm"
-                aria-label="Download App from Apple App Store"
+                aria-label={f.downloadAppApple}
               >
-                Download App from Apple App Store
+                {f.downloadAppApple}
               </a>
             </div>
             <div className="flex items-center space-x-2 text-gray-300">
@@ -50,40 +56,40 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Special Pages - same as sbmain */}
+          {/* Special Pages */}
           <div>
             <h3 className="text-lg font-bold mb-4 text-white border-b border-white/20 pb-2">
-              Special Pages
+              {f.specialPages}
             </h3>
             <ul className="space-y-2">
-              <li><Link href="/" className="text-gray-300 hover:text-white transition-colors">Home</Link></li>
-              <li><Link href="/sound-buttons-unblocked" className="text-gray-300 hover:text-white transition-colors">Sound Buttons Unblocked</Link></li>
-              <li><Link href="/sound-buttons-unblocked-for-school" className="text-gray-300 hover:text-white transition-colors">Sound Buttons for School</Link></li>
-              <li><Link href="/soundboard" className="text-gray-300 hover:text-white transition-colors">Soundboard</Link></li>
-              <li><Link href="/text-to-sound" className="text-gray-300 hover:text-white transition-colors">Text To Sound</Link></li>
-              <li><Link href="/create-sound" className="text-gray-300 hover:text-white transition-colors">Create Sound</Link></li>
-              <li><Link href="/play-random" className="text-gray-300 hover:text-white transition-colors">Play Random Sound</Link></li>
-              <li><Link href="/new" className="text-gray-300 hover:text-white transition-colors">New Sound Buttons</Link></li>
-              <li><Link href="/trends" className="text-gray-300 hover:text-white transition-colors">Trending</Link></li>
-              <li><Link href="/reviews" className="text-gray-300 hover:text-white transition-colors">User Reviews</Link></li>
-              <li><Link href="/games" className="text-gray-300 hover:text-white transition-colors">Games</Link></li>
-              <li><Link href="/kids-soundboard" className="text-gray-300 hover:text-white transition-colors">Kids Soundboard</Link></li>
-              <li><Link href="/sound-effects" className="text-gray-300 hover:text-white transition-colors">Sound Effects</Link></li>
-              <li><Link href="/login" className="text-gray-300 hover:text-white transition-colors">Sign In</Link></li>
-              <li><Link href="/register" className="text-gray-300 hover:text-white transition-colors">Create Account</Link></li>
+              <li><Link href={`${localePrefix}/`} className="text-gray-300 hover:text-white transition-colors">{f.home}</Link></li>
+              <li><Link href={`${localePrefix}/sound-buttons-unblocked`} className="text-gray-300 hover:text-white transition-colors">{f.soundButtonsUnblocked}</Link></li>
+              <li><Link href={`${localePrefix}/sound-buttons-unblocked-for-school`} className="text-gray-300 hover:text-white transition-colors">{f.soundButtonsForSchool}</Link></li>
+              <li><Link href={`${localePrefix}/soundboard`} className="text-gray-300 hover:text-white transition-colors">{f.soundboard}</Link></li>
+              <li><Link href={`${localePrefix}/text-to-sound`} className="text-gray-300 hover:text-white transition-colors">{f.textToSound}</Link></li>
+              <li><Link href={`${localePrefix}/create-sound`} className="text-gray-300 hover:text-white transition-colors">{f.createSound}</Link></li>
+              <li><Link href={`${localePrefix}/play-random`} className="text-gray-300 hover:text-white transition-colors">{f.playRandom}</Link></li>
+              <li><Link href={`${localePrefix}/new`} className="text-gray-300 hover:text-white transition-colors">{f.newSoundButtons}</Link></li>
+              <li><Link href={`${localePrefix}/trends`} className="text-gray-300 hover:text-white transition-colors">{f.trending}</Link></li>
+              <li><Link href={`${localePrefix}/reviews`} className="text-gray-300 hover:text-white transition-colors">{f.userReviews}</Link></li>
+              <li><Link href={`${localePrefix}/games`} className="text-gray-300 hover:text-white transition-colors">{f.games}</Link></li>
+              <li><Link href={`${localePrefix}/kids-soundboard`} className="text-gray-300 hover:text-white transition-colors">{f.kidsSoundboard}</Link></li>
+              <li><Link href={`${localePrefix}/sound-effects`} className="text-gray-300 hover:text-white transition-colors">{f.soundEffects}</Link></li>
+              <li><Link href={`${localePrefix}/login`} className="text-gray-300 hover:text-white transition-colors">{f.signIn}</Link></li>
+              <li><Link href={`${localePrefix}/register`} className="text-gray-300 hover:text-white transition-colors">{f.createAccount}</Link></li>
             </ul>
           </div>
 
           {/* Categories */}
           <div>
             <h3 className="text-lg font-bold mb-4 text-white border-b border-white/20 pb-2">
-              Categories
+              {f.categories}
             </h3>
             <ul className="space-y-2">
               {FOOTER_CATEGORIES.map((category) => (
                 <li key={category.id}>
                   <Link
-                    href={`/categories/${category.slug}`}
+                    href={`${localePrefix}/categories/${category.slug}`}
                     className="text-gray-300 hover:text-white transition-colors"
                   >
                     {category.name}
@@ -91,8 +97,8 @@ export default function Footer() {
                 </li>
               ))}
               <li>
-                <Link href="/categories" className="text-white hover:text-gray-300 transition-colors font-medium">
-                  View All Categories
+                <Link href={`${localePrefix}/categories`} className="text-white hover:text-gray-300 transition-colors font-medium">
+                  {f.viewAllCategories}
                 </Link>
               </li>
             </ul>
@@ -101,21 +107,21 @@ export default function Footer() {
           {/* Support */}
           <div>
             <h3 className="text-lg font-bold mb-4 text-white border-b border-white/20 pb-2">
-              Support
+              {f.support}
             </h3>
             <ul className="space-y-2">
-              <li><Link href="/about-us" className="text-gray-300 hover:text-white transition-colors">About Us</Link></li>
-              <li><Link href="/contact-us" className="text-gray-300 hover:text-white transition-colors">Contact Us</Link></li>
-              <li><Link href="/privacy-policy" className="text-gray-300 hover:text-white transition-colors">Privacy Policy</Link></li>
-              <li><Link href="/terms-of-use" className="text-gray-300 hover:text-white transition-colors">Terms of Use</Link></li>
-              <li><Link href="/sitemap" className="text-gray-300 hover:text-white transition-colors">Site Map</Link></li>
+              <li><Link href={`${localePrefix}/about-us`} className="text-gray-300 hover:text-white transition-colors">{f.aboutUs}</Link></li>
+              <li><Link href={`${localePrefix}/contact-us`} className="text-gray-300 hover:text-white transition-colors">{f.contactUs}</Link></li>
+              <li><Link href={`${localePrefix}/privacy-policy`} className="text-gray-300 hover:text-white transition-colors">{f.privacyPolicy}</Link></li>
+              <li><Link href={`${localePrefix}/terms-of-use`} className="text-gray-300 hover:text-white transition-colors">{f.termsOfUse}</Link></li>
+              <li><Link href={`${localePrefix}/sitemap`} className="text-gray-300 hover:text-white transition-colors">{f.siteMap}</Link></li>
             </ul>
           </div>
 
           {/* Contact Information */}
           <div>
             <h3 className="text-lg font-bold mb-4 text-white border-b border-white/20 pb-2">
-              Contact Information
+              {f.contactInfo}
             </h3>
             <ul className="space-y-3">
               <li className="flex items-start space-x-2">

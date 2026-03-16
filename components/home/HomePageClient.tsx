@@ -1,12 +1,14 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useMemo } from "react"
 import SearchBar from "@/components/search-bar"
 import SoundList from "@/components/home/SoundList"
 import AutoLoadingNewSoundsSection from "@/components/home/AutoLoadingNewSoundsSection"
 import AboutContent from "@/components/home/AboutContent"
 import { apiClient } from "@/lib/api/client"
+import { getStrings } from "@/lib/i18n/strings"
 import type { Sound } from "@/lib/types/sound"
+import type { Locale } from "@/lib/i18n/strings"
 
 type ProcessedSound = Sound & { sound_file: string }
 
@@ -15,6 +17,7 @@ interface HomePageClientProps {
   initialNewSounds: ProcessedSound[]
   initialTrendingMeta: { current_page: number; last_page: number; total_items: number }
   isMobileDevice: boolean
+  locale?: Locale
 }
 
 export default function HomePageClient({
@@ -22,7 +25,10 @@ export default function HomePageClient({
   initialNewSounds,
   initialTrendingMeta,
   isMobileDevice,
+  locale = "en",
 }: HomePageClientProps) {
+  const home = useMemo(() => getStrings(locale).home, [locale])
+  const localePrefix = locale === "en" ? "" : `/${locale}`
   const [trendingSounds, setTrendingSounds] = useState(initialTrendingSounds)
   const [currentTrendingPage, setCurrentTrendingPage] = useState(
     initialTrendingMeta?.current_page || 1
@@ -58,18 +64,14 @@ export default function HomePageClient({
         <div className="hero-container-lcp">
           <div className="hero-inner-lcp">
             <h1 className="hero-title-lcp">
-              Sound Buttons + Meme Soundboard: 100,000+ Unblocked Instant Play
-              Effect Buttons
+              {home.heroTitle}
             </h1>
             <p className="hero-text-lcp">
-              Explore a huge collection of hilarious sound buttons, meme
-              soundboard, sound effects, and unblocked soundboards all free!
-              Create custom sound buttons from your smartphone, desktop,
-              Chromebook, or tablet.
+              {home.heroDescription}
             </p>
             <div className="flex justify-center mt-2 px-2">
               <div className="flex justify-center max-w-3xl md:max-w-4xl lg:max-w-5xl w-full shadow-lg">
-                <SearchBar placeholder="Search Sound buttons..." />
+                <SearchBar placeholder={home.searchPlaceholder} />
               </div>
             </div>
           </div>
@@ -81,11 +83,11 @@ export default function HomePageClient({
           <div className="w-full max-w-7xl mx-auto pt-2 pb-0 px-2 sm:px-4 lg:px-6">
             <div className="trending-sounds-container">
               <SoundList
-                title="Trending Meme Soundboard"
+                title={home.trendingTitle}
                 sounds={trendingSounds}
                 initialCount={isMobileDevice ? 16 : 44}
                 loadMoreCount={isMobileDevice ? 8 : 22}
-                viewAllLink="/trends"
+                viewAllLink={`${localePrefix}/trends`}
                 onLoadMore={loadMoreTrending}
                 hasMoreSounds={currentTrendingPage < totalTrendingPages}
                 maxLines={4}
@@ -100,12 +102,14 @@ export default function HomePageClient({
               <AutoLoadingNewSoundsSection
                 initialSounds={initialNewSounds}
                 isMobileDevice={isMobileDevice}
+                title={home.newTitle}
+                locale={locale}
               />
             </div>
           </div>
         </main>
 
-        <AboutContent />
+        <AboutContent locale={locale} />
       </div>
     </>
   )

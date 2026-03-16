@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
 import Link from "next/link"
 import { Heart, Download, Share2, Code, Eye } from "lucide-react"
 import { Heart as HeartFilled } from "lucide-react"
@@ -14,6 +14,8 @@ import { useAuth } from "@/lib/auth/auth-context"
 import { apiClient } from "@/lib/api/client"
 import { getSoundDetailPath } from "@/lib/utils/slug"
 import { getDisplaySoundName, getSoundFaqSuffix } from "@/lib/utils"
+import { getStrings } from "@/lib/i18n/strings"
+import type { Locale } from "@/lib/i18n/strings"
 
 interface SoundDetailClientProps {
   sound: Sound
@@ -25,8 +27,9 @@ interface SoundDetailClientProps {
   categoryHref?: string
   /** Override share/detail path (e.g. /sound-effects/slug/id) */
   shareUrl?: string
-  /** Custom detail path for related sounds */
-  getRelatedDetailPath?: (sound: Sound) => string
+  /** Locale path prefix for related sound links (e.g. "" for en, "/es" for Spanish). Do not pass functions from Server Components. */
+  localePrefix?: string
+  locale?: Locale
 }
 
 function parseViews(value: unknown): number {
@@ -51,7 +54,8 @@ export default function SoundDetailClient({
   categoryName,
   categoryHref,
   shareUrl: shareUrlProp,
-  getRelatedDetailPath,
+  localePrefix = "",
+  locale: localeProp = "en",
 }: SoundDetailClientProps) {
   const { token } = useAuth()
   const [isFavorited, setIsFavorited] = useState(false)
@@ -59,10 +63,19 @@ export default function SoundDetailClient({
   const [showShareModal, setShowShareModal] = useState(false)
   const [showEmbedModal, setShowEmbedModal] = useState(false)
 
+  const sd = useMemo(() => getStrings(localeProp).soundDetail, [localeProp])
+  const nav = useMemo(() => getStrings(localeProp).nav, [localeProp])
+  const prefix = localePrefix !== undefined && localePrefix !== "" ? localePrefix : (localeProp === "en" ? "" : `/${localeProp}`)
+
+  const getDetailPathForRelated = useCallback(
+    (s: Sound) => prefix + getSoundDetailPath(s.name, s.id),
+    [prefix]
+  )
+
   const soundDetailPath = shareUrlProp ? (shareUrlProp.startsWith("http") ? shareUrlProp.replace(/^https?:\/\/[^/]+/, "") : shareUrlProp) : getSoundDetailPath(sound.name, sound.id)
   const shareUrl = shareUrlProp ?? (typeof window !== "undefined" ? `${window.location.origin}${soundDetailPath}` : `${SITE.baseUrl}${soundDetailPath}`)
   const embedPath = `/embed${getSoundDetailPath(sound.name, sound.id)}`
-  const categoryLink = categoryHref ?? `/categories/${categorySlug}`
+  const categoryLink = categoryHref ?? `${prefix}/categories/${categorySlug}`
 
   useEffect(() => {
     if (token) {
@@ -79,7 +92,7 @@ export default function SoundDetailClient({
 
   const handleFavorite = async () => {
     if (!token) {
-      window.location.href = `/login?redirect=${encodeURIComponent(soundDetailPath)}`
+      window.location.href = `${prefix || ""}/login?redirect=${encodeURIComponent(soundDetailPath)}`
       return
     }
     try {
@@ -113,14 +126,14 @@ export default function SoundDetailClient({
           <nav aria-label="Breadcrumb" className="mb-3 flex justify-center">
             <ol className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm text-slate-500 dark:text-slate-400">
               <li>
-                <Link href="/" className="transition-colors hover:text-slate-900 dark:hover:text-white">
-                  Home
+                <Link href={prefix || "/"} className="transition-colors hover:text-slate-900 dark:hover:text-white">
+                  {nav.home}
                 </Link>
               </li>
               <li aria-hidden="true">/</li>
               <li>
-                <Link href="/new" className="transition-colors hover:text-slate-900 dark:hover:text-white">
-                  Sounds
+                <Link href={`${prefix}/new`} className="transition-colors hover:text-slate-900 dark:hover:text-white">
+                  {sd.newSounds}
                 </Link>
               </li>
               <li aria-hidden="true">/</li>
@@ -183,7 +196,7 @@ export default function SoundDetailClient({
                     className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 text-sm font-medium text-white transition-colors hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
                   >
                     <Download className="h-4 w-4" />
-                    Download
+                    {sd.download}
                   </a>
                   <Button
                     type="button"
@@ -191,7 +204,7 @@ export default function SoundDetailClient({
                     className="h-10 gap-2 rounded-lg bg-slate-100 px-4 text-sm font-medium text-slate-800 transition-colors hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
                   >
                     <Heart className="h-4 w-4" fill={isFavorited ? "currentColor" : "none"} />
-                    {isFavorited ? "Saved" : "Favorite"}
+                    {isFavorited ? sd.removeFromFavorites : sd.addToFavorites}
                   </Button>
                   <Button
                     type="button"
@@ -199,7 +212,7 @@ export default function SoundDetailClient({
                     className="h-10 gap-2 rounded-lg bg-slate-100 px-4 text-sm font-medium text-slate-800 transition-colors hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
                   >
                     <Share2 className="h-4 w-4" />
-                    Share
+                    {sd.share}
                   </Button>
                   <Button
                     type="button"
@@ -217,9 +230,9 @@ export default function SoundDetailClient({
             {relatedSounds.length > 0 && (
               <div className="mt-6 w-full">
                 <SoundList
-                  title="You Might Like"
+                  title={sd.youMightLike}
                   sounds={relatedSounds}
-                  viewAllLink={categoryHref ?? "/new"}
+                  viewAllLink={categoryHref ?? `${prefix}/new`}
                   useCompactView={true}
                   maxCols={8}
                   showLoadMore={false}
@@ -227,7 +240,7 @@ export default function SoundDetailClient({
                   initialCount={isMobileDevice ? 16 : 40}
                   maxLines={isMobileDevice ? 4 : 5}
                   isMobileDevice={isMobileDevice}
-                  getDetailPath={getRelatedDetailPath}
+                  getDetailPath={getDetailPathForRelated}
                 />
               </div>
             )}
@@ -235,7 +248,7 @@ export default function SoundDetailClient({
             {/* SEO content */}
             <div className="mt-6 space-y-4">
               <section className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800/90 sm:p-5">
-                <h2 className="mb-2 text-base font-semibold text-slate-900 dark:text-white">About This Sound</h2>
+                <h2 className="mb-2 text-base font-semibold text-slate-900 dark:text-white">{sd.aboutThisSound}</h2>
                 <p className="mb-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
                   The <strong className="text-slate-800 dark:text-slate-200">{getDisplaySoundName(sound.name)}</strong>{getSoundFaqSuffix(sound.name)} is a
                   popular audio clip perfect for your soundboard, content creation, and entertainment. This high-quality
@@ -250,29 +263,29 @@ export default function SoundDetailClient({
               </section>
 
               <section className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800/90 sm:p-5">
-                <h2 className="mb-2 text-base font-semibold text-slate-900 dark:text-white">How to Use This Sound</h2>
+                <h2 className="mb-2 text-base font-semibold text-slate-900 dark:text-white">{sd.howToUse}</h2>
                 <ol className="list-inside list-decimal space-y-1.5 text-sm text-slate-600 dark:text-slate-300">
                   <li>
-                    <strong className="text-slate-800 dark:text-slate-200">Play instantly:</strong> Click the sound
+                    <strong className="text-slate-800 dark:text-slate-200">{sd.playInstantly}</strong> Click the sound
                     button above to play the {getDisplaySoundName(sound.name)} sound immediately in your browser.
                   </li>
                   <li>
-                    <strong className="text-slate-800 dark:text-slate-200">Download for free:</strong> Click the
-                    &quot;Download&quot; button to save this sound to your device for offline use.
+                    <strong className="text-slate-800 dark:text-slate-200">{sd.downloadForFree}</strong> Click the
+                    &quot;{sd.download}&quot; button to save this sound to your device for offline use.
                   </li>
                   <li>
-                    <strong className="text-slate-800 dark:text-slate-200">Use in content:</strong> Perfect for memes,
+                    <strong className="text-slate-800 dark:text-slate-200">{sd.useInContent}</strong> Perfect for memes,
                     TikTok videos, YouTube content, Discord servers, streaming, and more.
                   </li>
                   <li>
-                    <strong className="text-slate-800 dark:text-slate-200">Share with friends:</strong> Use the share
+                    <strong className="text-slate-800 dark:text-slate-200">{sd.shareWithFriends}</strong> Use the share
                     button to send this sound to others or embed it on your website.
                   </li>
                 </ol>
               </section>
 
               <section className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800/90 sm:p-5">
-                <h2 className="mb-2 text-base font-semibold text-slate-900 dark:text-white">Popular Uses</h2>
+                <h2 className="mb-2 text-base font-semibold text-slate-900 dark:text-white">{sd.popularUses}</h2>
                 <ul className="list-inside list-disc space-y-1 text-sm text-slate-600 dark:text-slate-300">
                   <li>Meme creation and viral content</li>
                   <li>TikTok videos and social media posts</li>
@@ -285,31 +298,31 @@ export default function SoundDetailClient({
               </section>
 
               <section className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800/90 sm:p-5">
-                <h2 className="mb-3 text-base font-semibold text-slate-900 dark:text-white">Explore More Sounds</h2>
+                <h2 className="mb-3 text-base font-semibold text-slate-900 dark:text-white">{sd.exploreMoreSounds}</h2>
                 <div className="flex flex-wrap gap-2">
                   <Link
                     href={categoryLink}
                     className="inline-flex h-9 items-center rounded-lg bg-slate-900 px-3 text-sm font-medium text-white transition-colors hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
                   >
-                    More {categoryName} Sounds
+                    {sd.moreCategorySounds.replace("{category}", categoryName)}
                   </Link>
                   <Link
-                    href="/trends"
+                    href={`${prefix}/trends`}
                     className="inline-flex h-9 items-center rounded-lg bg-slate-100 px-3 text-sm font-medium text-slate-800 transition-colors hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
                   >
-                    Trending
+                    {sd.trending}
                   </Link>
                   <Link
-                    href="/new"
+                    href={`${prefix}/new`}
                     className="inline-flex h-9 items-center rounded-lg bg-slate-100 px-3 text-sm font-medium text-slate-800 transition-colors hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
                   >
-                    New Sounds
+                    {sd.newSounds}
                   </Link>
                   <Link
-                    href="/categories"
+                    href={`${prefix}/categories`}
                     className="inline-flex h-9 items-center rounded-lg bg-slate-100 px-3 text-sm font-medium text-slate-800 transition-colors hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
                   >
-                    Soundboard
+                    {sd.soundboard}
                   </Link>
                 </div>
               </section>

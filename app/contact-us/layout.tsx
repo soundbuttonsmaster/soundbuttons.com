@@ -1,6 +1,11 @@
 import type { Metadata } from "next"
 import { SITE } from "@/lib/constants/site"
-import { SITE_NAV_LINKS } from "@/lib/constants/site-nav-links"
+import {
+  OLD_POLICY_NAV_ELEMENTS,
+  OLD_WEBSITE_SCHEMA,
+  OLD_ORGANIZATION_SCHEMA,
+  OLD_NAV_GRAPH_SCHEMA,
+} from "@/lib/constants/policy-page-schema"
 
 const BASE = SITE.baseUrl
 
@@ -28,7 +33,7 @@ export const metadata: Metadata = {
     description:
       "Contact the SoundButtons.com team with your questions, feedback, or support requests. We're here to help! Get in touch for technical support, feature requests, or general inquiries.",
     url: `${BASE}/contact-us`,
-    siteName: "SoundButtons.com",
+    siteName: "Sound Buttons",
     images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: "Contact Us - SoundButtons.com" }],
     locale: "en_US",
     alternateLocale: ["en_GB"],
@@ -59,13 +64,6 @@ const contactPageSchema = {
   },
 }
 
-const siteNavSchema = SITE_NAV_LINKS.map((link) => ({
-  "@context": "https://schema.org",
-  "@type": "SiteNavigationElement",
-  name: link.name,
-  url: link.url,
-}))
-
 export default function ContactUsLayout({
   children,
 }: {
@@ -73,17 +71,29 @@ export default function ContactUsLayout({
 }) {
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(contactPageSchema) }}
-      />
-      {siteNavSchema.map((schema, i) => (
+      {OLD_POLICY_NAV_ELEMENTS.map((schema, i) => (
         <script
           key={i}
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
         />
       ))}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(contactPageSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(OLD_WEBSITE_SCHEMA) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(OLD_ORGANIZATION_SCHEMA) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(OLD_NAV_GRAPH_SCHEMA) }}
+      />
       {children}
     </>
   )

@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     description:
       "Play the fun Whack-a-Mole game with amazing sound effects! Hit the moles as they pop up and score points. Perfect for kids and families!",
     url: `${BASE}/whack-a-mole`,
-    siteName: "SoundButtons.com",
+    siteName: "Sound Buttons",
     images: [{ url: `${BASE}/og.png`, width: 512, height: 512, alt: "Whack-a-Mole" }],
     locale: "en_US",
   },

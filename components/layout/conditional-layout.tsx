@@ -6,7 +6,7 @@ import Footer from "./footer"
 
 export default function ConditionalLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-  const isEmbed = pathname?.startsWith("/embed")
+  const isEmbed = pathname?.startsWith("/embed") || pathname?.startsWith("/sound-effects/embed")
 
   if (isEmbed) {
     return <div className="min-h-0">{children}</div>

@@ -129,6 +129,7 @@ const createAudio = (audioUrl: string): HTMLAudioElement => {
       CACHE_ACCESS_TIMES.delete(audioUrl);
     } else {
       CACHE_ACCESS_TIMES.set(audioUrl, Date.now());
+      cached.loop = false;
       if (cached.currentTime > 0) cached.currentTime = 0;
       if (!cached.paused) {
         cached.pause();
@@ -140,6 +141,7 @@ const createAudio = (audioUrl: string): HTMLAudioElement => {
 
   cleanupAudioCache(maxCache);
   const audio = new Audio(audioUrl);
+  audio.loop = false;
   audio.preload = 'auto';
   audio.crossOrigin = 'anonymous';
   audio.setAttribute('playsinline', 'true');
@@ -397,16 +399,21 @@ const CompactSoundButton: React.FC<CompactSoundButtonProps> = ({ sound, isAboveT
           setIsLoading(false);
           setIsPressed(false);
           if (loadingTimeoutRef.current) clearTimeout(loadingTimeoutRef.current);
+          const monitorStartTime = Date.now();
+          const MONITOR_RESUME_MS = 800;
           const monitorInterval = setInterval(() => {
-            if (audioElement._isPlayingAttempt && audio.paused && !audio.ended) {
-              audio.play().catch(() => { });
-            }
             if (audio.ended) {
               setIsPressed(false);
               setIsPlaying(false);
               setIsLoading(false);
               audioElement._isPlayingAttempt = false;
               clearInterval(monitorInterval);
+              return;
+            }
+            const elapsed = Date.now() - monitorStartTime;
+            if (elapsed > MONITOR_RESUME_MS) return;
+            if (audioElement._isPlayingAttempt && audio.paused && !audio.ended) {
+              audio.play().catch(() => { });
             }
           }, 100);
           setTimeout(() => {

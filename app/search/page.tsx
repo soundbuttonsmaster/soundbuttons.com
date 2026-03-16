@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     description:
       "Search our vast collection of sound buttons, sound effects, meme sounds, and audio clips. Find the perfect sound for your videos, memes, streams, and more.",
     url: `${BASE}/search`,
-    siteName: "SoundButtons.com",
+    siteName: "Sound Buttons",
     images: [
       {
         url: `${BASE}/og.png`,

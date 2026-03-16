@@ -1,0 +1,101 @@
+import type { Metadata } from "next"
+import Link from "next/link"
+import { SITE } from "@/lib/constants/site"
+import { SITE_NAV_LINKS } from "@/lib/constants/site-nav-links"
+import PageHero from "@/components/layout/page-hero"
+import { Rss } from "lucide-react"
+
+const BASE = SITE.baseUrl
+
+export const metadata: Metadata = {
+  title: { absolute: "RSS Feeds - Subscribe to Sound Buttons Updates | SoundButtons.com" },
+  description:
+    "Subscribe to SoundButtons.com RSS feeds for new sound buttons, trending sounds, and site updates.",
+  robots: { index: true, follow: true },
+  alternates: { canonical: `${BASE}/rss-feeds` },
+  openGraph: {
+    type: "website",
+    title: "RSS Feeds - Subscribe to Sound Buttons Updates | SoundButtons.com",
+    url: `${BASE}/rss-feeds`,
+    siteName: "Sound Buttons",
+  },
+  twitter: { card: "summary", title: "RSS Feeds | SoundButtons.com" },
+}
+
+const RSS_FEEDS = [
+  { name: "New sounds", description: "Latest sound buttons added to the site.", path: "/api/rss/new-sounds", url: `${BASE}/api/rss/new-sounds` },
+]
+
+const webPageSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: "RSS Feeds - SoundButtons.com",
+  description: "RSS feeds for new sounds and updates.",
+  url: `${BASE}/rss-feeds`,
+}
+const navSchema = SITE_NAV_LINKS.map((link) => ({
+  "@context": "https://schema.org",
+  "@type": "SiteNavigationElement",
+  name: link.name,
+  url: link.url,
+}))
+
+export default function RssFeedsPage() {
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }}
+      />
+      {navSchema.map((s, i) => (
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(s) }}
+        />
+      ))}
+      <PageHero
+        title="RSS Feeds"
+        description="Subscribe to our feeds for new sound buttons and updates."
+      />
+      <div className="py-8 bg-background">
+        <div className="w-full max-w-2xl mx-auto px-4">
+          <div className="bg-card border border-border rounded-2xl p-8 space-y-6">
+            <p className="text-muted-foreground text-sm">
+              Add these feeds to your RSS reader to get notified when new sounds are added.
+            </p>
+            <ul className="space-y-4">
+              {RSS_FEEDS.map((feed) => (
+                <li
+                  key={feed.path}
+                  className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-4 rounded-lg border border-border bg-muted/30"
+                >
+                  <div className="flex items-start gap-3">
+                    <Rss className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-medium text-foreground">{feed.name}</p>
+                      <p className="text-sm text-muted-foreground">{feed.description}</p>
+                    </div>
+                  </div>
+                  <a
+                    href={feed.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-primary hover:underline break-all shrink-0"
+                  >
+                    {feed.url}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <p className="text-sm text-muted-foreground">
+              <Link href="/sitemap" className="text-primary hover:underline">View sitemap</Link>
+              {" · "}
+              <Link href="/new" className="text-primary hover:underline">New sounds</Link>
+            </p>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
