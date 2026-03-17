@@ -1,9 +1,8 @@
 import type { Metadata } from "next"
-import { redirect, notFound } from "next/navigation"
+import { redirect } from "next/navigation"
 import { headers } from "next/headers"
 import { SITE } from "@/lib/constants/site"
 import { apiClient } from "@/lib/api/client"
-import { generateSlug } from "@/lib/utils/slug"
 import SearchResultsClient from "./SearchResultsClient"
 
 export const revalidate = 60
@@ -41,8 +40,9 @@ export async function generateMetadata({
     // ignore
   }
 
-  const title = `${toTitleCase(searchQuery)} Soundboard: Play Instant Sound Effect Button`
-  const description = `Discover ${totalItems > 0 ? totalItems : ""} ${searchQuery} soundboards for your meme sound buttons! Perfect for unblocked sound buttons, sound effects, and creating viral content.`
+  const name = toTitleCase(searchQuery)
+  const title = `${name} Soundboard: Play Instant Sound Effect Button`
+  const description = `Play and download ${searchQuery} sound buttons for free! Instant play, high-quality MP3 downloads. Perfect for memes, TikTok, Discord, and content creation. No registration required on SoundButtons.com.`
   const keywords = `${searchQuery}, ${searchQuery} sound buttons, ${searchQuery} sound effects, ${searchQuery} meme, ${searchQuery} audio, ${searchQuery} download, sound buttons, sound effects, meme soundboard`
   const canonicalUrl = `${BASE}/search/${query}`
 
@@ -50,6 +50,9 @@ export async function generateMetadata({
     title: { absolute: title },
     description,
     keywords,
+    authors: [{ name: "SoundButtons.com" }],
+    creator: "SoundButtons.com",
+    publisher: "SoundButtons.com",
     robots: {
       index: true,
       follow: true,
@@ -58,8 +61,10 @@ export async function generateMetadata({
     alternates: {
       canonical: canonicalUrl,
       languages: {
-        en: canonicalUrl,
+        en: `${BASE}/search/${query}`,
         fr: `${BASE}/fr/search/${query}`,
+        pt: `${BASE}/pt/search/${query}`,
+        es: `${BASE}/es/search/${query}`,
         "x-default": canonicalUrl,
       },
     },
@@ -71,15 +76,15 @@ export async function generateMetadata({
       siteName: "Sound Buttons",
       images: [
         {
-          url: `${BASE}/og.png`,
+          url: `${BASE}/search/${query}/opengraph-image`,
           width: 1200,
           height: 630,
           type: "image/png",
-          alt: `${toTitleCase(searchQuery)} Sound Buttons - SoundButtons.com`,
+          alt: `${name} Sound Buttons - SoundButtons.com`,
         },
       ],
       locale: "en_US",
-      alternateLocale: ["fr_FR"],
+      alternateLocale: ["fr_FR", "pt_BR", "es_ES"],
     },
     twitter: {
       card: "summary_large_image",
@@ -87,7 +92,7 @@ export async function generateMetadata({
       creator: "@soundbuttons",
       title,
       description,
-      images: [`${BASE}/og.png`],
+      images: [`${BASE}/search/${query}/opengraph-image`],
     },
   }
 }
@@ -126,58 +131,28 @@ export default async function SearchResultsPage({
     // ignore
   }
 
-  const canonicalUrl = `${BASE}/search/${querySlug}`
-
-  const searchDetailTitle = `${toTitleCase(sanitizedQuery)} Soundboard: Play Instant Sound Effect Button`
-  const searchDetailDescription = `Discover ${sanitizedQuery} soundboards for your meme sound buttons! Perfect for unblocked sound buttons, sound effects, and creating viral content.`
-
-  const searchDetailSchema = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "SearchResultsPage",
-        name: searchDetailTitle,
-        description: searchDetailDescription,
-        url: canonicalUrl,
-        mainEntity: {
-          "@type": "ItemList",
-          name: searchDetailTitle,
-          numberOfItems: meta.total_items,
-          itemListElement: initialSounds.slice(0, 10).map((sound, i) => ({
-            "@type": "ListItem",
-            position: i + 1,
-            item: {
-              "@type": "AudioObject",
-              name: sound.name,
-              description: `${sound.name} sound button - ${sanitizedQuery} search result`,
-              url: `${BASE}/${generateSlug(sound.name)}/${sound.id}`,
-              contentUrl: sound.sound_file,
-              encodingFormat: "audio/mpeg",
-            },
-          })),
-        },
-        publisher: {
-          "@type": "Organization",
-          name: "SoundButtons.com",
-          logo: { "@type": "ImageObject", url: `${BASE}/og.png` },
-        },
-      },
-      {
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Home", item: `${BASE}/` },
-          { "@type": "ListItem", position: 2, name: "Search", item: `${BASE}/search` },
-          { "@type": "ListItem", position: 3, name: `${toTitleCase(sanitizedQuery)} Sound Buttons`, item: canonicalUrl },
-        ],
-      },
-    ],
-  }
+  const name = toTitleCase(sanitizedQuery)
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(searchDetailSchema) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: `${BASE}/` },
+              { "@type": "ListItem", position: 2, name: "Search", item: `${BASE}/search` },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: name,
+                item: `${BASE}/search/${querySlug}`,
+              },
+            ],
+          }),
+        }}
       />
       <SearchResultsClient
         searchQuery={sanitizedQuery}

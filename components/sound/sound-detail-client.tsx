@@ -15,6 +15,7 @@ import { apiClient } from "@/lib/api/client"
 import { getSoundDetailPath } from "@/lib/utils/slug"
 import { getDisplaySoundName, getSoundFaqSuffix } from "@/lib/utils"
 import { getStrings } from "@/lib/i18n/strings"
+import { getLocalizedHref } from "@/lib/i18n/paths"
 import type { Locale } from "@/lib/i18n/strings"
 
 interface SoundDetailClientProps {
@@ -75,7 +76,7 @@ export default function SoundDetailClient({
   const soundDetailPath = shareUrlProp ? (shareUrlProp.startsWith("http") ? shareUrlProp.replace(/^https?:\/\/[^/]+/, "") : shareUrlProp) : getSoundDetailPath(sound.name, sound.id)
   const shareUrl = shareUrlProp ?? (typeof window !== "undefined" ? `${window.location.origin}${soundDetailPath}` : `${SITE.baseUrl}${soundDetailPath}`)
   const embedPath = `/embed${getSoundDetailPath(sound.name, sound.id)}`
-  const categoryLink = categoryHref ?? `${prefix}/categories/${categorySlug}`
+  const categoryLink = categoryHref ?? getLocalizedHref(`/categories/${categorySlug}`, localeProp)
 
   useEffect(() => {
     if (token) {
@@ -92,7 +93,8 @@ export default function SoundDetailClient({
 
   const handleFavorite = async () => {
     if (!token) {
-      window.location.href = `${prefix || ""}/login?redirect=${encodeURIComponent(soundDetailPath)}`
+      const loginPath = getLocalizedHref("/login", localeProp)
+      window.location.href = `${loginPath}?redirect=${encodeURIComponent(soundDetailPath)}`
       return
     }
     try {

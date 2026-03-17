@@ -4,6 +4,7 @@ import "./globals.css";
 import { SITE } from "@/lib/constants/site";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { AuthProvider } from "@/lib/auth/auth-context";
+import { PwaProvider } from "@/components/pwa/PwaProvider";
 import ConditionalLayout from "@/components/layout/conditional-layout";
 
 const geistSans = Geist({
@@ -24,9 +25,23 @@ export const metadata: Metadata = {
   description:
     "Free sound effects and soundboard. Play, share, and download sound buttons.",
   metadataBase: new URL(SITE.baseUrl),
+  icons: {
+    icon: [
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-48x48.png", sizes: "48x48", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
+  },
+  themeColor: "#e53935",
+  appleWebApp: {
+    capable: true,
+    title: "SoundButtons",
+    statusBarStyle: "black-translucent",
   },
 };
 
@@ -63,6 +78,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
+            <PwaProvider />
             <ConditionalLayout>{children}</ConditionalLayout>
           </AuthProvider>
         </ThemeProvider>

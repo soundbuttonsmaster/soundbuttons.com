@@ -76,7 +76,7 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  themeColor: "#2563eb",
+  themeColor: "#e53935",
   formatDetection: { telephone: false },
   appleWebApp: {
     capable: true,
@@ -93,7 +93,7 @@ export const metadata: Metadata = {
     "MobileOptimized": "width",
     "HandheldFriendly": "true",
     "mobile-web-app-capable": "yes",
-    "msapplication-TileColor": "#2563eb",
+    "msapplication-TileColor": "#e53935",
     "msapplication-config": "/browserconfig.xml",
   },
 }

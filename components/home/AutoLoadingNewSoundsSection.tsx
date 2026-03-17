@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation"
 import { ChevronRight } from "lucide-react"
 import SoundButton from "@/components/sound/sound-button"
 import { apiClient } from "@/lib/api/client"
+import { getSoundDetailPath } from "@/lib/utils/slug"
 import { getStrings } from "@/lib/i18n/strings"
 import type { Sound } from "@/lib/types/sound"
 import type { Locale } from "@/lib/i18n/strings"
@@ -333,10 +334,10 @@ const AutoLoadingNewSoundsSection = forwardRef<
             disabled={sounds.length === 0}
           >
             <span className="hidden sm:inline">
-              {isAutoPlaying ? "Stop Auto" : "Auto Play"}
+              {isAutoPlaying ? home.stopAuto : home.autoPlay}
             </span>
             <span className="sm:hidden">
-              {isAutoPlaying ? "Stop" : "Auto"}
+              {isAutoPlaying ? home.stopShort : home.autoShort}
             </span>
           </button>
           <button
@@ -346,10 +347,10 @@ const AutoLoadingNewSoundsSection = forwardRef<
             disabled={sounds.length === 0}
           >
             <span className="hidden sm:inline">
-              {isRandomPlaying ? "Stop Random" : "Random Play"}
+              {isRandomPlaying ? home.stopRandom : home.randomPlay}
             </span>
             <span className="sm:hidden">
-              {isRandomPlaying ? "Stop" : "Random"}
+              {isRandomPlaying ? home.stopShort : home.randomShort}
             </span>
           </button>
           <button
@@ -358,7 +359,7 @@ const AutoLoadingNewSoundsSection = forwardRef<
             onClick={() => router.push(newPath)}
           >
             <span className="hidden sm:inline">{viewAllLabel}</span>
-            <span className="sm:hidden">{viewAllLabel.split(" ")[0]}</span>
+            <span className="sm:hidden">{home.view}</span>
             <span className="btn-arrow-dot"><ChevronRight className="w-3 h-3" strokeWidth={3} /></span>
           </button>
         </div>
@@ -395,6 +396,11 @@ const AutoLoadingNewSoundsSection = forwardRef<
                                   index < (isMobileDevice ? 16 : 44)
                                 }
                                 isMobileDevice={isMobileDevice}
+                                detailPath={
+                                  locale === "en"
+                                    ? undefined
+                                    : `/${locale}${getSoundDetailPath(sound.name ?? "", sound.id)}`
+                                }
                               />
                             )
                           })}
@@ -436,6 +442,11 @@ const AutoLoadingNewSoundsSection = forwardRef<
                                   index < (isMobileDevice ? 16 : 44)
                                 }
                                 isMobileDevice={isMobileDevice}
+                                detailPath={
+                                  locale === "en"
+                                    ? undefined
+                                    : `/${locale}${getSoundDetailPath(sound.name ?? "", sound.id)}`
+                                }
                               />
                             )
                           })}

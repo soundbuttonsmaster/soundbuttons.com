@@ -1,10 +1,51 @@
+import type { Metadata } from "next"
 import { headers } from "next/headers"
 import { apiClient } from "@/lib/api/client"
 import HomePageClient from "@/components/home/HomePageClient"
-import { buildLocaleMetadata, getLocaleBase } from "@/lib/i18n/metadata"
+import { SITE, getLocaleBase } from "@/lib/constants/site"
 
 export const revalidate = 60
-export const metadata = buildLocaleMetadata("pt", "home")
+
+const BASE = getLocaleBase("pt")
+
+export const metadata: Metadata = {
+  title: { absolute: "Myinstants: Botões de som com mesa de som de memes" },
+  description:
+    "Toque milhares de botões de som com os melhores sons, botão de meme, pegadinhas, efeitos sonoros e áudio de alta qualidade em um poderoso soundboard desbloqueado.",
+  authors: [{ name: "SoundButtons.com" }],
+  creator: "SoundButtons.com",
+  publisher: "SoundButtons.com",
+  alternates: {
+    canonical: BASE,
+    languages: {
+      en: SITE.baseUrl,
+      es: getLocaleBase("es"),
+      pt: BASE,
+      fr: getLocaleBase("fr"),
+      "x-default": SITE.baseUrl,
+    },
+  },
+  openGraph: {
+    type: "website",
+    title: "Myinstants: Botões de som com mesa de som de memes",
+    description:
+      "Toque milhares de botões de som com os melhores sons, botão de meme, pegadinhas, efeitos sonoros e áudio de alta qualidade em um poderoso soundboard desbloqueado.",
+    url: BASE,
+    siteName: "Sound Buttons",
+    images: [{ url: `${BASE}/opengraph-image`, width: 1200, height: 630, type: "image/png" as const, alt: "Botões de Som", secureUrl: `${BASE}/opengraph-image` }],
+    locale: "pt_BR",
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@soundbuttons",
+    creator: "@soundbuttons",
+    title: "Myinstants: Botões de som com mesa de som de memes",
+    description:
+      "Toque milhares de botões de som com os melhores sons, botão de meme, pegadinhas, efeitos sonoros e áudio de alta qualidade em um poderoso soundboard desbloqueado.",
+    images: [`${BASE}/opengraph-image`],
+  },
+  robots: { index: true, follow: true },
+}
 
 export default async function PtHomePage() {
   const headersList = await headers()
@@ -33,24 +74,18 @@ export default async function PtHomePage() {
     // ignore
   }
 
-  const base = getLocaleBase("pt")
-  const webSiteSchema = {
+  const breadcrumbSchema = {
     "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: "SoundButtons.com",
-    url: `${base}/`,
-    inLanguage: "pt",
-    description: "Sound buttons - Meme soundboard e efeitos sonoros.",
-    potentialAction: {
-      "@type": "SearchAction",
-      target: `${base}/search/{search_term_string}`,
-      "query-input": "required name=search_term_string",
-    },
+    "@type": "BreadcrumbList",
+    itemListElement: [{ "@type": "ListItem", position: 1, name: "soundboard", item: BASE }],
   }
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteSchema) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <HomePageClient
         initialTrendingSounds={trendingSounds}
         initialNewSounds={newSounds}

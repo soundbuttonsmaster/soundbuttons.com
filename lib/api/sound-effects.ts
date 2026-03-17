@@ -54,6 +54,19 @@ export const soundEffectsApi = {
     }
   },
 
+  async getByTag(tag: string): Promise<SoundEffect[]> {
+    try {
+      const result = await fetchJson<{ status?: boolean; data?: SoundEffect[] }>(
+        `${API_BASE_URL}/soundeffects/tag/${encodeURIComponent(tag)}`
+      )
+      if (result?.status && Array.isArray(result.data)) return result.data
+      if (Array.isArray(result.data)) return result.data
+      return []
+    } catch {
+      return []
+    }
+  },
+
   async getRelated(id: number, tags: string, limit = 30): Promise<SoundEffect[]> {
     try {
       const all = await this.getAll()

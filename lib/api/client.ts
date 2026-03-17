@@ -254,56 +254,73 @@ export const apiClient = {
     }
   },
 
-  /** Login - returns token and user for auth context */
+  /** Login - POST /login/user (same as sbmain). email field accepts username or email. */
   async login(
-    username: string,
+    usernameOrEmail: string,
     password: string
   ): Promise<{ success: true; token: string; user: { id: number; username: string; email: string; full_name?: string } } | { success: false; message: string }> {
     try {
-      const res = await fetch(`${API_BASE_URL}/auth/login`, {
+      const res = await fetch(`${API_BASE_URL}/login/user`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email: usernameOrEmail, password }),
       })
       const data = (await res.json().catch(() => ({}))) as {
+        id?: number
         token?: string
-        user?: { id: number; username: string; email: string; full_name?: string }
+        user?: { username: string; is_admin?: boolean }
+        error?: string
         message?: string
-        detail?: string
       }
       if (res.ok && data.token && data.user) {
-        return { success: true, token: data.token, user: data.user }
+        const user = {
+          id: data.id ?? 0,
+          username: data.user.username,
+          email: usernameOrEmail,
+          full_name: undefined as string | undefined,
+        }
+        return { success: true, token: data.token, user }
       }
-      return { success: false, message: data.message || data.detail || "Login failed" }
+      return { success: false, message: data.error || data.message || "Login failed" }
     } catch {
       return { success: false, message: "Network error" }
     }
   },
 
-  /** Register - creates account and returns token and user */
+  /** Register - POST /register (same as sbmain). Returns no token; call login() after success. */
   async register(
     email: string,
     username: string,
     password: string
-  ): Promise<{ success: true; token: string; user: { id: number; username: string; email: string; full_name?: string } } | { success: false; message: string }> {
+  ): Promise<{ success: true; user: { id: number; username: string; email: string } } | { success: false; message: string }> {
     try {
-      const res = await fetch(`${API_BASE_URL}/auth/register`, {
+      const res = await fetch(`${API_BASE_URL}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, username, password }),
+        body: JSON.stringify({ username, email, password }),
       })
       const data = (await res.json().catch(() => ({}))) as {
-        token?: string
-        user?: { id: number; username: string; email: string; full_name?: string }
+        id?: number
+        user?: { username: string; email: string; is_admin?: boolean }
         message?: string
-        detail?: string
         email?: string[]
         username?: string[]
       }
-      if (res.ok && data.token && data.user) {
-        return { success: true, token: data.token, user: data.user }
+      if (res.ok && data.user) {
+        return {
+          success: true,
+          user: {
+            id: data.id ?? 0,
+            username: data.user.username,
+            email: data.user.email,
+          },
+        }
       }
-      const msg = data.message || data.detail || (Array.isArray(data.email) ? data.email[0] : null) || (Array.isArray(data.username) ? data.username[0] : null) || "Registration failed"
+      const msg =
+        data.message ||
+        (Array.isArray(data.email) ? data.email[0] : null) ||
+        (Array.isArray(data.username) ? data.username[0] : null) ||
+        "Registration failed"
       return { success: false, message: msg }
     } catch {
       return { success: false, message: "Network error" }
@@ -354,61 +371,6 @@ export const apiClient = {
     }
   },
 
-  /** Get current user profile (requires token) */
-  async getProfile(
-    token: string
-  ): Promise<{ success: true; user: { id: number; username: string; email: string; full_name?: string } } | { success: false; message: string }> {
-    try {
-      const res = await fetch(`${API_BASE_URL}/auth/me`, {
-        headers: { Authorization: `Token ${token}` } as HeadersInit,
-      })
-      const data = (await res.json().catch(() => ({}))) as { id?: number; username?: string; email?: string; full_name?: string; message?: string }
-      if (res.ok && data.id != null) {
-        return {
-          success: true,
-          user: {
-            id: data.id,
-            username: data.username ?? "",
-            email: data.email ?? "",
-            full_name: data.full_name,
-          },
-        }
-      }
-      return { success: false, message: (data as { message?: string }).message || "Failed to load profile" }
-    } catch {
-      return { success: false, message: "Network error" }
-    }
-  },
-
-  /** Update user profile (requires token) */
-  async updateProfile(
-    token: string,
-    payload: { email?: string; full_name?: string }
-  ): Promise<{ success: boolean; message?: string; user?: { id: number; username: string; email: string; full_name?: string } }> {
-    try {
-      const res = await fetch(`${API_BASE_URL}/auth/me`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json", Authorization: `Token ${token}` } as HeadersInit,
-        body: JSON.stringify(payload),
-      })
-      const data = (await res.json().catch(() => ({}))) as { id?: number; username?: string; email?: string; full_name?: string; message?: string }
-      if (res.ok && data.id != null) {
-        return {
-          success: true,
-          user: {
-            id: data.id,
-            username: data.username ?? "",
-            email: data.email ?? "",
-            full_name: data.full_name,
-          },
-        }
-      }
-      return { success: false, message: (data as { message?: string }).message || "Failed to update profile" }
-    } catch {
-      return { success: false, message: "Network error" }
-    }
-  },
-
   /** Get leaderboard entries */
   async getLeaderboard(
     page = 1,
@@ -442,25 +404,32 @@ export const apiClient = {
     }
   },
 
-  /** Get current user's sounds / my soundboard (requires token) */
+  /** Get current user's sounds - GET /sounds?my_sounds=true (same as sbmain) */
   async getMySounds(
     token: string,
     page = 1,
-    pageSize = 50
+    pageSize = 1000
   ): Promise<{ data: ProcessedSound[]; meta: { current_page: number; last_page: number; total_items: number } }> {
     try {
       const res = await fetch(
-        `${API_BASE_URL}/user/sounds?page=${page}&limit=${pageSize}`,
-        { headers: { Authorization: `Token ${token}` }, next: { revalidate: 0 } }
+        `${API_BASE_URL}/sounds?my_sounds=true&limit=${pageSize}${page > 1 ? `&page=${page}` : ""}`,
+        { headers: { Authorization: `Token ${token}` }, cache: "no-store" }
       )
       if (!res.ok) return { data: [], meta: { current_page: page, last_page: 1, total_items: 0 } }
-      const json = (await res.json()) as SoundResponse & { data?: { sounds?: ApiSound[]; current_page?: number; total_pages?: number; total_items?: number } }
-      const nested = json.data && typeof json.data === "object" && "sounds" in json.data
-      const soundsRes = nested ? (json.data as { sounds?: ApiSound[] }) : json
-      const metaRes = nested && json.data ? json.data : json
+      const json = (await res.json()) as SoundResponse & {
+        data?: ApiSound[] | { sounds?: ApiSound[]; current_page?: number; total_pages?: number; total_items?: number }
+        results?: { sounds?: ApiSound[] }
+      }
+      let raw: ApiSound[] = []
+      if (json.sounds && Array.isArray(json.sounds)) raw = json.sounds
+      else if (json.data && Array.isArray(json.data)) raw = json.data
+      else if (json.results?.sounds) raw = json.results.sounds
+      else if (json.data && typeof json.data === "object" && "sounds" in json.data)
+        raw = (json.data as { sounds?: ApiSound[] }).sounds || []
+      const metaRes = (typeof json.data === "object" && json.data && "sounds" in json.data ? json.data : json) as SoundResponse
       return {
-        data: extractSounds(soundsRes as SoundResponse),
-        meta: extractMeta(metaRes as SoundResponse, page, pageSize),
+        data: raw.map((s) => processSound(s)),
+        meta: extractMeta(metaRes, page, pageSize),
       }
     } catch {
       return { data: [], meta: { current_page: page, last_page: 1, total_items: 0 } }

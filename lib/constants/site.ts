@@ -11,3 +11,16 @@ export const SITE = {
   email: "play@soundbuttons.com",
   contactEmail: "play@soundbuttons.com",
 } as const
+
+export type Locale = "en" | "es" | "pt" | "fr"
+
+const localeBases: Record<Locale, string> = {
+  en: SITE.baseUrl,
+  es: `${SITE.baseUrl}/es`,
+  pt: `${SITE.baseUrl}/pt`,
+  fr: `${SITE.baseUrl}/fr`,
+}
+
+export function getLocaleBase(locale: Locale): string {
+  return localeBases[locale]
+}

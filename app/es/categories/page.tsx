@@ -1,29 +1,67 @@
+import type { Metadata } from "next"
 import Link from "next/link"
 import { ChevronRight } from "lucide-react"
 import PageHero from "@/components/layout/page-hero"
 import SearchBar from "@/components/search-bar"
 import { getTopLevelCategories } from "@/lib/constants/categories"
-import { buildLocaleMetadata, getLocaleBase } from "@/lib/i18n/metadata"
+import { SITE, getLocaleBase } from "@/lib/constants/site"
 
 export const revalidate = 86400
 
-export const metadata = buildLocaleMetadata("es", "categories")
+const BASE = getLocaleBase("es")
+
+export const metadata: Metadata = {
+  title: { absolute: "Categorías de Botones de Sonido – Navegar Todas | SoundButtons.com" },
+  description:
+    "¡Navega todas las categorías de botones de sonido en SoundButtons.com! Desde memes hasta música, juegos y comedia, encuentra y explora miles de efectos sonoros organizados.",
+  authors: [{ name: "SoundButtons.com" }],
+  creator: "SoundButtons.com",
+  publisher: "SoundButtons.com",
+  alternates: {
+    canonical: `${BASE}/categories`,
+    languages: {
+      en: `${SITE.baseUrl}/categories`,
+      es: `${BASE}/categories`,
+      pt: `${getLocaleBase("pt")}/categories`,
+      fr: `${getLocaleBase("fr")}/categories`,
+      "x-default": SITE.baseUrl,
+    },
+  },
+  openGraph: {
+    type: "website",
+    title: "Categorías de Botones de Sonido – Navegar Todas | SoundButtons.com",
+    description:
+      "¡Navega todas las categorías de botones de sonido en SoundButtons.com! Desde memes hasta música, juegos y comedia, encuentra y explora miles de efectos sonoros organizados.",
+    url: `${BASE}/categories`,
+    siteName: "Sound Buttons",
+    images: [{ url: `${BASE}/categories/opengraph-image`, width: 1200, height: 630, type: "image/png" as const, alt: "Categorías de Botones de Sonido", secureUrl: `${BASE}/categories/opengraph-image` }],
+    locale: "es_ES",
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@soundbuttons",
+    creator: "@soundbuttons",
+    title: "Categorías de Botones de Sonido – Navegar Todas | SoundButtons.com",
+    description:
+      "¡Navega todas las categorías de botones de sonido en SoundButtons.com! Desde memes hasta música, juegos y comedia, encuentra y explora miles de efectos sonoros organizados.",
+    images: [`${BASE}/categories/opengraph-image`],
+  },
+  robots: { index: true, follow: true },
+}
 
 export default function EsCategoriesPage() {
-  const BASE = getLocaleBase("es")
-
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Inicio", item: `${BASE}/` },
-      { "@type": "ListItem", position: 2, name: "Categorías", item: `${BASE}/categories` },
-    ],
+    itemListElement: [{ "@type": "ListItem", position: 1, name: "categories", item: `${BASE}/categories` }],
   }
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <PageHero
         title="Categorías de Sound Buttons"
         description="Explora miles de sound buttons organizados por categoría."

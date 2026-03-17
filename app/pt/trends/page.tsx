@@ -1,13 +1,52 @@
+import type { Metadata } from "next"
 import { headers } from "next/headers"
 import { apiClient } from "@/lib/api/client"
-import { buildLocaleMetadata, getLocaleBase } from "@/lib/i18n/metadata"
-import { getBreadcrumbLabels } from "@/lib/i18n/strings"
+import { SITE, getLocaleBase } from "@/lib/constants/site"
 import TrendsPageClient from "@/app/trends/TrendsPageClient"
 
 export const revalidate = 300
 const PAGE_SIZE = 44
 
-export const metadata = buildLocaleMetadata("pt", "trends")
+const BASE = getLocaleBase("pt")
+
+export const metadata: Metadata = {
+  title: { absolute: "Botões de Som em Alta & Meme Soundboard Viral" },
+  description:
+    "Descubra os botões de som mais populares em alta e os meme soundboard virais e efeitos sonoros no SoundButtons.com.",
+  authors: [{ name: "SoundButtons.com" }],
+  creator: "SoundButtons.com",
+  publisher: "SoundButtons.com",
+  alternates: {
+    canonical: `${BASE}/trends`,
+    languages: {
+      en: `${SITE.baseUrl}/trends`,
+      es: `${getLocaleBase("es")}/trends`,
+      pt: `${BASE}/trends`,
+      fr: `${getLocaleBase("fr")}/trends`,
+      "x-default": SITE.baseUrl,
+    },
+  },
+  openGraph: {
+    type: "website",
+    title: "Botões de Som em Alta & Meme Soundboard Viral",
+    description:
+      "Descubra os botões de som mais populares em alta e os meme soundboard virais e efeitos sonoros no SoundButtons.com.",
+    url: `${BASE}/trends`,
+    siteName: "Sound Buttons",
+    images: [{ url: `${BASE}/trends/opengraph-image`, width: 1200, height: 630, type: "image/png" as const, alt: "Botões de Som em Alta", secureUrl: `${BASE}/trends/opengraph-image` }],
+    locale: "pt_BR",
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@soundbuttons",
+    creator: "@soundbuttons",
+    title: "Botões de Som em Alta & Meme Soundboard Viral",
+    description:
+      "Descubra os botões de som mais populares em alta e os meme soundboard virais e efeitos sonoros no SoundButtons.com.",
+    images: [`${BASE}/trends/opengraph-image`],
+  },
+  robots: { index: true, follow: true },
+}
 
 export default async function PtTrendsPage() {
   const headersList = await headers()
@@ -26,20 +65,18 @@ export default async function PtTrendsPage() {
     // ignore
   }
 
-  const BASE = getLocaleBase("pt")
-  const labels = getBreadcrumbLabels("pt")
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: labels.home, item: `${BASE}/` },
-      { "@type": "ListItem", position: 2, name: labels.trending, item: `${BASE}/trends` },
-    ],
+    itemListElement: [{ "@type": "ListItem", position: 1, name: "trends", item: `${BASE}/trends` }],
   }
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <TrendsPageClient initialSounds={initialSounds} initialMeta={meta} isMobileDevice={isMobile} />
     </>
   )

@@ -1,9 +1,50 @@
+import type { Metadata } from "next"
 import { redirect } from "next/navigation"
-import { buildLocaleMetadata, getLocaleBase } from "@/lib/i18n/metadata"
+import { SITE, getLocaleBase } from "@/lib/constants/site"
 import SearchPageClient from "@/app/search/SearchPageClient"
 
 export const revalidate = 3600
-export const metadata = buildLocaleMetadata("pt", "search")
+
+const BASE = getLocaleBase("pt")
+
+export const metadata: Metadata = {
+  title: { absolute: "Pesquisar Botões de Som - Encontrar Efeitos Sonoros e Sons de Memes | SoundButtons.com" },
+  description:
+    "Pesquise em nossa vasta coleção de botões de som, efeitos sonoros, sons de memes e clipes de áudio. Encontre o som perfeito para seus vídeos, memes, streams e muito mais. Grátis para baixar e usar.",
+  authors: [{ name: "SoundButtons.com" }],
+  creator: "SoundButtons.com",
+  publisher: "SoundButtons.com",
+  alternates: {
+    canonical: `${BASE}/search`,
+    languages: {
+      en: `${SITE.baseUrl}/search`,
+      es: `${getLocaleBase("es")}/search`,
+      pt: `${BASE}/search`,
+      fr: `${getLocaleBase("fr")}/search`,
+      "x-default": SITE.baseUrl,
+    },
+  },
+  openGraph: {
+    type: "website",
+    title: "Pesquisar Botões de Som - Encontrar Efeitos Sonoros e Sons de Memes | SoundButtons.com",
+    description:
+      "Pesquise em nossa vasta coleção de botões de som, efeitos sonoros, sons de memes e clipes de áudio. Encontre o som perfeito para seus vídeos, memes, streams e muito mais. Grátis para baixar e usar.",
+    url: `${BASE}/search`,
+    siteName: "Sound Buttons",
+    images: [{ url: `${BASE}/search/opengraph-image`, width: 1200, height: 630, type: "image/png" as const, alt: "Pesquisar Botões de Som", secureUrl: `${BASE}/search/opengraph-image` }],
+    locale: "pt_BR",
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@soundbuttons",
+    creator: "@soundbuttons",
+    title: "Pesquisar Botões de Som - Encontrar Efeitos Sonoros e Sons de Memes | SoundButtons.com",
+    description:
+      "Pesquise em nossa vasta coleção de botões de som, efeitos sonoros, sons de memes e clipes de áudio. Encontre o som perfeito para seus vídeos, memes, streams e muito mais. Grátis para baixar e usar.",
+    images: [`${BASE}/search/opengraph-image`],
+  },
+  robots: { index: true, follow: true },
+}
 
 function slugify(str: string): string {
   if (!str) return ""
@@ -17,12 +58,18 @@ export default async function PtSearchPage({ searchParams }: { searchParams: Pro
     if (slug) redirect(`/pt/search/${slug}`)
   }
 
-  const BASE = getLocaleBase("pt")
-  const searchSchema = { "@context": "https://schema.org", "@type": "WebPage", name: "Pesquisar Sound Buttons", url: `${BASE}/search`, isPartOf: { "@type": "WebSite", name: "SoundButtons.com", url: `${BASE}/` } }
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [{ "@type": "ListItem", position: 1, name: "search", item: `${BASE}/search` }],
+  }
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(searchSchema) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <SearchPageClient />
     </>
   )

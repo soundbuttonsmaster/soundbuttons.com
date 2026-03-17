@@ -3,9 +3,7 @@ import { notFound } from "next/navigation"
 import type { Metadata } from "next"
 import { apiClient } from "@/lib/api/client"
 import { getCategoryBySlug, getParentCategory, getSubcategories } from "@/lib/constants/categories"
-import { SITE } from "@/lib/constants/site"
-import { getLocaleBase } from "@/lib/i18n/metadata"
-import { getBreadcrumbLabels } from "@/lib/i18n/strings"
+import { SITE, getLocaleBase } from "@/lib/constants/site"
 import CategoryDetailClient from "@/app/categories/[slug]/CategoryDetailClient"
 
 export const revalidate = 300
@@ -19,12 +17,36 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const category = getCategoryBySlug(slug)
   if (!category) return { title: "Category Not Found" }
   const base = getLocaleBase("pt")
-  const displayName = category.name.replace(/ Soundboard$/, "")
+  const canonicalUrl = `${base}/categories/${slug}`
+  const title = `Botões de Som de ${category.name}: Meme Soundboard Desbloqueado`
+  const description = `Descubra e toque os melhores botões de som de ${category.name} para baixar, compartilhar e aproveitar efeitos sonoros de alta qualidade para memes, vídeos, pegadinhas e diversão sem fim!`
+  const ogImageUrl = `${base}/categories/${slug}/opengraph-image`
   return {
-    title: { absolute: `${displayName} - Soundboard | SoundButtons.com` },
-    description: `Descubra e reproduza os melhores sound buttons de ${displayName}.`,
-    alternates: { canonical: `${base}/categories/${slug}` },
-    openGraph: { type: "website", title: `${category.name} - SoundButtons.com`, url: `${base}/categories/${slug}`, siteName: "Sound Buttons", images: [{ url: `${SITE.baseUrl}/og.png`, width: 1200, height: 630 }], locale: "pt_BR" },
+    title: { absolute: title },
+    description,
+    authors: [{ name: "SoundButtons.com" }],
+    creator: "SoundButtons.com",
+    publisher: "SoundButtons.com",
+    alternates: {
+      canonical: canonicalUrl,
+      languages: {
+        en: `${SITE.baseUrl}/categories/${slug}`,
+        es: `${SITE.baseUrl}/es/categories/${slug}`,
+        pt: canonicalUrl,
+        fr: `${SITE.baseUrl}/fr/categories/${slug}`,
+        "x-default": `${SITE.baseUrl}/categories/${slug}`,
+      },
+    },
+    openGraph: {
+      type: "website",
+      title,
+      description,
+      url: canonicalUrl,
+      siteName: "Sound Buttons",
+      images: [{ url: ogImageUrl, width: 1200, height: 630, type: "image/png" as const, alt: category.name, secureUrl: ogImageUrl }],
+      locale: "pt_BR",
+    },
+    twitter: { card: "summary_large_image", site: "@soundbuttons", creator: "@soundbuttons", title, description, images: [ogImageUrl] },
     robots: { index: true, follow: true },
   }
 }
@@ -49,32 +71,27 @@ export default async function PtCategoryDetailPage({ params }: Props) {
     meta = result.meta
   } catch { /* ignore */ }
 
-  const base = getLocaleBase("pt")
-  const labels = getBreadcrumbLabels("pt")
-  const breadcrumbSchema = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: parentCategory
-      ? [
-          { "@type": "ListItem", position: 1, name: labels.home, item: `${base}/` },
-          { "@type": "ListItem", position: 2, name: labels.categories, item: `${base}/categories` },
-          { "@type": "ListItem", position: 3, name: parentCategory.name, item: `${base}/categories/${parentCategory.slug}` },
-          { "@type": "ListItem", position: 4, name: category.name, item: `${base}/categories/${slug}` },
-        ]
-      : [
-          { "@type": "ListItem", position: 1, name: labels.home, item: `${base}/` },
-          { "@type": "ListItem", position: 2, name: labels.categories, item: `${base}/categories` },
-          { "@type": "ListItem", position: 3, name: category.name, item: `${base}/categories/${slug}` },
-        ],
-  }
   const faqs = [
     { question: `O que são os sound buttons de ${category.name}?`, answer: `Os sound buttons de ${category.name} são clipes de áudio que você pode reproduzir com um clique.` },
     { question: `Como baixar os sound effects de ${category.name}?`, answer: `Clique em qualquer sound button e depois no botão de download. O som será salvo como MP3.` },
   ]
 
+  const base = getLocaleBase("pt")
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "categories", item: `${base}/categories` },
+      { "@type": "ListItem", position: 2, name: category.name, item: `${base}/categories/${slug}` },
+    ],
+  }
+
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <CategoryDetailClient
         category={category}
         subcategories={subcategories}

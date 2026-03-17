@@ -30,13 +30,19 @@ export default function RegisterClient() {
       return
     }
     setLoading(true)
-    const res = await apiClient.register(email.trim(), username.trim(), password)
+    const regRes = await apiClient.register(email.trim(), username.trim(), password)
+    if (!regRes.success) {
+      setLoading(false)
+      setError(regRes.message || "Registration failed")
+      return
+    }
+    const loginRes = await apiClient.login(email.trim(), password)
     setLoading(false)
-    if (res.success) {
-      login(res.token, res.user)
+    if (loginRes.success && loginRes.token && loginRes.user) {
+      login(loginRes.token, { ...loginRes.user, email: regRes.user.email })
       router.push("/")
     } else {
-      setError(res.message || "Registration failed")
+      router.push("/login?registered=1")
     }
   }
 

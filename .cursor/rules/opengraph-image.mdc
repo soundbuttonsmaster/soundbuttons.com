@@ -1,0 +1,44 @@
+---
+description: Always add dynamic OG image (opengraph-image.tsx) for every new page with metadata
+globs: app/**/layout.tsx, app/**/page.tsx
+alwaysApply: true
+---
+
+# Open Graph Image - Required for Every Page
+
+**When adding a new page with metadata, ALWAYS add `opengraph-image.tsx`** in the same route folder. Use the dynamic SVG-based image via `StaticOgImage`, never static PNG URLs.
+
+## Pattern
+
+For each new page/route (e.g. `app/my-page/`), create:
+
+```
+app/my-page/
+  layout.tsx      # metadata with openGraph/twitter
+  opengraph-image.tsx   # REQUIRED - dynamic OG image
+  page.tsx
+```
+
+## opengraph-image.tsx Template
+
+```tsx
+import { ImageResponse } from "next/og"
+import { StaticOgImage, OG_IMAGE_WIDTH, OG_IMAGE_HEIGHT } from "@/components/og/StaticOgImage"
+
+export const alt = "Page Title - SoundButtons.com"
+export const size = { width: OG_IMAGE_WIDTH, height: OG_IMAGE_HEIGHT }
+export const contentType = "image/png"
+
+export default function OgImage() {
+  return new ImageResponse(
+    <StaticOgImage title="Page Title" subtitle="Optional Subtitle" />,
+    { ...size }
+  )
+}
+```
+
+## Layout
+
+- Do NOT add explicit `images` to openGraph or twitter in layout metadata
+- Next.js will auto-use the route's `opengraph-image.tsx`
+- Add comment: `// Uses opengraph-image.tsx for dynamic OG image`

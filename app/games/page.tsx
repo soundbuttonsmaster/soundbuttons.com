@@ -1,7 +1,4 @@
-import type { Metadata } from "next"
 import Link from "next/link"
-import { SITE } from "@/lib/constants/site"
-import { SITE_NAV_LINKS } from "@/lib/constants/site-nav-links"
 import {
   Gamepad2,
   Volume2,
@@ -15,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { SITE } from "@/lib/constants/site"
 
 export const revalidate = 300
 const BASE = SITE.baseUrl
@@ -56,81 +54,9 @@ const games = [
   },
 ]
 
-export const metadata: Metadata = {
-  title: { absolute: "Kids Games - Fun Sound Buttons for Everyone" },
-  description:
-    "Discover kids games sound buttons on SoundButtons! Play fun, safe, and interactive sound effects perfect for children and enjoy endless audio entertainment.",
-  keywords:
-    "kids games, fun games, sound games, tic tac toe, sound effects, children games, colorful games, interactive games",
-  robots: { index: true, follow: true },
-  alternates: {
-    canonical: `${BASE}/games`,
-    languages: { en: `${BASE}/games`, "x-default": `${BASE}/games` },
-  },
-  openGraph: {
-    type: "website",
-    title: "Kids Games - Fun Sound Buttons for Everyone",
-    description:
-      "Discover kids games sound buttons on SoundButtons! Play fun, safe, and interactive sound effects perfect for children.",
-    url: `${BASE}/games`,
-    siteName: "Sound Buttons",
-    images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: "Kids Games" }],
-    locale: "en_US",
-  },
-  twitter: {
-    card: "summary_large_image",
-    site: "@soundbuttons",
-    creator: "@soundbuttons",
-    title: "Kids Games - Fun Sound Buttons for Everyone",
-    description:
-      "Discover kids games sound buttons on SoundButtons! Play fun, safe, and interactive sound effects.",
-    images: [`${BASE}/og.png`],
-  },
-}
-
 export default function GamesPage() {
-  const webPageSchema = {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    name: "Play Games With Sound Buttons And Soundboard Unblocked",
-    description:
-      "Super fun games for kids with amazing sound effects! Play TikTok Toe and more colorful games. Each game is like a magical adventure with sounds!",
-    url: `${BASE}/games`,
-    mainEntity: {
-      "@type": "ItemList",
-      itemListElement: games.map((game, index) => ({
-        "@type": "ListItem",
-        position: index + 1,
-        item: {
-          "@type": "WebPage",
-          name: game.title,
-          description: game.description,
-          url: `${BASE}${game.url}`,
-        },
-      })),
-    },
-  }
-
-  const siteNavSchema = SITE_NAV_LINKS.map((link) => ({
-    "@context": "https://schema.org",
-    "@type": "SiteNavigationElement",
-    name: link.name,
-    url: link.url,
-  }))
-
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }}
-      />
-      {siteNavSchema.map((s, i) => (
-        <script
-          key={i}
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(s) }}
-        />
-      ))}
       <div className="min-h-screen bg-gradient-to-br from-yellow-100 via-pink-100 to-purple-100 dark:from-yellow-950 dark:via-pink-950 dark:to-purple-950 relative overflow-hidden">
         <div className="absolute top-10 left-10 w-20 h-20 bg-yellow-300 rounded-full opacity-20 animate-bounce" />
         <div className="absolute top-32 right-20 w-16 h-16 bg-pink-300 rounded-full opacity-20 animate-pulse" />

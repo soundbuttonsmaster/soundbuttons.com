@@ -1,0 +1,39 @@
+---
+description: Breadcrumb schema for SERP - plain URL path segments only, NEVER Home
+globs: app/**/page.tsx, app/**/layout.tsx
+alwaysApply: false
+---
+
+# Breadcrumb Schema - SERP Display
+
+Use **BreadcrumbList** JSON-LD for SERP breadcrumbs. Plain URL path segments only.
+
+## Critical: NO HOME
+
+**DO NOT add "Home" or root (`/`) to breadcrumb schema.** Never include `{ name: "Home", item: "/" }` in `itemListElement`. This breaks SEO and the user explicitly forbids it. Start breadcrumbs from the first meaningful path segment (e.g. categories, search, slug).
+
+## Rules
+
+- **Plain URL path segments** as `name` (e.g. `"about-us"`, `"blog"`, `"categories"`, `"reactions"`)
+- **NEVER include "Home"** or root in `itemListElement` - no exceptions
+- **Each page defines its own schema** - no shared schema files, no exports/imports
+- Add inline via `<script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />`
+
+## Pattern
+
+```tsx
+// ✅ Correct - no Home
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "categories", item: `${BASE}/categories` },
+    { "@type": "ListItem", position: 2, name: category.name, item: `${BASE}/categories/${slug}` },
+  ],
+}
+
+// ❌ WRONG - never do this
+// { "@type": "ListItem", position: 1, name: "Home", item: `${BASE}/` },
+```
+
+Do not touch home page (`app/page.tsx`).

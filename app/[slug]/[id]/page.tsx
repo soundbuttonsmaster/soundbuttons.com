@@ -7,7 +7,7 @@ import type { Sound } from "@/lib/types/sound"
 import { getCategoryById } from "@/lib/constants/categories"
 import { SITE } from "@/lib/constants/site"
 import { generateSlug } from "@/lib/utils/slug"
-import { toTitleCase, getNameForTitle } from "@/lib/utils"
+import { toTitleCase, getNameForTitle, getDisplaySoundName } from "@/lib/utils"
 
 function isMobileDevice(userAgent: string | null): boolean {
   if (!userAgent) return false
@@ -21,18 +21,12 @@ interface SoundPageProps {
 }
 
 function buildDescription(soundName: string): string {
-  const hasSuffix = /sound\s*button|sound\s*effect/i.test(soundName)
-  const suffix = hasSuffix ? "" : " sound button"
-  return `Play the iconic ${soundName}${suffix} for your meme soundboard! Perfect for unblocked sound buttons, sound effects, and creating viral content.`
+  const name = getDisplaySoundName(soundName)
+  return `Play and download ${name} sound effect instantly! Explore meme soundboard, sound buttons & sound effects for entertainment, pranks and content creation.`
 }
 
 function buildKeywords(soundName: string): string {
   return `${soundName}, ${soundName} sound button, ${soundName} meme sound, ${soundName} sound effect, ${soundName} download, ${soundName} mp3, sound buttons, meme sounds, sound effects, soundboard, unblocked sound buttons, free sound effects, viral sounds, meme soundboard, audio effects, sound buttons unblocked, soundboard download, funny sounds, notification sounds, ringtone sounds, sound buttons for school, sound buttons for discord, sound buttons for tiktok, sound buttons for youtube, sound buttons for streaming, sound buttons for gaming, sound buttons for pranks, sound buttons for memes, sound buttons for reactions, sound buttons for content creation, sound buttons for social media, sound buttons for videos, sound buttons for podcasts, sound buttons for live streams, sound buttons for comedy, sound buttons for entertainment`
-}
-
-function getFaqSuffix(soundName: string): string {
-  const hasSoundButton = /sound\s*button|sound\s*effect/i.test(soundName)
-  return hasSoundButton ? "" : " sound button"
 }
 
 export async function generateMetadata({ params }: SoundPageProps): Promise<Metadata> {
@@ -86,12 +80,12 @@ export async function generateMetadata({ params }: SoundPageProps): Promise<Meta
       siteName: "Sound Buttons",
       images: [
         {
-          url: `${SITE.baseUrl}/og.png`,
+          url: `${SITE.baseUrl}/${canonicalSlug}/${sound.id}/opengraph-image`,
           width: 1200,
           height: 630,
           type: "image/png",
           alt: `${sound.name} - SoundButtons.com`,
-          secureUrl: `${SITE.baseUrl}/og.png`,
+          secureUrl: `${SITE.baseUrl}/${canonicalSlug}/${sound.id}/opengraph-image`,
         },
       ],
       locale: "en_US",
@@ -104,7 +98,7 @@ export async function generateMetadata({ params }: SoundPageProps): Promise<Meta
       creator: "@soundbuttons",
       title,
       description,
-      images: [`${SITE.baseUrl}/og.png`],
+      images: [`${SITE.baseUrl}/${canonicalSlug}/${sound.id}/opengraph-image`],
     },
   }
 }
@@ -146,125 +140,32 @@ export default async function SoundDetailPage({ params }: SoundPageProps) {
   const categoryId = sound.category_id ?? 13
   const category = getCategoryById(categoryId)
   const categorySlug = category?.slug ?? "memes"
-  const canonicalUrl = `${SITE.baseUrl}/${canonicalSlug}/${sound.id}`
-
-  const description = buildDescription(sound.name)
-  const faqSuffix = getFaqSuffix(sound.name)
-  const faqs = [
-    {
-      q: `What is the ${sound.name}${faqSuffix}?`,
-      a: `The ${sound.name}${faqSuffix} is a popular audio clip you can play, download, and use in your memes, videos, and streams.`,
-    },
-    {
-      q: `How can I download the ${sound.name}${faqSuffix}?`,
-      a: `Simply click the download button on this page to save the ${sound.name}${faqSuffix} as an MP3 file to your device.`,
-    },
-    {
-      q: `Can I use the ${sound.name}${faqSuffix} for free?`,
-      a: `Yes! The ${sound.name}${faqSuffix} is free to play, download, and share for personal use.`,
-    },
-    {
-      q: `Where is the ${sound.name}${faqSuffix} from?`,
-      a: `The ${sound.name}${faqSuffix} is part of our unblocked soundboard collection, perfect for memes, reactions, and content creation.`,
-    },
-    {
-      q: `Can I use the ${sound.name}${faqSuffix} on my phone?`,
-      a: `Absolutely! The ${sound.name}${faqSuffix} works on all devices, including smartphones, tablets, and desktops.`,
-    },
-  ]
-
-  const breadcrumbSchema = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: `${SITE.baseUrl}/` },
-      { "@type": "ListItem", position: 2, name: category?.name ?? "Sounds", item: `${SITE.baseUrl}/categories/${categorySlug}` },
-      { "@type": "ListItem", position: 3, name: sound.name, item: canonicalUrl },
-    ],
-  }
-
-  const organizationSchema = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: "SoundButtons.com",
-    url: `${SITE.baseUrl}/`,
-    logo: { "@type": "ImageObject", url: `${SITE.baseUrl}/og.png` },
-  }
-
-  const audioSchema = {
-    "@context": "https://schema.org",
-    "@type": "AudioObject",
-    name: sound.name,
-    description,
-    url: canonicalUrl,
-    contentUrl: sound.sound_file,
-    image: `${SITE.baseUrl}/og.png`,
-    encodingFormat: "audio/mpeg",
-    inLanguage: "en",
-    ...("created_at" in sound && sound.created_at
-      ? { datePublished: (sound as { created_at: string }).created_at }
-      : {}),
-    interactionStatistic: {
-      "@type": "InteractionCounter",
-      interactionType: "https://schema.org/ListenAction",
-      userInteractionCount: sound.views ?? 0,
-    },
-    publisher: {
-      "@type": "Organization",
-      name: "SoundButtons.com",
-      logo: { "@type": "ImageObject", url: `${SITE.baseUrl}/og.png` },
-    },
-  }
-
-  const itemListSchema =
-    youMightLikeSounds.length > 0
-      ? {
-          "@context": "https://schema.org",
-          "@type": "ItemList",
-          name: "You might also like",
-          numberOfItems: youMightLikeSounds.length,
-          itemListElement: youMightLikeSounds.slice(0, 10).map((s, i) => ({
-            "@type": "ListItem",
-            position: i + 1,
-            item: {
-              "@type": "AudioObject",
-              name: s.name,
-              url: `${SITE.baseUrl}/${generateSlug(s.name)}/${s.id}`,
-            },
-          })),
-        }
-      : null
-
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqs.map((faq) => ({
-      "@type": "Question",
-      name: faq.q,
-      acceptedAnswer: { "@type": "Answer", text: faq.a },
-    })),
-  }
-
-  const webPageSchema = {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    name: `${toTitleCase(getNameForTitle(sound.name))} Sound Effect Download: Instant Soundboard Button`,
-    description,
-    url: canonicalUrl,
-    isPartOf: { "@type": "WebSite", name: "SoundButtons.com", url: `${SITE.baseUrl}/` },
-    potentialAction: { "@type": "ListenAction", target: canonicalUrl },
-  }
+  const categoryName = category?.name ?? "Sounds"
+  const breadcrumbCategoryUrl = category
+    ? `${SITE.baseUrl}/categories/${categorySlug}`
+    : `${SITE.baseUrl}/categories`
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(audioSchema) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
-      {itemListSchema && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }} />
-      )}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: `${SITE.baseUrl}/` },
+              { "@type": "ListItem", position: 2, name: categoryName, item: breadcrumbCategoryUrl },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: getDisplaySoundName(sound.name),
+                item: `${SITE.baseUrl}/${canonicalSlug}/${sound.id}`,
+              },
+            ],
+          }),
+        }}
+      />
       <SoundDetailClient
         sound={sound}
         relatedSounds={youMightLikeSounds}

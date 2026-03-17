@@ -2,10 +2,7 @@ import type { Metadata } from "next"
 import { redirect, notFound } from "next/navigation"
 import { headers } from "next/headers"
 import { apiClient } from "@/lib/api/client"
-import { generateSlug } from "@/lib/utils/slug"
-import { SITE } from "@/lib/constants/site"
-import { getLocaleBase } from "@/lib/i18n/metadata"
-import { getBreadcrumbLabels, getStrings } from "@/lib/i18n/strings"
+import { SITE, getLocaleBase } from "@/lib/constants/site"
 import SearchResultsClient from "@/app/search/[query]/SearchResultsClient"
 
 export const revalidate = 60
@@ -38,17 +35,39 @@ export async function generateMetadata({
   }
 
   const base = getLocaleBase("es")
-  const searchStrings = getStrings("es").search
-  const title = searchStrings.resultsTitleTemplate.replace("{query}", toTitleCase(searchQuery))
-  const description = `Descubre sound buttons de ${searchQuery}. Reproduce y descarga efectos de sonido para memes y contenido.`
   const canonicalUrl = `${base}/search/${query}`
+  const searchName = toTitleCase(searchQuery)
+  const soundCount = totalItems
+  const title = `${searchName} Soundboard: ${soundCount} Botón de Efecto de Sonido Instantáneo`
+  const description = `¡Reproduce y descarga ${soundCount} botones de sonido ${searchName} gratis! Reproducción instantánea, descargas MP3 de alta calidad. Perfecto para memes, TikTok, Discord y creación de contenido.`
+  const ogImageUrl = `${base}/search/${query}/opengraph-image`
 
   return {
     title: { absolute: title },
     description,
-    alternates: { canonical: canonicalUrl },
-    openGraph: { type: "website", title, description, url: canonicalUrl, siteName: "Sound Buttons", images: [{ url: `${SITE.baseUrl}/og.png`, width: 1200, height: 630 }], locale: "es_ES" },
-    twitter: { card: "summary_large_image", title, description },
+    authors: [{ name: "SoundButtons.com" }],
+    creator: "SoundButtons.com",
+    publisher: "SoundButtons.com",
+    alternates: {
+      canonical: canonicalUrl,
+      languages: {
+        en: `${SITE.baseUrl}/search/${query}`,
+        es: canonicalUrl,
+        pt: `${SITE.baseUrl}/pt/search/${query}`,
+        fr: `${SITE.baseUrl}/fr/search/${query}`,
+        "x-default": `${SITE.baseUrl}/search/${query}`,
+      },
+    },
+    openGraph: {
+      type: "website",
+      title,
+      description,
+      url: canonicalUrl,
+      siteName: "Sound Buttons",
+      images: [{ url: ogImageUrl, width: 1200, height: 630, type: "image/png" as const, alt: title, secureUrl: ogImageUrl }],
+      locale: "es_ES",
+    },
+    twitter: { card: "summary_large_image", site: "@soundbuttons", creator: "@soundbuttons", title, description, images: [ogImageUrl] },
     robots: { index: true, follow: true },
   }
 }
@@ -82,22 +101,21 @@ export default async function EsSearchResultsPage({
   }
 
   const base = getLocaleBase("es")
-  const labels = getBreadcrumbLabels("es")
-  const canonicalUrl = `${base}/search/${querySlug}`
-
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: labels.home, item: `${base}/` },
-      { "@type": "ListItem", position: 2, name: labels.search, item: `${base}/search` },
-      { "@type": "ListItem", position: 3, name: toTitleCase(sanitizedQuery), item: canonicalUrl },
+      { "@type": "ListItem", position: 1, name: "search", item: `${base}/search` },
+      { "@type": "ListItem", position: 2, name: searchQuery, item: `${base}/search/${querySlug}` },
     ],
   }
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <SearchResultsClient
         searchQuery={sanitizedQuery}
         initialSounds={initialSounds}

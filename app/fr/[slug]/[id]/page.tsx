@@ -5,11 +5,10 @@ import SoundDetailClient from "@/components/sound/sound-detail-client"
 import { apiClient } from "@/lib/api/client"
 import type { Sound } from "@/lib/types/sound"
 import { getCategoryById } from "@/lib/constants/categories"
-import { SITE } from "@/lib/constants/site"
 import { generateSlug } from "@/lib/utils/slug"
 import { toTitleCase, getNameForTitle } from "@/lib/utils"
-import { getPageMetadata, getLocaleBase } from "@/lib/i18n/metadata"
-import { getBreadcrumbLabels } from "@/lib/i18n/strings"
+import { SITE, getLocaleBase } from "@/lib/constants/site"
+import { getDisplaySoundName } from "@/lib/utils"
 
 export const revalidate = 60
 
@@ -29,14 +28,36 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const base = getLocaleBase("fr")
   const canonicalSlug = generateSlug(sound.name)
   const canonicalUrl = `${base}/${canonicalSlug}/${sound.id}`
-  const { title, description } = getPageMetadata("fr", "soundDetail")
-  const displayTitle = `${toTitleCase(getNameForTitle(sound.name))} - ${title}`
+  const soundName = toTitleCase(getNameForTitle(sound.name))
+  const title = `${soundName} Téléchargement d'Effet Sonore : Bouton Soundboard Instantané`
+  const description = `Jouez et téléchargez l'effet sonore ${getDisplaySoundName(sound.name)} instantanément ! Explorez le soundboard de mèmes, les boutons sonores et les effets sonores pour le divertissement, les blagues et la création de contenu.`
+  const ogImageUrl = `${base}/${canonicalSlug}/${sound.id}/opengraph-image`
   return {
-    title: { absolute: displayTitle },
+    title: { absolute: title },
     description,
-    alternates: { canonical: canonicalUrl },
-    openGraph: { type: "music.song", title: displayTitle, description, url: canonicalUrl, siteName: "Sound Buttons", images: [{ url: `${SITE.baseUrl}/og.png`, width: 1200, height: 630 }], locale: "fr_FR" },
-    twitter: { card: "summary_large_image", title: displayTitle, description },
+    authors: [{ name: "SoundButtons.com" }],
+    creator: "SoundButtons.com",
+    publisher: "SoundButtons.com",
+    alternates: {
+      canonical: canonicalUrl,
+      languages: {
+        en: `${SITE.baseUrl}/${canonicalSlug}/${sound.id}`,
+        es: `${SITE.baseUrl}/es/${canonicalSlug}/${sound.id}`,
+        pt: `${SITE.baseUrl}/pt/${canonicalSlug}/${sound.id}`,
+        fr: canonicalUrl,
+        "x-default": `${SITE.baseUrl}/${canonicalSlug}/${sound.id}`,
+      },
+    },
+    openGraph: {
+      type: "music.song",
+      title,
+      description,
+      url: canonicalUrl,
+      siteName: "Sound Buttons",
+      images: [{ url: ogImageUrl, width: 1200, height: 630, type: "image/png" as const, alt: sound.name, secureUrl: ogImageUrl }],
+      locale: "fr_FR",
+    },
+    twitter: { card: "summary_large_image", site: "@soundbuttons", creator: "@soundbuttons", title, description, images: [ogImageUrl] },
     robots: { index: true, follow: true },
   }
 }
@@ -73,27 +94,32 @@ export default async function FrSoundDetailPage({ params }: Props) {
     category_id: sound.category_id, category_name: sound.category_name,
   }
 
-  const labels = getBreadcrumbLabels("fr")
+  const categoryName = category?.name ?? "Sounds"
+  const shareUrl = `${base}/${canonicalSlug}/${sound.id}`
+  const breadcrumbCategoryUrl = category ? `${base}/categories/${categorySlug}` : `${base}/categories`
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: labels.home, item: `${base}/` },
-      { "@type": "ListItem", position: 2, name: category?.name ?? "Sounds", item: `${base}/categories/${categorySlug}` },
-      { "@type": "ListItem", position: 3, name: sound.name, item: `${base}/${canonicalSlug}/${sound.id}` },
+      { "@type": "ListItem", position: 1, name: "categories", item: `${base}/categories` },
+      { "@type": "ListItem", position: 2, name: categoryName, item: breadcrumbCategoryUrl },
+      { "@type": "ListItem", position: 3, name: getDisplaySoundName(sound.name), item: shareUrl },
     ],
   }
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <SoundDetailClient
         sound={soundForClient}
         relatedSounds={youMightLikeSounds}
         categorySlug={categorySlug}
-        categoryName={category?.name ?? "Sounds"}
+        categoryName={categoryName}
         categoryHref={`/fr/categories/${categorySlug}`}
-        shareUrl={`${base}/${canonicalSlug}/${sound.id}`}
+        shareUrl={shareUrl}
         localePrefix="/fr"
         locale="fr"
         isMobileDevice={isMobile}

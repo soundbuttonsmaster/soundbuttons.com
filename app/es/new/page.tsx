@@ -1,14 +1,52 @@
+import type { Metadata } from "next"
 import { headers } from "next/headers"
 import { apiClient } from "@/lib/api/client"
-import { buildLocaleMetadata, getLocaleBase } from "@/lib/i18n/metadata"
-import { getBreadcrumbLabels } from "@/lib/i18n/strings"
+import { SITE, getLocaleBase } from "@/lib/constants/site"
 import NewPageClient from "@/app/new/NewPageClient"
 
 export const revalidate = 300
-
 const PAGE_SIZE = 35
 
-export const metadata = buildLocaleMetadata("es", "new")
+const BASE = getLocaleBase("es")
+
+export const metadata: Metadata = {
+  title: { absolute: "Nuevos Botones de Sonido: Audio Fresco de Soundboard de Memes Actualizado Diariamente" },
+  description:
+    "¡Descubre los botones de sonido y soundboard más recientes con clips de audio nuevos y en tendencia actualizados diariamente para reproducir, descargar y compartir para memes, juegos y entretenimiento!",
+  authors: [{ name: "SoundButtons.com" }],
+  creator: "SoundButtons.com",
+  publisher: "SoundButtons.com",
+  alternates: {
+    canonical: `${BASE}/new`,
+    languages: {
+      en: `${SITE.baseUrl}/new`,
+      es: `${BASE}/new`,
+      pt: `${getLocaleBase("pt")}/new`,
+      fr: `${getLocaleBase("fr")}/new`,
+      "x-default": SITE.baseUrl,
+    },
+  },
+  openGraph: {
+    type: "website",
+    title: "Nuevos Botones de Sonido: Audio Fresco de Soundboard de Memes Actualizado Diariamente",
+    description:
+      "¡Descubre los botones de sonido y soundboard más recientes con clips de audio nuevos y en tendencia actualizados diariamente para reproducir, descargar y compartir para memes, juegos y entretenimiento!",
+    url: `${BASE}/new`,
+    siteName: "Sound Buttons",
+    images: [{ url: `${BASE}/new/opengraph-image`, width: 1200, height: 630, type: "image/png" as const, alt: "Nuevos Botones de Sonido", secureUrl: `${BASE}/new/opengraph-image` }],
+    locale: "es_ES",
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@soundbuttons",
+    creator: "@soundbuttons",
+    title: "Nuevos Botones de Sonido: Audio Fresco de Soundboard de Memes Actualizado Diariamente",
+    description:
+      "¡Descubre los botones de sonido y soundboard más recientes con clips de audio nuevos y en tendencia actualizados diariamente para reproducir, descargar y compartir para memes, juegos y entretenimiento!",
+    images: [`${BASE}/new/opengraph-image`],
+  },
+  robots: { index: true, follow: true },
+}
 
 function slugify(str: string): string {
   if (!str) return ""
@@ -33,20 +71,18 @@ export default async function EsNewPage() {
     // ignore
   }
 
-  const BASE = getLocaleBase("es")
-  const labels = getBreadcrumbLabels("es")
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: labels.home, item: `${BASE}/` },
-      { "@type": "ListItem", position: 2, name: labels.new, item: `${BASE}/new` },
-    ],
+    itemListElement: [{ "@type": "ListItem", position: 1, name: "new", item: `${BASE}/new` }],
   }
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <NewPageClient
         initialSounds={initialSounds}
         initialMeta={meta}

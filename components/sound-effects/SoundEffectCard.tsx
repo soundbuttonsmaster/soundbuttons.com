@@ -1,11 +1,12 @@
 "use client"
 
 import { useRef, useState, useEffect } from "react"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { ArrowDownToLine } from "lucide-react"
 import { soundEffectsApi } from "@/lib/api/sound-effects"
 import type { SoundEffect } from "@/lib/api/sound-effects"
-import { generateSlug } from "@/lib/utils/slug"
+import { generateSlug, tagToSearchSlug } from "@/lib/utils/slug"
 
 interface SoundEffectCardProps {
   effect: SoundEffect
@@ -99,7 +100,13 @@ export default function SoundEffectCard({ effect }: SoundEffectCardProps) {
             {effect.soundName}
           </div>
           {firstTag && (
-            <span className="text-xs text-primary font-medium">{firstTag}</span>
+            <Link
+              href={`/sound-effects/search/${tagToSearchSlug(firstTag)}`}
+              onClick={(e) => e.stopPropagation()}
+              className="text-xs text-primary font-medium hover:underline"
+            >
+              {firstTag}
+            </Link>
           )}
         </div>
         <button

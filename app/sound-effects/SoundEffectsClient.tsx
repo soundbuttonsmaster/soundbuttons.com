@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import PageHero from "@/components/layout/page-hero"
+import SearchBar from "@/components/search-bar"
 import SoundEffectCard from "@/components/sound-effects/SoundEffectCard"
 import type { SoundEffect } from "@/lib/api/sound-effects"
 
@@ -35,17 +37,22 @@ export default function SoundEffectsClient({ initialEffects }: SoundEffectsClien
         <div className="absolute bottom-0 right-0 w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-pink-200 via-indigo-200 to-blue-200 opacity-30 blur-3xl dark:from-pink-900 dark:via-indigo-900 dark:to-blue-900 dark:opacity-20" />
       </div>
 
+      <PageHero
+        title="Sound Effects Library"
+        description="Discover and download high-quality sound effects for your creative projects. Perfect for videos, games, podcasts, and multimedia content."
+      >
+        <div className="flex justify-center mt-2 px-2">
+          <div className="flex justify-center max-w-3xl md:max-w-4xl lg:max-w-5xl w-full shadow-lg">
+            <SearchBar
+              searchBasePath="/sound-effects"
+              placeholder="Search sound effects..."
+            />
+          </div>
+        </div>
+      </PageHero>
+
       <main className="flex-1 flex flex-col items-center relative z-10 w-full py-8 md:py-10">
         <div className="max-w-7xl w-full px-4">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-              Sound Effects Library
-            </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Discover and download high-quality sound effects for your creative projects.
-              Perfect for videos, games, podcasts, and multimedia content.
-            </p>
-          </div>
 
           {loading ? (
             <div className="text-center py-12">

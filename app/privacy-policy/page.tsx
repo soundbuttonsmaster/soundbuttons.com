@@ -1,96 +1,8 @@
-import type { Metadata } from "next"
 import { SITE } from "@/lib/constants/site"
-import {
-  OLD_POLICY_NAV_ELEMENTS,
-  OLD_WEBSITE_SCHEMA,
-  OLD_ORGANIZATION_SCHEMA,
-  OLD_NAV_GRAPH_SCHEMA,
-} from "@/lib/constants/policy-page-schema"
-
-const BASE = SITE.baseUrl
-
-export const metadata: Metadata = {
-  title: { absolute: "Privacy Policy - SoundButtons.com | Data Protection & Rights" },
-  description:
-    "Read our comprehensive privacy policy to learn how we handle your data, cookies, and user rights at SoundButtons.com. We're committed to protecting your privacy and personal information.",
-  keywords:
-    "privacy policy soundbuttons, soundbuttons privacy, data protection soundbuttons, cookie policy soundbuttons, user rights soundbuttons, privacy policy sound button, data protection sound button, cookie policy sound button, user rights sound button, privacy policy audio platform, data protection audio platform, cookie policy audio platform, user rights audio platform, privacy policy sound effects, data protection sound effects, cookie policy sound effects, user rights sound effects, privacy policy meme sounds, data protection meme sounds, cookie policy meme sounds, user rights meme sounds, privacy policy gaming sounds, data protection gaming sounds, cookie policy gaming sounds, user rights gaming sounds, privacy policy comedy sounds, data protection comedy sounds, cookie policy comedy sounds, user rights comedy sounds, privacy policy music sounds, data protection music sounds, cookie policy music sounds, user rights music sounds",
-  authors: [{ name: "SoundButtons.com" }],
-  creator: "SoundButtons.com",
-  publisher: "SoundButtons.com",
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
-  alternates: {
-    canonical: `${BASE}/privacy-policy`,
-    languages: { en: `${BASE}/privacy-policy`, "x-default": `${BASE}/privacy-policy` },
-  },
-  openGraph: {
-    type: "website",
-    title: "Privacy Policy - SoundButtons.com | Data Protection & Rights",
-    description:
-      "Read our comprehensive privacy policy to learn how we handle your data, cookies, and user rights at SoundButtons.com. We're committed to protecting your privacy and personal information.",
-    url: `${BASE}/privacy-policy`,
-    siteName: "Sound Buttons",
-    images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: "Privacy Policy - SoundButtons.com" }],
-    locale: "en_US",
-    alternateLocale: ["en_GB"],
-  },
-  twitter: {
-    card: "summary_large_image",
-    site: "@soundbuttons",
-    creator: "@soundbuttons",
-    title: "Privacy Policy - SoundButtons.com | Data Protection & Rights",
-    description:
-      "Read our comprehensive privacy policy to learn how we handle your data, cookies, and user rights at SoundButtons.com.",
-    images: [`${BASE}/og.png`],
-  },
-}
-
-const webPageSchema = {
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  name: "Privacy Policy - SoundButtons.Com",
-  description:
-    "Read our privacy policy to learn how we handle your data, cookies, and user rights at SoundButtons.Com.",
-  url: `${BASE}/privacy-policy`,
-  inLanguage: "en",
-  publisher: {
-    "@type": "Organization",
-    name: "SoundButtons.com",
-    logo: { "@type": "ImageObject", url: `${BASE}/og.png` },
-  },
-}
 
 export default function PrivacyPolicyPage() {
   return (
-    <>
-      {OLD_POLICY_NAV_ELEMENTS.map((schema, i) => (
-        <script
-          key={i}
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-        />
-      ))}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(OLD_WEBSITE_SCHEMA) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(OLD_ORGANIZATION_SCHEMA) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(OLD_NAV_GRAPH_SCHEMA) }}
-      />
-      <div className="flex flex-col items-center py-8 bg-background">
+    <div className="flex flex-col items-center py-8 bg-background">
         <div className="w-full max-w-2xl px-4">
             <h1 className="text-3xl font-bold mb-6 text-foreground">Privacy Policy</h1>
             <p className="mb-4 text-muted-foreground">
@@ -177,6 +89,5 @@ export default function PrivacyPolicyPage() {
             </p>
           </div>
       </div>
-    </>
   )
 }

@@ -9,10 +9,15 @@ import React, {
   useRef,
   useImperativeHandle,
   forwardRef,
+  useMemo,
 } from "react"
+import { usePathname } from "next/navigation"
 import { ChevronRight } from "lucide-react"
 import type { Sound } from "@/lib/types/sound"
 import SoundButton from "@/components/sound/sound-button"
+import { getSoundDetailPath } from "@/lib/utils/slug"
+import { getStrings, getLocaleFromPathname } from "@/lib/i18n/strings"
+import type { Locale } from "@/lib/i18n/strings"
 
 interface SoundListProps {
   title: string
@@ -39,6 +44,8 @@ interface SoundListProps {
   maxCols?: number
   /** Custom detail path for each sound (e.g. /sound-effects/slug/id) */
   getDetailPath?: (sound: Sound) => string
+  /** Locale for i18n; defaults to pathname-derived locale */
+  locale?: Locale
 }
 
 export interface SoundListRef {
@@ -68,9 +75,21 @@ const SoundList = forwardRef<SoundListRef, SoundListProps>(
       isMobileDevice: isMobileDeviceProp,
       maxCols,
       getDetailPath,
+      locale: localeProp,
     },
     ref
   ) => {
+    const pathname = usePathname()
+    const locale = localeProp ?? getLocaleFromPathname(pathname ?? "")
+    const { home, common } = useMemo(() => getStrings(locale), [locale])
+    const effectiveGetDetailPath = useMemo(() => {
+      if (getDetailPath) return getDetailPath
+      if (locale !== "en") {
+        return (s: Sound) => `/${locale}${getSoundDetailPath(s.name ?? "", s.id)}`
+      }
+      return undefined
+    }, [getDetailPath, locale])
+
     const [loading, setLoading] = useState(false)
     const [isMobileDevice, setIsMobileDevice] = useState(
       isMobileDeviceProp ?? false
@@ -361,10 +380,10 @@ const SoundList = forwardRef<SoundListRef, SoundListProps>(
                 onClick={handleAutoPlay}
               >
                 <span className="hidden sm:inline">
-                  {isAutoPlaying ? "Stop Auto" : "Auto Play"}
+                  {isAutoPlaying ? home.stopAuto : home.autoPlay}
                 </span>
                 <span className="sm:hidden">
-                  {isAutoPlaying ? "Stop" : "Auto"}
+                  {isAutoPlaying ? home.stopShort : home.autoShort}
                 </span>
               </button>
               <button
@@ -373,10 +392,10 @@ const SoundList = forwardRef<SoundListRef, SoundListProps>(
                 onClick={handleRandomPlay}
               >
                 <span className="hidden sm:inline">
-                  {isRandomPlaying ? "Stop Random" : "Random Play"}
+                  {isRandomPlaying ? home.stopRandom : home.randomPlay}
                 </span>
                 <span className="sm:hidden">
-                  {isRandomPlaying ? "Stop" : "Random"}
+                  {isRandomPlaying ? home.stopShort : home.randomShort}
                 </span>
               </button>
               <button
@@ -384,8 +403,8 @@ const SoundList = forwardRef<SoundListRef, SoundListProps>(
                 className="btn-theme btn-theme-arrow flex-shrink-0"
                 onClick={() => (window.location.href = viewAllLink)}
               >
-                <span className="hidden sm:inline">View All</span>
-                <span className="sm:hidden">View</span>
+                <span className="hidden sm:inline">{home.viewAll}</span>
+                <span className="sm:hidden">{home.view}</span>
                 <span className="btn-arrow-dot"><ChevronRight className="w-3 h-3" strokeWidth={3} /></span>
               </button>
             </div>
@@ -393,7 +412,7 @@ const SoundList = forwardRef<SoundListRef, SoundListProps>(
         </div>
         {displayedSounds.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground bg-muted rounded-xl">
-            <p className="text-lg">No sounds found</p>
+            <p className="text-lg">{common.noSoundsFound}</p>
           </div>
         ) : (
           <>
@@ -427,7 +446,7 @@ const SoundList = forwardRef<SoundListRef, SoundListProps>(
                                 index < (isMobileDevice ? 12 : 44)
                               }
                               isMobileDevice={isMobileDevice}
-                              detailPath={getDetailPath?.(sound)}
+                              detailPath={effectiveGetDetailPath?.(sound)}
                             />
                           ) : useCardView && customCardComponent ? (
                             React.createElement(customCardComponent, {
@@ -445,7 +464,7 @@ const SoundList = forwardRef<SoundListRef, SoundListProps>(
                                   : index < 10
                               }
                               isMobileDevice={isMobileDevice}
-                              detailPath={getDetailPath?.(sound)}
+                              detailPath={effectiveGetDetailPath?.(sound)}
                             />
                           )}
                         </Fragment>
@@ -466,11 +485,11 @@ const SoundList = forwardRef<SoundListRef, SoundListProps>(
                   {loading && showLoadingIndicator ? (
                     <div className="flex items-center gap-2">
                       <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent" />
-                      <span>Loading...</span>
+                      <span>{common.loading}</span>
                     </div>
                   ) : (
                     <>
-                      <span>Load More Sounds</span>
+                      <span>{home.loadMoreSounds}</span>
                       <span className="btn-arrow-dot"><ChevronRight className="w-3 h-3" strokeWidth={3} /></span>
                     </>
                   )}
@@ -484,7 +503,7 @@ const SoundList = forwardRef<SoundListRef, SoundListProps>(
                   onClick={() => (window.location.href = viewAllLink)}
                   className="btn-theme btn-theme-arrow px-4"
                 >
-                  <span>View All {title}</span>
+                  <span>{home.viewAll} {title}</span>
                   <span className="btn-arrow-dot"><ChevronRight className="w-3 h-3" strokeWidth={3} /></span>
                 </button>
               </div>

@@ -1,13 +1,9 @@
-import type { Metadata } from "next"
-import { SITE } from "@/lib/constants/site"
-import {
-  OLD_POLICY_NAV_ELEMENTS,
-  OLD_WEBSITE_SCHEMA,
-  OLD_ORGANIZATION_SCHEMA,
-  OLD_NAV_GRAPH_SCHEMA,
-} from "@/lib/constants/policy-page-schema"
+import type { Metadata, Viewport } from "next"
 
-const BASE = SITE.baseUrl
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+}
 
 export const metadata: Metadata = {
   title: { absolute: "Contact Us - SoundButtons.com | Get Support & Feedback" },
@@ -18,25 +14,28 @@ export const metadata: Metadata = {
   authors: [{ name: "SoundButtons.com" }],
   creator: "SoundButtons.com",
   publisher: "SoundButtons.com",
+  metadataBase: new URL("https://soundbuttons.com"),
   robots: {
     index: true,
     follow: true,
-    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
+    "max-image-preview": "large",
+    "max-snippet": -1,
+    "max-video-preview": -1,
+    googleBot: { index: true, follow: true },
   },
   alternates: {
-    canonical: `${BASE}/contact-us`,
-    languages: { en: `${BASE}/contact-us`, "x-default": `${BASE}/contact-us` },
+    canonical: "https://soundbuttons.com/contact-us",
   },
   openGraph: {
     type: "website",
     title: "Contact Us - SoundButtons.com | Get Support & Feedback",
     description:
       "Contact the SoundButtons.com team with your questions, feedback, or support requests. We're here to help! Get in touch for technical support, feature requests, or general inquiries.",
-    url: `${BASE}/contact-us`,
+    url: "https://soundbuttons.com/contact-us",
     siteName: "Sound Buttons",
-    images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: "Contact Us - SoundButtons.com" }],
     locale: "en_US",
     alternateLocale: ["en_GB"],
+    // Uses opengraph-image.tsx for dynamic SVG-based OG image
   },
   twitter: {
     card: "summary_large_image",
@@ -45,22 +44,33 @@ export const metadata: Metadata = {
     title: "Contact Us - SoundButtons.com | Get Support & Feedback",
     description:
       "Contact the SoundButtons.com team with your questions, feedback, or support requests. We're here to help! Get in touch for technical support, feature requests, or general inquiries.",
-    images: [`${BASE}/og.png`],
   },
-}
-
-const contactPageSchema = {
-  "@context": "https://schema.org",
-  "@type": "ContactPage",
-  name: "Contact Us - SoundButtons.Com",
-  description:
-    "Contact the SoundButtons.Com team with your questions, feedback, or support requests. We're here to help!",
-  url: `${BASE}/contact-us`,
-  inLanguage: "en",
-  publisher: {
-    "@type": "Organization",
-    name: "SoundButtons.com",
-    logo: { "@type": "ImageObject", url: `${BASE}/og.png` },
+  themeColor: "#2563eb",
+  applicationName: "Sound Buttons",
+  appleWebApp: {
+    capable: true,
+    title: "SoundButtons",
+    statusBarStyle: "default",
+  },
+  formatDetection: { telephone: false },
+  other: {
+    "fb:app_id": "123456789012345",
+    "wot-verification": "4342162e8c0f7503ba1f",
+    language: "en",
+    rating: "general",
+    distribution: "global",
+    bingbot: "index, follow",
+    HandheldFriendly: "true",
+    MobileOptimized: "width",
+    "mobile-web-app-capable": "yes",
+    coverage: "worldwide",
+    target: "all",
+    "msapplication-TileColor": "#2563eb",
+    "msapplication-config": "/browserconfig.xml",
+    "twitter:domain": "soundbuttons.com",
+    "twitter:app:name:iphone": "SoundButtons",
+    "twitter:app:name:ipad": "SoundButtons",
+    "twitter:app:name:googleplay": "SoundButtons",
   },
 }
 
@@ -69,30 +79,23 @@ export default function ContactUsLayout({
 }: {
   children: React.ReactNode
 }) {
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "contact-us",
+        item: "https://soundbuttons.com/contact-us",
+      },
+    ],
+  }
   return (
     <>
-      {OLD_POLICY_NAV_ELEMENTS.map((schema, i) => (
-        <script
-          key={i}
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-        />
-      ))}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(contactPageSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(OLD_WEBSITE_SCHEMA) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(OLD_ORGANIZATION_SCHEMA) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(OLD_NAV_GRAPH_SCHEMA) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
       {children}
     </>

@@ -7,7 +7,8 @@ import { usePathname, useRouter } from "next/navigation"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
 import { LanguageChanger } from "@/components/ui/language-changer"
 import { getTopLevelCategories } from "@/lib/constants/categories"
-import { getStrings, getLocaleFromPathname, getLocalePrefix } from "@/lib/i18n/strings"
+import { getStrings, getLocaleFromPathname } from "@/lib/i18n/strings"
+import { getLocalizedHref } from "@/lib/i18n/paths"
 
 function generateSlug(query: string): string {
   return query
@@ -28,24 +29,23 @@ export default function Header() {
   const categories = getTopLevelCategories()
 
   const locale = getLocaleFromPathname(pathname ?? "")
-  const localePrefix = getLocalePrefix(pathname ?? "")
   const nav = useMemo(() => getStrings(locale).nav, [locale])
 
   const navBeforeLinks = useMemo(
     () => [
-      { name: nav.home, href: `${localePrefix || ""}/` },
-      { name: nav.soundEffects, href: `${localePrefix}/categories/sound-effects` },
-      { name: nav.new, href: `${localePrefix}/new` },
-      { name: nav.trending, href: `${localePrefix}/trends` },
+      { name: nav.home, href: getLocalizedHref("/", locale) },
+      { name: nav.soundEffects, href: getLocalizedHref("/categories/sound-effects", locale) },
+      { name: nav.new, href: getLocalizedHref("/new", locale) },
+      { name: nav.trending, href: getLocalizedHref("/trends", locale) },
     ],
-    [nav, localePrefix]
+    [nav, locale]
   )
   const navAfterLinks = useMemo(
     () => [
-      { name: nav.memeSoundboard, href: `${localePrefix}/categories/memes` },
-      { name: nav.playRandom, href: `${localePrefix}/play-random` },
+      { name: nav.memeSoundboard, href: getLocalizedHref("/categories/memes", locale) },
+      { name: nav.playRandom, href: getLocalizedHref("/play-random", locale) },
     ],
-    [nav, localePrefix]
+    [nav, locale]
   )
 
   useEffect(() => {
@@ -80,7 +80,7 @@ export default function Header() {
     e.preventDefault()
     if (searchQuery.trim()) {
       const slug = generateSlug(searchQuery.trim())
-      if (slug) router.push(`${localePrefix}/search/${slug}`)
+      if (slug) router.push(getLocalizedHref(`/search/${slug}`, locale))
     }
   }
 
@@ -92,7 +92,7 @@ export default function Header() {
       <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:bg-slate-950/95 dark:supports-[backdrop-filter]:dark:bg-slate-950/80 border-slate-200 dark:border-slate-800">
         <div className="relative flex h-14 w-full items-center justify-between gap-4 px-4 sm:px-6">
           {/* Logo - left */}
-          <Link href={localePrefix || "/"} className="flex shrink-0 items-center">
+          <Link href={getLocalizedHref("/", locale)} className="flex shrink-0 items-center">
             <span className="text-base font-bold tracking-tight text-slate-900 dark:text-white sm:text-lg">
               SOUND BUTTONS
             </span>
@@ -131,7 +131,7 @@ export default function Header() {
                 {categories.map((cat) => (
                   <Link
                     key={cat.id}
-                    href={`${localePrefix}/categories/${cat.slug}`}
+                    href={getLocalizedHref(`/categories/${cat.slug}`, locale)}
                     role="menuitem"
                     className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                     onClick={() => setCategoryDropdownOpen(false)}
@@ -165,7 +165,7 @@ export default function Header() {
               />
             </form>
             <Link
-              href={`${localePrefix}/register`}
+              href={getLocalizedHref("/register", locale)}
               className="hidden shrink-0 rounded-lg bg-slate-900 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200 sm:inline-flex"
             >
               {nav.joinFree}
@@ -249,7 +249,7 @@ export default function Header() {
                     {categories.map((cat) => (
                       <Link
                         key={cat.id}
-                        href={`${localePrefix}/categories/${cat.slug}`}
+                        href={getLocalizedHref(`/categories/${cat.slug}`, locale)}
                         className="block py-2 text-sm text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
                         onClick={() => setMobileMenuOpen(false)}
                       >
@@ -271,14 +271,14 @@ export default function Header() {
               ))}
               <div className="border-t border-slate-200 pt-4 dark:border-slate-800">
                 <Link
-                  href={`${localePrefix}/login`}
+                  href={getLocalizedHref("/login", locale)}
                   className="block rounded-lg px-4 py-3 text-base font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {nav.login}
                 </Link>
                 <Link
-                  href={`${localePrefix}/register`}
+                  href={getLocalizedHref("/register", locale)}
                   className="mt-2 block rounded-lg bg-slate-900 px-4 py-3 text-center text-base font-medium text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
                   onClick={() => setMobileMenuOpen(false)}
                 >

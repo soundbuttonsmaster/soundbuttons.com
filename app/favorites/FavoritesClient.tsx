@@ -10,7 +10,6 @@ import type { ProcessedSound } from "@/lib/api/client"
 import type { Sound } from "@/lib/types/sound"
 import PageHero from "@/components/layout/page-hero"
 import SoundList from "@/components/home/SoundList"
-import { Button } from "@/components/ui/button"
 
 const PAGE_SIZE = 50
 
@@ -99,12 +98,13 @@ export default function FavoritesClient() {
               <p className="text-muted-foreground text-sm">
                 Create an account or sign in to save sound buttons and access them here.
               </p>
-              <Button asChild className="w-full h-11">
-                <Link href="/login?redirect=/favorites">
-                  <LogIn className="mr-2 h-4 w-4" />
-                  Sign In
-                </Link>
-              </Button>
+              <Link
+                href="/login?redirect=/favorites"
+                className="inline-flex items-center justify-center w-full h-11 rounded-md bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
+              >
+                <LogIn className="mr-2 h-4 w-4" />
+                Sign In
+              </Link>
               <p className="text-sm text-muted-foreground">
                 Don&apos;t have an account? <Link href="/register" className="text-primary hover:underline">Register</Link>
               </p>
@@ -134,9 +134,12 @@ export default function FavoritesClient() {
               <p className="text-muted-foreground text-sm mb-4">
                 Start adding sounds from the home page or search to see them here.
               </p>
-              <Button asChild variant="outline">
-                <Link href="/">Explore sounds</Link>
-              </Button>
+              <Link
+                href="/"
+                className="inline-flex items-center justify-center px-4 py-2 rounded-md border border-input bg-background font-medium hover:bg-accent hover:text-accent-foreground transition-colors"
+              >
+                Explore sounds
+              </Link>
             </div>
           ) : (
             <SoundList

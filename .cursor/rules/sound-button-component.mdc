@@ -1,0 +1,44 @@
+---
+description: Use SoundButton component only - never the icon-based CompactSoundButton
+globs: app/**/*.tsx, components/**/*.tsx
+alwaysApply: true
+---
+
+# Sound Button Component - Use SoundButton Only
+
+**Always use `SoundButton`** from `@/components/sound/sound-button` for displaying sound buttons. Never use the icon-based `CompactSoundButton` from `@/components/blog/CompactSoundButton`.
+
+## Rules
+
+- **DO** use: `import SoundButton from "@/components/sound/sound-button"`
+- **DON'T** use: `import CompactSoundButton from "@/components/blog/CompactSoundButton"` (shows Volume2 icon instead of proper button)
+
+## Usage
+
+```tsx
+// Correct - SoundButton shows the 3D styled button
+import SoundButton from "@/components/sound/sound-button"
+
+<SoundButton
+  sound={sound}
+  customSize={80}
+  hideActions
+  isAboveTheFold={index < 4}
+/>
+```
+
+## Props
+
+- `sound`: Sound type (from `@/lib/types/sound`) - ProcessedSound from API maps directly
+- `customSize`: Optional - e.g. 64, 80 for compact grids
+- `hideActions`: Optional - hide like/download for compact layouts
+- `hideLabel`: Optional - hide sound name below button
+- `isAboveTheFold`: Optional - for above-fold optimization
+
+## Wrong
+
+```tsx
+// Wrong - uses generic Volume2 icon
+import CompactSoundButton from "@/components/blog/CompactSoundButton"
+<CompactSoundButton sound={sound} />
+```

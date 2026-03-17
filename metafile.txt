@@ -1,68 +1,232 @@
-<meta name="author" content="SoundButtons.com" />
-<meta property="og:url" content="https://soundbuttons.com/" />
-<meta name="rating" content="general" />
-<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-<meta name="target" content="all" />
-<meta name="creator" content="SoundButtons.com" />
-<meta property="og:type" content="website" />
-<meta name="coverage" content="worldwide" />
-<meta name="keywords" content="sound buttons, meme sounds, sound effects, soundboard, unblocked sound buttons, free sound effects, viral sounds, meme soundboard, audio effects" />
-<meta name="language" content="en" />
-<meta property="og:image" content="https://soundbuttons.com/og.png" />
-<meta property="og:title" content="Sound Buttons - 9,99,999+ Meme Soundboard Unblocked" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="copyright" content="© 2025 SoundButtons.com" />
-<meta name="generator" content="Next.js" />
-<meta property="og:locale" content="en_US" />
-<meta name="publisher" content="SoundButtons.com" />
-<meta name="description" content="Play thousands of sound buttons with the best sound, buttons, meme, prank, sound effect, and high-quality audio in one powerful soundboard unblocked" />
-<meta name="theme-color" content="#2563eb" />
-<meta name="distribution" content="global" />
-<meta property="og:image:alt" content="Sound Buttons - 9,99,999+ Meme Soundboard Unblocked" />
-<meta property="og:site_name" content="SoundButtons.com" />
-<meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:site" content="@soundbuttons" />
-<meta property="twitter:image" content="https://soundbuttons.com/og.png" />
-<meta property="twitter:title" content="Sound Buttons - 9,99,999+ Meme Soundboard Unblocked" />
-<meta property="og:description" content="Play thousands of sound buttons with the best sound, buttons, meme, prank, sound effect, and high-quality audio in one powerful soundboard unblocked" />
-<meta property="og:image:width" content="1200" />
-<meta name="MobileOptimized" content="width" />
-<meta property="og:image:height" content="630" />
-<meta property="twitter:creator" content="@soundbuttons" />
-<meta name="HandheldFriendly" content="true" />
-<meta name="format-detection" content="telephone=no" />
-<meta property="twitter:image:alt" content="Sound Buttons - 9,99,999+ Meme Soundboard Unblocked" />
-<meta property="twitter:description" content="Play thousands of sound buttons with the best sound, buttons, meme, prank, sound effect, and high-quality audio in one powerful soundboard unblocked" />
-<meta name="msapplication-config" content="/browserconfig.xml" />
-<meta name="mobile-web-app-capable" content="yes" />
-<meta name="msapplication-TileColor" content="#2563eb" />
-<meta name="apple-mobile-web-app-title" content="SoundButtons" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+/404
+change og:image
+https://soundbuttons.com/og.png
 
-[
-  {
-    "url": "https://soundbuttons.com/",
-    "name": "SoundButtons.com",
-    "@type": "WebSite",
-    "@context": "https://schema.org",
-    "description": "Sound buttons is the Ultimate collection of unblocked soundboard, sound buttons, meme soundboard, with billion's of sound effects and meme buttons.",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://soundbuttons.com/search/{search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
-  },
-  {
-    "@type": "BreadcrumbList",
-    "@context": "https://schema.org",
-    "itemListElement": [
-      {
-        "item": "https://soundbuttons.com/",
-        "name": "Home",
-        "@type": "ListItem",
-        "position": 1
-      }
-    ]
-  }
-]
+change twitter:image
+https://soundbuttons.com/og.png
+
+/about-us 
+change og:image
+https://soundbuttons.com/og.png
+
+change twitter:image
+https://soundbuttons.com/og.png
+
+/forgot-password
+change robots tag
+noindex, nofollow
+
+/games
+add robots tag
+max-image-preview:large, max-snippet:-1
+
+change og:image
+https://soundbuttons.com/og.png
+
+change twitter:image
+https://soundbuttons.com/og.png
+
+
+/meme-buttons
+change Title, H1
+Meta Title: Meme Buttons: 100k+ Sound Buttons Unblocked
+H1: Meme Buttons: 100,000+ Sound Buttons with Soundboard Unblocked
+
+/meme-soundboard
+change Title
+Meta Title: Meme Soundboard: 100k+ Instant Play Soundboards Unblocked
+
+
+/profile
+change twitter:description
+Manage your SoundButtons.com account. View your soundboard, uploads, and access your saved favorites.
+
+/register
+
+change twitter:description
+Create a free SoundButtons.com account to save favorites, upload sounds, and build your own soundboard.
+
+
+
+/reviews
+twitter:description
+Read what our users say about SoundButtons.com. Share your own experience and rate our service to help us improve.
+
+/rss-feeds
+add Publisher name 
+
+add og:image & twitter:image link 
+
+
+/soundboard
+change twitter:image
+https://soundbuttons.com/soundboard/opengraph-image
+
+Add below 
+
+twitter:image:width
+1200
+twitter:image:height
+630
+
+/sound-buttons
+Meta Title: Sound Buttons Guide - Meme Soundboard Unblocked
+
+change twitter:image
+http://localhost:3000/soundboard/opengraph-image?9f9a26c378401ddf
+
+twitter:image:width
+1200
+twitter:image:height
+630
+
+/sound-buttons-unblocked
+Meta Title: Sound Buttons Unblocked - Play & Download Free Sounds
+
+change twitter:image
+http://localhost:3000/sound-buttons-unblocked/opengraph-image?da9f5cd2708ad552
+
+twitter:image:width
+1200
+twitter:image:height
+630
+
+/sound-buttons-unblocked-for-school
+Meta Title: Sound Buttons Unblocked for School - Play Free Sounds Online
+ 
+
+change twitter:image
+https://soundbuttons.com/og.png
+
+twitter:image:width
+1200
+twitter:image:height
+630
+
+/sound-effects
+
+add Robots Tag
+max-image-preview:large, max-snippet:-1, max-video-preview:-1
+
+add Publisher 
+SoundButtons.com
+
+H1: Sound Effects Library: 100,000+ Free Download Sound Effects for Videos, Games & More
+
+change twitter:image
+http://localhost:3000/sound-effects/opengraph-image?fa3bfafd7bcf532
+
+twitter:image:width
+1200
+twitter:image:height
+630
+
+/text-to-sound
+
+add Robots Tag
+max-image-preview:large, max-snippet:-1, max-video-preview:-1
+
+add Publisher 
+SoundButtons.com
+
+change twitter:image
+http://localhost:3000/text-to-sound/opengraph-image?ae9ada1c16eea61a
+
+twitter:image:width
+1200
+twitter:image:height
+630
+
+/tic-tac-toe
+Meta Title: Play Tic Tac Toe with Sound Buttons | Fun, Colorful, and Challenging Game
+
+add Robots Tag
+max-image-preview:large, max-snippet:-1, max-video-preview:-1
+
+add Publisher 
+SoundButtons.com
+
+change twitter:image
+http://localhost:3000/tic-tac-toe/opengraph-image?7243117655cd125e
+
+twitter:image:width
+1200
+twitter:image:height
+630
+
+/trends
+
+add Robots Tag
+max-image-preview:large, max-snippet:-1, max-video-preview:-1
+
+add Publisher 
+SoundButtons.com
+
+change twitter:image
+http://localhost:3000/trends/opengraph-image?b1195a33815a89ad
+
+twitter:image:width
+1200
+twitter:image:height
+630
+
+
+/upload-sound
+
+add Publisher 
+SoundButtons.com
+
+change twitter:image
+http://localhost:3000/upload-sound/opengraph-image?42c86e08aa57cc06
+
+twitter:image:width
+1200
+twitter:image:height
+630
+
+/whack-a-mole
+
+Meta Title: Whack-a-Mole Game With Sound Buttons & Meme Soundboard
+
+
+add Publisher 
+SoundButtons.com
+
+change twitter:image
+http://localhost:3000/whack-a-mole/opengraph-image?82a84198efef1bc8
+
+twitter:image:width
+1200
+twitter:image:height
+630
+
+/search
+meta title: Search Sound Buttons - Find Sound Effects & Meme Soundboard
+meta Description: Search our vast collection of sound buttons, sound effects, meme sounds, and audio clips. Find the perfect sound for your videos, memes, streams, and more. 
+
+add Publisher 
+SoundButtons.com
+
+change twitter:image
+http://localhost:3000/search/opengraph-image?c0488f2e9d658e33
+
+twitter:image:width
+1200
+twitter:image:height
+630
+
+sound search page: /search/fart
+
+meta title: Meta title: {search name} fart Soundboard: {sound count} Play Instant Sound Effect Button
+meta Description: Play and download {search name} sound buttons for free! Instant play, high-quality MP3 downloads. Perfect for memes, TikTok, Discord, and content creation. 
+H1: {sound count}  {search name} Sound Buttons: Unblocked Meme Soundboard
+
+sound detail page: /fart/101
+H1: {sound name} Sound Button - Free Download & Play
+Short description: Play and download {sound name} sound button for free! Perfect for memes, TikTok, Discord, and content creation. High-quality MP3 download available instantly on SoundButtons.com.
+
+
+twitter:image:width
+1200
+twitter:image:height
+630

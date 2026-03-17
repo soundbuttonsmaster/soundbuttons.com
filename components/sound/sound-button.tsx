@@ -97,10 +97,10 @@ const cleanupAudioCache = (maxSize?: number) => {
 };
 
 const normalizeAudioUrl = (sound: Sound): string | null => {
+  const sf = (sound as any).sound_file;
+  // Prefer sound.sound_file when it's a full URL or blob (for TTS preview)
+  if (sf && typeof sf === 'string' && (sf.startsWith('http') || sf.startsWith('blob:') || sf.startsWith('data:'))) return sf;
   if (sound.id && typeof sound.id === 'number') {
-    // Prefer sound.sound_file when it's a full URL (soundbuttons.com API)
-    const sf = (sound as any).sound_file;
-    if (sf && typeof sf === 'string' && sf.startsWith('http')) return sf;
     // Prefer cached S3 URL so audio loads directly from S3 (no 302)
     const resolved = getResolvedPlaybackUrl(sound.id);
     if (resolved) return resolved;

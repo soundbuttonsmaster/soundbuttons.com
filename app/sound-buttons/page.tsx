@@ -1,100 +1,18 @@
-import type { Metadata } from "next"
 import Link from "next/link"
-import { SITE } from "@/lib/constants/site"
-import { SITE_NAV_LINKS } from "@/lib/constants/site-nav-links"
-import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
 export const revalidate = 86400
 
-const BASE = SITE.baseUrl
-
-export const metadata: Metadata = {
-  title: { absolute: "Sound Buttons Guide - Meme Soundboard Unblocked | SoundButtons.com" },
-  description:
-    "Learn all about sound buttons and explore 100,000+ sounds for memes, streaming, and content creation. Discover, play, and download your favorite audio clips!",
-  keywords:
-    "sound buttons, sound buttons guide, meme soundboard, unblocked sound buttons, sound effects, audio clips, streaming sounds, content creation",
-  robots: { index: true, follow: true },
-  alternates: {
-    canonical: `${BASE}/sound-buttons`,
-    languages: { en: `${BASE}/sound-buttons`, "x-default": `${BASE}/sound-buttons` },
-  },
-  openGraph: {
-    type: "website",
-    title: "Sound Buttons Guide - Meme Soundboard Unblocked",
-    description:
-      "Learn all about sound buttons and explore 100,000+ sounds for memes, streaming, and content creation. Discover, play, and download your favorite audio clips!",
-    url: `${BASE}/sound-buttons`,
-    siteName: "Sound Buttons",
-    images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: "Sound Buttons Guide | SoundButtons.com" }],
-    locale: "en_US",
-  },
-  twitter: {
-    card: "summary_large_image",
-    site: "@soundbuttons",
-    creator: "@soundbuttons",
-    title: "Sound Buttons Guide - Meme Soundboard Unblocked",
-    description:
-      "Learn all about sound buttons and explore 100,000+ sounds for memes, streaming, and content creation. Discover, play, and download your favorite audio clips!",
-    images: [`${BASE}/og.png`],
-  },
-}
-
-const articleSchema = {
-  "@context": "https://schema.org",
-  "@type": "Article",
-  headline: "Sound Buttons: The Ultimate Guide to Audio Memes & Sound Effects",
-  description:
-    "Learn all about sound buttons and explore 100,000+ sounds for memes, streaming, and content creation. Discover, play, and download your favorite audio clips!",
-  image: `${BASE}/og.png`,
-  author: { "@type": "Organization", name: "SoundButtons.com" },
-  publisher: {
-    "@type": "Organization",
-    name: "SoundButtons.com",
-    logo: { "@type": "ImageObject", url: `${BASE}/og.png` },
-  },
-  datePublished: "2023-01-01T08:00:00+00:00",
-  dateModified: new Date().toISOString(),
-}
-
-const breadcrumbSchema = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: `${BASE}/` },
-    { "@type": "ListItem", position: 2, name: "Sound Buttons", item: `${BASE}/sound-buttons` },
-  ],
-}
-
-const siteNavSchema = SITE_NAV_LINKS.map((link) => ({
-  "@context": "https://schema.org",
-  "@type": "SiteNavigationElement",
-  name: link.name,
-  url: link.url,
-}))
-
 const linkClass = "text-primary font-semibold underline hover:opacity-80"
+
+const btnPrimary =
+  "inline-flex items-center justify-center rounded-md text-sm font-medium h-10 px-8 bg-primary text-primary-foreground shadow hover:bg-primary/90"
+const btnOutline =
+  "inline-flex items-center justify-center rounded-md text-sm font-medium h-10 px-8 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground"
 
 export default function SoundButtonsPage() {
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      {siteNavSchema.map((schema, i) => (
-        <script
-          key={i}
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-        />
-      ))}
-
-      <div className="min-h-screen flex flex-col bg-background relative overflow-x-hidden">
+    <div className="min-h-screen flex flex-col bg-background relative overflow-x-hidden">
         <div className="pointer-events-none fixed inset-0 z-0">
           <div className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-blue-300 via-purple-200 to-pink-200 opacity-40 blur-3xl dark:from-blue-900 dark:via-purple-900 dark:to-pink-900 dark:opacity-30" />
           <div className="absolute bottom-0 right-0 w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-pink-200 via-indigo-200 to-blue-200 opacity-30 blur-3xl dark:from-pink-900 dark:via-indigo-900 dark:to-blue-900 dark:opacity-20" />
@@ -115,12 +33,15 @@ export default function SoundButtonsPage() {
                   Learn how sound buttons power memes, streams, and viral moments. Explore 100,000+ free clips you can play, download, and share instantly across every device.
                 </p>
                 <div className="flex flex-wrap justify-center gap-4">
-                  <Button size="lg" className="bg-primary hover:bg-primary/90" asChild>
-                    <Link href="/trends">Explore Trending Sound Buttons</Link>
-                  </Button>
-                  <Button size="lg" variant="outline" className="bg-card dark:bg-secondary hover:bg-accent border-border" asChild>
-                    <Link href="/upload-sound">Create Your Own Sound Button</Link>
-                  </Button>
+                  <Link href="/trends" className={cn(btnPrimary, "h-10 px-8")}>
+                    Explore Trending Sound Buttons
+                  </Link>
+                  <Link
+                    href="/upload-sound"
+                    className={cn(btnOutline, "h-10 px-8 bg-card dark:bg-secondary border-border")}
+                  >
+                    Create Your Own Sound Button
+                  </Link>
                 </div>
               </div>
             </div>
@@ -220,9 +141,9 @@ export default function SoundButtonsPage() {
                     <li><strong>Add Proper Tags</strong>: Use accurate tags to help others find your sound button</li>
                   </ul>
                   <div className="not-prose mt-4">
-                    <Button className="bg-primary hover:bg-primary/90" asChild>
-                      <Link href="/upload-sound">Create Your Sound Button Now</Link>
-                    </Button>
+                    <Link href="/upload-sound" className={btnPrimary}>
+                      Create Your Sound Button Now
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -233,44 +154,44 @@ export default function SoundButtonsPage() {
                   <div>
                     <h3 className="text-xl font-semibold">Meme Sound Buttons</h3>
                     <p>Tap into the largest meme soundboard online packed with trending TikTok audio, Vine throwbacks, Discord classics, and punchlines like “Bruh” and “Emotional Damage.” Ideal for influencers, reaction content, or rapid-fire laughs.</p>
-                    <Button variant="link" className="p-0 h-auto text-primary" asChild>
-                      <Link href="/categories/memes">Browse Meme Buttons →</Link>
-                    </Button>
+                    <Link href="/categories/memes" className="text-primary font-medium hover:underline">
+                      Browse Meme Buttons →
+                    </Link>
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold">Movies Sound Buttons</h3>
                     <p>Relive blockbuster quotes and cinematic sound effects spanning Star Wars, MARVEL, Harry Potter, and golden-age Hollywood. Every clip is ready for instant play or download.</p>
-                    <Button variant="link" className="p-0 h-auto text-primary" asChild>
-                      <Link href="/categories/movies">Unlock Movie Quotes →</Link>
-                    </Button>
+                    <Link href="/categories/movies" className="text-primary font-medium hover:underline">
+                      Unlock Movie Quotes →
+                    </Link>
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold">Anime Sound Buttons</h3>
                     <p>Power up with anime soundboards capturing catchphrases, theme songs, battle cries, and emotional moments. From Naruto jutsu calls to Dragon Ball transformations, fans and cosplayers rely on these clips daily.</p>
-                    <Button variant="link" className="p-0 h-auto text-primary" asChild>
-                      <Link href="/categories/anime">Explore Anime Buttons →</Link>
-                    </Button>
+                    <Link href="/categories/anime" className="text-primary font-medium hover:underline">
+                      Explore Anime Buttons →
+                    </Link>
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold">Games Sound Buttons</h3>
                     <p>Level up with gaming soundboards covering Minecraft, Fortnite, Among Us, Roblox, and retro legends. Perfect for streaming overlays, Discord callouts, or celebrating a big win.</p>
-                    <Button variant="link" className="p-0 h-auto text-primary" asChild>
-                      <Link href="/categories/games">Jump Into Gaming Audio →</Link>
-                    </Button>
+                    <Link href="/categories/games" className="text-primary font-medium hover:underline">
+                      Jump Into Gaming Audio →
+                    </Link>
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold">Sound Effects Buttons</h3>
                     <p>Browse professionally produced effects for explosions, applause, ambient textures, animals, and more. Creators, podcasters, and editors love our ready-to-use reactions and transitions.</p>
-                    <Button variant="link" className="p-0 h-auto text-primary" asChild>
-                      <Link href="/categories/sound-effects">Discover SFX Buttons →</Link>
-                    </Button>
+                    <Link href="/categories/sound-effects" className="text-primary font-medium hover:underline">
+                      Discover SFX Buttons →
+                    </Link>
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold">Politics Sound Buttons</h3>
                     <p>Stay informed and entertained with notable speeches, debate highlights, presidential quotes, and campaign soundbites. These buttons are classroom-ready and great for commentary channels.</p>
-                    <Button variant="link" className="p-0 h-auto text-primary" asChild>
-                      <Link href="/categories/politics">Hear Political Clips →</Link>
-                    </Button>
+                    <Link href="/categories/politics" className="text-primary font-medium hover:underline">
+                      Hear Political Clips →
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -325,12 +246,15 @@ export default function SoundButtonsPage() {
                     Explore thousands of free clips, craft custom sounds that go viral, or simply enjoy instant entertainment with the Sound Buttons unblocked platform.
                   </p>
                   <div className="flex flex-wrap justify-center gap-4">
-                    <Button size="lg" className="bg-primary hover:bg-primary/90" asChild>
-                      <Link href="/">Browse Sound Buttons</Link>
-                    </Button>
-                    <Button size="lg" variant="outline" className="bg-background/50 hover:bg-background/80 border-primary" asChild>
-                      <Link href="/upload-sound">Create Your Own</Link>
-                    </Button>
+                    <Link href="/" className={cn(btnPrimary, "h-10 px-8")}>
+                      Browse Sound Buttons
+                    </Link>
+                    <Link
+                      href="/upload-sound"
+                      className={cn(btnOutline, "h-10 px-8 bg-background/50 hover:bg-background/80 border-primary")}
+                    >
+                      Create Your Own
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -338,6 +262,5 @@ export default function SoundButtonsPage() {
           </section>
         </main>
       </div>
-    </>
   )
 }

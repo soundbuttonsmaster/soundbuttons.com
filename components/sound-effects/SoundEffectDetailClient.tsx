@@ -2,12 +2,14 @@
 
 import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
-import { Download, Share2 } from "lucide-react"
+import { Download, Share2, ChevronRight, Copy } from "lucide-react"
 import ShareModal from "@/components/share/share-modal"
 import SoundEffectCard from "./SoundEffectCard"
 import { soundEffectsApi } from "@/lib/api/sound-effects"
 import type { SoundEffect } from "@/lib/api/sound-effects"
-import { getSoundEffectDetailPath } from "@/lib/utils/slug"
+import { getSoundEffectDetailPath, generateSlug, tagToSearchSlug } from "@/lib/utils/slug"
+import { SITE } from "@/lib/constants/site"
+import { getNameForTitle } from "@/lib/utils"
 
 interface SoundEffectDetailClientProps {
   soundEffect: SoundEffect
@@ -70,7 +72,36 @@ export default function SoundEffectDetailClient({
     return () => window.removeEventListener("pause-all-sounds", pauseAll as EventListener)
   }, [soundEffect.id])
 
-  const firstTag = soundEffect.tags ? soundEffect.tags.split(",")[0]?.trim() : ""
+  const tags = soundEffect.tags
+    ? soundEffect.tags.split(",").map((t) => t.trim()).filter(Boolean)
+    : []
+  const displayName = getNameForTitle(soundEffect.soundName || "")
+  const faqSuffix = /sound\s*effect/i.test(soundEffect.soundName || "") ? "" : " sound effect"
+  const faqs = [
+    {
+      question: `What is the ${displayName || "this"}${faqSuffix}?`,
+      answer: `The ${displayName || "this"}${faqSuffix} is a high-quality audio clip you can play, download, and use in your creative projects. It's perfect for videos, games, podcasts, streams, and multimedia content. All sound effects on SoundButtons are free to use.`,
+    },
+    {
+      question: `How can I download the ${displayName || "this"}${faqSuffix}?`,
+      answer: `Click the "Download MP3" button above to save the ${displayName || "this"}${faqSuffix} to your device. The file will download as an MP3 that you can use in any video editor, game, or audio project.`,
+    },
+    {
+      question: `Can I use the ${displayName || "this"}${faqSuffix} for free?`,
+      answer: `Yes! All sound effects on SoundButtons.com are free to play and download. You can use them in personal and commercial projects including videos, games, podcasts, and streams. Check the sound detail page for any specific licensing notes.`,
+    },
+    {
+      question: `How do I embed the ${displayName || "this"}${faqSuffix} on my website?`,
+      answer: `Use the embed section below to copy an iframe code. Paste it into your HTML to add a playable sound button to your site. The embed is responsive and works on all devices.`,
+    },
+    {
+      question: `What format is the ${displayName || "this"}${faqSuffix} available in?`,
+      answer: `The ${displayName || "this"}${faqSuffix} is available as an MP3 file. MP3 is widely supported across video editors, game engines, streaming software, and audio applications.`,
+    },
+  ]
+  const embedSlug = generateSlug(soundEffect.soundName || "") || "sound-effect"
+  const embedPath = `/sound-effects/embed/${embedSlug}/${soundEffect.id}`
+  const embedCode = `<iframe src="${SITE.baseUrl}${embedPath}" width="300" height="90" style="max-width:100%;border:0;" loading="lazy"></iframe>`
 
   return (
     <>
@@ -105,9 +136,15 @@ export default function SoundEffectDetailClient({
               </button>
               <h1 className="mt-4 text-2xl md:text-3xl font-bold text-center">{soundEffect.soundName}</h1>
               <div className="flex flex-wrap justify-center gap-2 mt-2">
-                {firstTag && (
-                  <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">{firstTag}</span>
-                )}
+                {tags.map((tag) => (
+                  <Link
+                    key={tag}
+                    href={`/sound-effects/search/${tagToSearchSlug(tag)}`}
+                    className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors"
+                  >
+                    {tag}
+                  </Link>
+                ))}
                 <span className="px-3 py-1 rounded-full bg-muted text-muted-foreground text-xs">
                   {soundEffect.views ?? 0} views
                 </span>
@@ -132,10 +169,50 @@ export default function SoundEffectDetailClient({
               </div>
             </div>
 
+            <section className="mt-8 pt-6 border-t border-border">
+              <h2 className="text-lg font-semibold mb-3">Embed this sound effect on your site</h2>
+              <textarea
+                readOnly
+                rows={3}
+                value={embedCode}
+                className="w-full resize-none rounded-lg border border-border bg-muted/50 p-3 text-xs font-mono text-foreground"
+                onFocus={(e) => e.currentTarget.select()}
+                aria-label="Embed code for this sound effect"
+              />
+              <button
+                type="button"
+                onClick={() => navigator.clipboard.writeText(embedCode).catch(() => {})}
+                className="mt-2 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:opacity-90"
+              >
+                <Copy className="h-4 w-4" />
+                Copy embed code
+              </button>
+            </section>
+
+            <section className="mt-8 pt-6 border-t border-border">
+              <h2 className="text-xl font-bold mb-4">Frequently Asked Questions</h2>
+              <div className="space-y-2">
+                {faqs.map((faq, i) => (
+                  <details
+                    key={i}
+                    className="group rounded-lg border border-border bg-card overflow-hidden"
+                  >
+                    <summary className="flex items-center justify-between cursor-pointer list-none px-4 py-3 font-medium text-foreground hover:bg-accent/50 transition-colors [&::-webkit-details-marker]:hidden">
+                      <span>{faq.question}</span>
+                      <ChevronRight className="h-4 w-4 shrink-0 transition-transform group-open:rotate-90" />
+                    </summary>
+                    <div className="px-4 py-3 pt-0 text-muted-foreground border-t border-border">
+                      {faq.answer}
+                    </div>
+                  </details>
+                ))}
+              </div>
+            </section>
+
             {relatedEffects.length > 0 && (
               <section className="mt-10">
-                <h2 className="text-xl font-bold mb-4">You might also like</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <h2 className="text-xl font-bold mb-4">Similar Sound Effects</h2>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
                   {relatedEffects.map((eff) => (
                     <SoundEffectCard key={eff.id} effect={eff} />
                   ))}

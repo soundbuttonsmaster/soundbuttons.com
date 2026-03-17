@@ -1,99 +1,32 @@
-import type { Metadata } from "next"
 import Link from "next/link"
 import { ChevronRight } from "lucide-react"
 import PageHero from "@/components/layout/page-hero"
 import SearchBar from "@/components/search-bar"
 import { getTopLevelCategories } from "@/lib/constants/categories"
 import { SITE } from "@/lib/constants/site"
-import { SITE_NAV_LINKS } from "@/lib/constants/site-nav-links"
 
 export const revalidate = 86400
 
-const BASE = SITE.baseUrl
-
-export const metadata: Metadata = {
-  title: { absolute: "Sound Button Categories – Browse All | SoundButtons.com" },
-  description:
-    "Browse all sound button categories on SoundButtons.com! From memes to music, gaming to comedy, find and explore thousands of organized sound effects.",
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
-  },
-  alternates: {
-    canonical: `${BASE}/categories`,
-    languages: { en: `${BASE}/categories`, "x-default": `${BASE}/categories` },
-  },
-  openGraph: {
-    type: "website",
-    title: "Sound Button Categories – Browse All | SoundButtons.com",
-    description:
-      "Browse all sound button categories on SoundButtons.com! From memes to music, gaming to comedy, find and explore thousands of organized sound effects.",
-    url: `${BASE}/categories`,
-    siteName: "Sound Buttons",
-    images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: "Sound Button Categories" }],
-    locale: "en_US",
-  },
-  twitter: {
-    card: "summary_large_image",
-    site: "@soundbuttons",
-    creator: "@soundbuttons",
-    title: "Sound Button Categories – Browse All | SoundButtons.com",
-    description:
-      "Browse all sound button categories on SoundButtons.com! From memes to music, gaming to comedy, find and explore thousands of organized sound effects.",
-    images: [`${BASE}/og.png`],
-  },
-}
-
-const collectionPageSchema = {
-  "@context": "https://schema.org",
-  "@type": "CollectionPage",
-  name: "Sound Button Categories – Browse All | SoundButtons.com",
-  description:
-    "Browse all sound button categories on SoundButtons.com! From memes to music, gaming to comedy, find and explore thousands of organized sound effects.",
-  url: `${BASE}/categories`,
-  inLanguage: "en",
-  publisher: {
-    "@type": "Organization",
-    name: "SoundButtons.com",
-    logo: { "@type": "ImageObject", url: `${BASE}/og.png` },
-  },
-}
-
-const breadcrumbSchema = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: `${BASE}/` },
-    { "@type": "ListItem", position: 2, name: "Categories", item: `${BASE}/categories` },
-  ],
-}
-
-const siteNavSchema = SITE_NAV_LINKS.map((link) => ({
-  "@context": "https://schema.org",
-  "@type": "SiteNavigationElement",
-  name: link.name,
-  url: link.url,
-}))
-
 export default function CategoriesPage() {
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "categories",
+        item: `${SITE.baseUrl}/categories`,
+      },
+    ],
+  }
+
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageSchema) }}
-      />
-      <script
-        type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      {siteNavSchema.map((schema, i) => (
-        <script
-          key={i}
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-        />
-      ))}
       <PageHero
         title="Sound Button Categories"
         description="Explore thousands of sound buttons organized by category. From memes to music, games to comedy—find the perfect sound effects for your content, streams, and entertainment."

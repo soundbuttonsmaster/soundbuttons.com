@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import { ChevronDown, Languages } from "lucide-react"
 import type { Locale } from "@/lib/i18n/strings"
+import { pathHasLocaleVersion } from "@/lib/i18n/paths"
 
 const LOCALE_LABELS: Record<Locale, string> = {
   en: "EN",
@@ -15,8 +16,10 @@ const LOCALE_LABELS: Record<Locale, string> = {
 function getPathForLocale(pathname: string, targetLocale: Locale): string {
   const withoutLocale = pathname?.replace(/^\/(es|pt|fr)(\/|$)/, "$2") || "/"
   const base = withoutLocale === "/" ? "" : withoutLocale
-  if (targetLocale === "en") return base || "/"
-  return base ? `/${targetLocale}${base}` : `/${targetLocale}`
+  const basePath = base || "/"
+  if (targetLocale === "en") return basePath
+  if (!pathHasLocaleVersion(basePath)) return `/${targetLocale}`
+  return `/${targetLocale}${base}`
 }
 
 export function LanguageChanger() {

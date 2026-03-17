@@ -1,27 +1,67 @@
+import type { Metadata } from "next"
 import Link from "next/link"
 import { ChevronRight } from "lucide-react"
 import PageHero from "@/components/layout/page-hero"
 import SearchBar from "@/components/search-bar"
 import { getTopLevelCategories } from "@/lib/constants/categories"
-import { buildLocaleMetadata, getLocaleBase } from "@/lib/i18n/metadata"
+import { SITE, getLocaleBase } from "@/lib/constants/site"
 
 export const revalidate = 86400
-export const metadata = buildLocaleMetadata("fr", "categories")
+
+const BASE = getLocaleBase("fr")
+
+export const metadata: Metadata = {
+  title: { absolute: "Catégories de boutons sonores – Parcourir tout | SoundButtons.com" },
+  description:
+    "Parcourez toutes les catégories de boutons sonores sur SoundButtons.com ! Des mèmes à la musique, des jeux à la comédie, découvrez et explorez des milliers d'effets sonores organisés.",
+  authors: [{ name: "SoundButtons.com" }],
+  creator: "SoundButtons.com",
+  publisher: "SoundButtons.com",
+  alternates: {
+    canonical: `${BASE}/categories`,
+    languages: {
+      en: `${SITE.baseUrl}/categories`,
+      es: `${getLocaleBase("es")}/categories`,
+      pt: `${getLocaleBase("pt")}/categories`,
+      fr: `${BASE}/categories`,
+      "x-default": SITE.baseUrl,
+    },
+  },
+  openGraph: {
+    type: "website",
+    title: "Catégories de boutons sonores – Parcourir tout | SoundButtons.com",
+    description:
+      "Parcourez toutes les catégories de boutons sonores sur SoundButtons.com ! Des mèmes à la musique, des jeux à la comédie, découvrez et explorez des milliers d'effets sonores organisés.",
+    url: `${BASE}/categories`,
+    siteName: "Sound Buttons",
+    images: [{ url: `${BASE}/categories/opengraph-image`, width: 1200, height: 630, type: "image/png" as const, alt: "Catégories de boutons sonores", secureUrl: `${BASE}/categories/opengraph-image` }],
+    locale: "fr_FR",
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@soundbuttons",
+    creator: "@soundbuttons",
+    title: "Catégories de boutons sonores – Parcourir tout | SoundButtons.com",
+    description:
+      "Parcourez toutes les catégories de boutons sonores sur SoundButtons.com ! Des mèmes à la musique, des jeux à la comédie, découvrez et explorez des milliers d'effets sonores organisés.",
+    images: [`${BASE}/categories/opengraph-image`],
+  },
+  robots: { index: true, follow: true },
+}
 
 export default function FrCategoriesPage() {
-  const BASE = getLocaleBase("fr")
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Accueil", item: `${BASE}/` },
-      { "@type": "ListItem", position: 2, name: "Catégories", item: `${BASE}/categories` },
-    ],
+    itemListElement: [{ "@type": "ListItem", position: 1, name: "categories", item: `${BASE}/categories` }],
   }
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <PageHero title="Catégories de Sound Buttons" description="Parcourez des milliers de sound buttons organisés par catégorie.">
         <div className="flex justify-center mt-2 px-2">
           <div className="flex justify-center max-w-3xl md:max-w-4xl lg:max-w-5xl w-full shadow-lg">

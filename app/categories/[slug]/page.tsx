@@ -3,7 +3,6 @@ import { notFound } from "next/navigation"
 import type { Metadata } from "next"
 import { apiClient } from "@/lib/api/client"
 import { SITE } from "@/lib/constants/site"
-import { SITE_NAV_LINKS } from "@/lib/constants/site-nav-links"
 import { CATEGORIES, getCategoryBySlug, getParentCategory, getSubcategories } from "@/lib/constants/categories"
 import CategoryDetailClient from "./CategoryDetailClient"
 
@@ -32,6 +31,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: { absolute: title },
     description,
+    authors: [{ name: "SoundButtons.com" }],
+    creator: "SoundButtons.com",
+    publisher: "SoundButtons.com",
     robots: {
       index: true,
       follow: true,
@@ -39,7 +41,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     alternates: {
       canonical: canonicalUrl,
-      languages: { en: canonicalUrl, "x-default": canonicalUrl },
+      languages: {
+        en: canonicalUrl,
+        es: `${BASE}/es/categories/${slug}`,
+        pt: `${BASE}/pt/categories/${slug}`,
+        fr: `${BASE}/fr/categories/${slug}`,
+        "x-default": canonicalUrl,
+      },
     },
     openGraph: {
       type: "website",
@@ -47,8 +55,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description,
       url: canonicalUrl,
       siteName: "Sound Buttons",
-      images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: category.name }],
+      images: [
+        {
+          url: `${BASE}/categories/${slug}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          type: "image/png",
+          alt: category.name,
+          secureUrl: `${BASE}/categories/${slug}/opengraph-image`,
+        },
+      ],
       locale: "en_US",
+      alternateLocale: ["en_GB", "en_CA", "en_AU", "fr_FR"],
     },
     twitter: {
       card: "summary_large_image",
@@ -56,18 +74,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       creator: "@soundbuttons",
       title: `${category.name} - SoundButtons.Com`,
       description,
-      images: [`${BASE}/og.png`],
+      images: [`${BASE}/categories/${slug}/opengraph-image`],
     },
   }
-}
-
-function slugify(str: string): string {
-  if (!str) return ""
-  return str
-    .toLowerCase()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/[\s_-]+/g, "-")
-    .replace(/^-+|-+$/g, "") || "sound"
 }
 
 export default async function CategoryDetailPage({ params }: Props) {
@@ -96,63 +105,13 @@ export default async function CategoryDetailPage({ params }: Props) {
     // ignore
   }
 
-  const canonicalUrl = `${BASE}/categories/${slug}`
-
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement: parentCategory
-      ? [
-          { "@type": "ListItem", position: 1, name: "Home", item: `${BASE}/` },
-          { "@type": "ListItem", position: 2, name: "Categories", item: `${BASE}/categories` },
-          { "@type": "ListItem", position: 3, name: parentCategory.name, item: `${BASE}/categories/${parentCategory.slug}` },
-          { "@type": "ListItem", position: 4, name: category.name, item: canonicalUrl },
-        ]
-      : [
-          { "@type": "ListItem", position: 1, name: "Home", item: `${BASE}/` },
-          { "@type": "ListItem", position: 2, name: "Categories", item: `${BASE}/categories` },
-          { "@type": "ListItem", position: 3, name: category.name, item: canonicalUrl },
-        ],
-  }
-
-  const siteNavSchema = SITE_NAV_LINKS.map((link) => ({
-    "@context": "https://schema.org",
-    "@type": "SiteNavigationElement",
-    name: link.name,
-    url: link.url,
-  }))
-
-  const collectionPageSchema = {
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    name: `${category.name} Sound Buttons`,
-    description: `Discover and play the best ${category.name} sound buttons. Download, share, and enjoy high-quality sound effects!`,
-    url: canonicalUrl,
-    image: `${BASE}/og.png`,
-    inLanguage: "en",
-    publisher: {
-      "@type": "Organization",
-      name: "SoundButtons.com",
-      logo: { "@type": "ImageObject", url: `${BASE}/og.png` },
-    },
-  }
-
-  const itemListSchema = {
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    itemListElement: initialSounds.slice(0, 10).map((sound, idx) => {
-      const soundSlug = `${slugify(sound.name)}-${sound.id}`
-      return {
-        "@type": "ListItem",
-        position: idx + 1,
-        item: {
-          "@type": "AudioObject",
-          name: sound.name,
-          description: `${category.name} sound button`,
-          url: `${BASE}/${soundSlug}`,
-        },
-      }
-    }),
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "categories", item: `${BASE}/categories` },
+      { "@type": "ListItem", position: 2, name: category.name, item: `${BASE}/categories/${slug}` },
+    ],
   }
 
   const faqs = [
@@ -183,21 +142,6 @@ export default async function CategoryDetailPage({ params }: Props) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      {siteNavSchema.map((s, i) => (
-        <script
-          key={i}
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(s) }}
-        />
-      ))}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
       />
       <CategoryDetailClient
         category={category}

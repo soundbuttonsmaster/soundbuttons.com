@@ -1,34 +1,6 @@
-import type { Metadata } from "next"
 import Link from "next/link"
-import { SITE } from "@/lib/constants/site"
 import { CATEGORIES } from "@/lib/constants/categories"
-import { SITE_NAV_LINKS } from "@/lib/constants/site-nav-links"
 import { ChevronRight } from "lucide-react"
-
-const BASE = SITE.baseUrl
-
-export const metadata: Metadata = {
-  title: "Sitemap - SoundButtons.com",
-  description:
-    "Navigate SoundButtons.com through our sitemap. Find all our pages including sound categories, blog posts, and more.",
-  robots: { index: true, follow: true },
-  alternates: { canonical: `${BASE}/sitemap` },
-  openGraph: {
-    type: "website",
-    title: "Sitemap - SoundButtons.com",
-    description:
-      "Navigate SoundButtons.com through our sitemap. Find all our pages including sound categories and more.",
-    url: `${BASE}/sitemap`,
-    siteName: "Sound Buttons",
-    locale: "en_US",
-  },
-  twitter: {
-    card: "summary",
-    title: "Sitemap - SoundButtons.com",
-    description:
-      "Navigate SoundButtons.com through our sitemap. Find all our pages including sound categories and more.",
-  },
-}
 
 const staticPages = [
   { name: "Home", path: "/" },
@@ -75,15 +47,6 @@ const otherPages = [
   { name: "Main Blog Page", path: "/blog" },
 ]
 
-const siteNavSchema = {
-  "@context": "https://schema.org",
-  "@graph": SITE_NAV_LINKS.map((link) => ({
-    "@type": "SiteNavigationElement",
-    name: link.name,
-    url: link.url,
-  })),
-}
-
 function LinkList({
   links,
   className,
@@ -110,10 +73,6 @@ function LinkList({
 export default function SitemapPage() {
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(siteNavSchema) }}
-      />
       <div className="py-12 px-4 sm:px-6 lg:px-8 bg-background">
           <div className="max-w-4xl mx-auto bg-card shadow-lg rounded-lg p-6 md:p-10">
             <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-8 border-b pb-4">

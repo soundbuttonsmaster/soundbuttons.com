@@ -1,7 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { SITE } from "@/lib/constants/site"
-import { SITE_NAV_LINKS } from "@/lib/constants/site-nav-links"
 import PageHero from "@/components/layout/page-hero"
 import { Rss } from "lucide-react"
 
@@ -26,34 +25,9 @@ const RSS_FEEDS = [
   { name: "New sounds", description: "Latest sound buttons added to the site.", path: "/api/rss/new-sounds", url: `${BASE}/api/rss/new-sounds` },
 ]
 
-const webPageSchema = {
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  name: "RSS Feeds - SoundButtons.com",
-  description: "RSS feeds for new sounds and updates.",
-  url: `${BASE}/rss-feeds`,
-}
-const navSchema = SITE_NAV_LINKS.map((link) => ({
-  "@context": "https://schema.org",
-  "@type": "SiteNavigationElement",
-  name: link.name,
-  url: link.url,
-}))
-
 export default function RssFeedsPage() {
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }}
-      />
-      {navSchema.map((s, i) => (
-        <script
-          key={i}
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(s) }}
-        />
-      ))}
       <PageHero
         title="RSS Feeds"
         description="Subscribe to our feeds for new sound buttons and updates."

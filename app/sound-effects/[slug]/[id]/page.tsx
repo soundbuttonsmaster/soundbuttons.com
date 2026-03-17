@@ -4,7 +4,6 @@ import SoundEffectDetailClient from "@/components/sound-effects/SoundEffectDetai
 import { soundEffectsApi } from "@/lib/api/sound-effects"
 import { SITE } from "@/lib/constants/site"
 import { generateSlug } from "@/lib/utils/slug"
-import { getSoundEffectDetailPath } from "@/lib/utils/slug"
 
 export const revalidate = 60
 
@@ -75,8 +74,6 @@ export default async function SoundEffectDetailPage({ params }: SoundEffectPageP
     permanentRedirect(`/sound-effects/${canonicalSlug}/${soundEffect.id}`)
   }
 
-  const canonicalUrl = `${SITE.baseUrl}${getSoundEffectDetailPath(soundEffect.soundName, soundEffect.id)}`
-
   let relatedEffects: Awaited<ReturnType<typeof soundEffectsApi.getRelated>> = []
   try {
     relatedEffects = await soundEffectsApi.getRelated(
@@ -94,58 +91,30 @@ export default async function SoundEffectDetailPage({ params }: SoundEffectPageP
     // ignore
   }
 
-  const description = buildDescription(soundEffect.soundName)
-  const faqSuffix = /sound\s*effect/i.test(soundEffect.soundName) ? "" : " sound effect"
-  const faqs = [
-    {
-      q: `What is the ${soundEffect.soundName}${faqSuffix}?`,
-      a: `The ${soundEffect.soundName}${faqSuffix} is a high-quality audio clip you can download and use in your creative projects, videos, games, and multimedia content.`,
-    },
-    {
-      q: `How can I download the ${soundEffect.soundName}${faqSuffix}?`,
-      a: `Simply click the download button on this page to save the ${soundEffect.soundName}${faqSuffix} as an MP3 file.`,
-    },
-    {
-      q: `Can I use the ${soundEffect.soundName}${faqSuffix} for free?`,
-      a: `Yes! The ${soundEffect.soundName}${faqSuffix} is free to download and use for personal and commercial projects.`,
-    },
-  ]
-
-  const breadcrumbSchema = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: `${SITE.baseUrl}/` },
-      { "@type": "ListItem", position: 2, name: "Sound Effects", item: `${SITE.baseUrl}/sound-effects` },
-      { "@type": "ListItem", position: 3, name: soundEffect.soundName, item: canonicalUrl },
-    ],
-  }
-
-  const audioSchema = {
-    "@context": "https://schema.org",
-    "@type": "AudioObject",
-    name: soundEffect.soundName,
-    description,
-    url: canonicalUrl,
-    contentUrl: soundEffectsApi.getSoundFileUrl(soundEffect),
-    encodingFormat: "audio/mpeg",
-  }
-
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqs.map((faq) => ({
-      "@type": "Question",
-      name: faq.q,
-      acceptedAnswer: { "@type": "Answer", text: faq.a },
-    })),
-  }
+  const base = SITE.baseUrl
+  const detailPath = `/sound-effects/${canonicalSlug}/${soundEffect.id}`
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(audioSchema) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: `${base}/` },
+              { "@type": "ListItem", position: 2, name: "Sound Effects", item: `${base}/sound-effects` },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: soundEffect.soundName,
+                item: `${base}${detailPath}`,
+              },
+            ],
+          }),
+        }}
+      />
       <SoundEffectDetailClient soundEffect={soundEffect} relatedEffects={relatedEffects} />
     </>
   )

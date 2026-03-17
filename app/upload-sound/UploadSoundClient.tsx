@@ -72,12 +72,13 @@ export default function UploadSoundClient() {
               <p className="text-muted-foreground text-sm">
                 Create an account or sign in to share your sound buttons with the community.
               </p>
-              <Button asChild className="w-full h-11">
-                <Link href="/login?redirect=/upload-sound">
-                  <LogIn className="mr-2 h-4 w-4" />
-                  Sign In
-                </Link>
-              </Button>
+              <Link
+                href="/login?redirect=/upload-sound"
+                className="inline-flex items-center justify-center w-full h-11 rounded-md bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
+              >
+                <LogIn className="mr-2 h-4 w-4" />
+                Sign In
+              </Link>
               <p className="text-sm text-muted-foreground">
                 <Link href="/register" className="text-primary hover:underline">Register</Link> to get started.
               </p>

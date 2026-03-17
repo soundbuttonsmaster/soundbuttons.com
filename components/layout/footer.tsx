@@ -4,15 +4,16 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { getTopLevelCategories } from "@/lib/constants/categories"
 import { SITE } from "@/lib/constants/site"
-import { getStrings, getLocalePrefix } from "@/lib/i18n/strings"
+import { getStrings, getLocaleFromPathname } from "@/lib/i18n/strings"
+import { getLocalizedHref } from "@/lib/i18n/paths"
 import { Mail, Heart, Music, Phone, MapPin, Facebook, Instagram, Youtube } from "lucide-react"
 
 const FOOTER_CATEGORIES = getTopLevelCategories().slice(0, 8)
 
 export default function Footer() {
   const pathname = usePathname()
-  const localePrefix = getLocalePrefix(pathname ?? "")
-  const f = getStrings(pathname?.startsWith("/es") ? "es" : pathname?.startsWith("/pt") ? "pt" : pathname?.startsWith("/fr") ? "fr" : "en").footer
+  const locale = getLocaleFromPathname(pathname ?? "")
+  const f = getStrings(locale).footer
 
   return (
     <footer className="bg-[rgb(15,23,42)] text-white pt-4 pb-8">
@@ -62,21 +63,21 @@ export default function Footer() {
               {f.specialPages}
             </h3>
             <ul className="space-y-2">
-              <li><Link href={`${localePrefix}/`} className="text-gray-300 hover:text-white transition-colors">{f.home}</Link></li>
-              <li><Link href={`${localePrefix}/sound-buttons-unblocked`} className="text-gray-300 hover:text-white transition-colors">{f.soundButtonsUnblocked}</Link></li>
-              <li><Link href={`${localePrefix}/sound-buttons-unblocked-for-school`} className="text-gray-300 hover:text-white transition-colors">{f.soundButtonsForSchool}</Link></li>
-              <li><Link href={`${localePrefix}/soundboard`} className="text-gray-300 hover:text-white transition-colors">{f.soundboard}</Link></li>
-              <li><Link href={`${localePrefix}/text-to-sound`} className="text-gray-300 hover:text-white transition-colors">{f.textToSound}</Link></li>
-              <li><Link href={`${localePrefix}/create-sound`} className="text-gray-300 hover:text-white transition-colors">{f.createSound}</Link></li>
-              <li><Link href={`${localePrefix}/play-random`} className="text-gray-300 hover:text-white transition-colors">{f.playRandom}</Link></li>
-              <li><Link href={`${localePrefix}/new`} className="text-gray-300 hover:text-white transition-colors">{f.newSoundButtons}</Link></li>
-              <li><Link href={`${localePrefix}/trends`} className="text-gray-300 hover:text-white transition-colors">{f.trending}</Link></li>
-              <li><Link href={`${localePrefix}/reviews`} className="text-gray-300 hover:text-white transition-colors">{f.userReviews}</Link></li>
-              <li><Link href={`${localePrefix}/games`} className="text-gray-300 hover:text-white transition-colors">{f.games}</Link></li>
-              <li><Link href={`${localePrefix}/kids-soundboard`} className="text-gray-300 hover:text-white transition-colors">{f.kidsSoundboard}</Link></li>
-              <li><Link href={`${localePrefix}/sound-effects`} className="text-gray-300 hover:text-white transition-colors">{f.soundEffects}</Link></li>
-              <li><Link href={`${localePrefix}/login`} className="text-gray-300 hover:text-white transition-colors">{f.signIn}</Link></li>
-              <li><Link href={`${localePrefix}/register`} className="text-gray-300 hover:text-white transition-colors">{f.createAccount}</Link></li>
+              <li><Link href={getLocalizedHref("/", locale)} className="text-gray-300 hover:text-white transition-colors">{f.home}</Link></li>
+              <li><Link href={getLocalizedHref("/sound-buttons-unblocked", locale)} className="text-gray-300 hover:text-white transition-colors">{f.soundButtonsUnblocked}</Link></li>
+              <li><Link href={getLocalizedHref("/sound-buttons-unblocked-for-school", locale)} className="text-gray-300 hover:text-white transition-colors">{f.soundButtonsForSchool}</Link></li>
+              <li><Link href={getLocalizedHref("/soundboard", locale)} className="text-gray-300 hover:text-white transition-colors">{f.soundboard}</Link></li>
+              <li><Link href={getLocalizedHref("/text-to-sound", locale)} className="text-gray-300 hover:text-white transition-colors">{f.textToSound}</Link></li>
+              <li><Link href={getLocalizedHref("/create-sound", locale)} className="text-gray-300 hover:text-white transition-colors">{f.createSound}</Link></li>
+              <li><Link href={getLocalizedHref("/play-random", locale)} className="text-gray-300 hover:text-white transition-colors">{f.playRandom}</Link></li>
+              <li><Link href={getLocalizedHref("/new", locale)} className="text-gray-300 hover:text-white transition-colors">{f.newSoundButtons}</Link></li>
+              <li><Link href={getLocalizedHref("/trends", locale)} className="text-gray-300 hover:text-white transition-colors">{f.trending}</Link></li>
+              <li><Link href={getLocalizedHref("/reviews", locale)} className="text-gray-300 hover:text-white transition-colors">{f.userReviews}</Link></li>
+              <li><Link href={getLocalizedHref("/games", locale)} className="text-gray-300 hover:text-white transition-colors">{f.games}</Link></li>
+              <li><Link href={getLocalizedHref("/kids-soundboard", locale)} className="text-gray-300 hover:text-white transition-colors">{f.kidsSoundboard}</Link></li>
+              <li><Link href={getLocalizedHref("/sound-effects", locale)} className="text-gray-300 hover:text-white transition-colors">{f.soundEffects}</Link></li>
+              <li><Link href={getLocalizedHref("/login", locale)} className="text-gray-300 hover:text-white transition-colors">{f.signIn}</Link></li>
+              <li><Link href={getLocalizedHref("/register", locale)} className="text-gray-300 hover:text-white transition-colors">{f.createAccount}</Link></li>
             </ul>
           </div>
 
@@ -89,7 +90,7 @@ export default function Footer() {
               {FOOTER_CATEGORIES.map((category) => (
                 <li key={category.id}>
                   <Link
-                    href={`${localePrefix}/categories/${category.slug}`}
+                    href={getLocalizedHref(`/categories/${category.slug}`, locale)}
                     className="text-gray-300 hover:text-white transition-colors"
                   >
                     {category.name}
@@ -97,7 +98,7 @@ export default function Footer() {
                 </li>
               ))}
               <li>
-                <Link href={`${localePrefix}/categories`} className="text-white hover:text-gray-300 transition-colors font-medium">
+                <Link href={getLocalizedHref("/categories", locale)} className="text-white hover:text-gray-300 transition-colors font-medium">
                   {f.viewAllCategories}
                 </Link>
               </li>
@@ -110,11 +111,11 @@ export default function Footer() {
               {f.support}
             </h3>
             <ul className="space-y-2">
-              <li><Link href={`${localePrefix}/about-us`} className="text-gray-300 hover:text-white transition-colors">{f.aboutUs}</Link></li>
-              <li><Link href={`${localePrefix}/contact-us`} className="text-gray-300 hover:text-white transition-colors">{f.contactUs}</Link></li>
-              <li><Link href={`${localePrefix}/privacy-policy`} className="text-gray-300 hover:text-white transition-colors">{f.privacyPolicy}</Link></li>
-              <li><Link href={`${localePrefix}/terms-of-use`} className="text-gray-300 hover:text-white transition-colors">{f.termsOfUse}</Link></li>
-              <li><Link href={`${localePrefix}/sitemap`} className="text-gray-300 hover:text-white transition-colors">{f.siteMap}</Link></li>
+              <li><Link href={getLocalizedHref("/about-us", locale)} className="text-gray-300 hover:text-white transition-colors">{f.aboutUs}</Link></li>
+              <li><Link href={getLocalizedHref("/contact-us", locale)} className="text-gray-300 hover:text-white transition-colors">{f.contactUs}</Link></li>
+              <li><Link href={getLocalizedHref("/privacy-policy", locale)} className="text-gray-300 hover:text-white transition-colors">{f.privacyPolicy}</Link></li>
+              <li><Link href={getLocalizedHref("/terms-of-use", locale)} className="text-gray-300 hover:text-white transition-colors">{f.termsOfUse}</Link></li>
+              <li><Link href={getLocalizedHref("/sitemap", locale)} className="text-gray-300 hover:text-white transition-colors">{f.siteMap}</Link></li>
             </ul>
           </div>
 
