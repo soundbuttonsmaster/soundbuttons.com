@@ -4,8 +4,13 @@ import { useState } from "react"
 import Link from "next/link"
 import { ArrowLeft, Mail } from "lucide-react"
 import { apiClient } from "@/lib/api/client"
-import { Button } from "@/components/ui/button"
-import { SITE } from "@/lib/constants/site"
+
+const pageWrap = "bg-slate-50 dark:bg-slate-950 py-4 sm:py-6"
+const cardClass = "rounded-xl border border-slate-200 dark:border-slate-800 bg-card shadow-sm"
+const primaryBtn =
+  "inline-flex items-center justify-center gap-2 w-full h-11 rounded-lg font-medium bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200 transition-colors disabled:opacity-60"
+const inputClass =
+  "w-full h-11 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-slate-400 dark:focus:ring-slate-500 focus:border-transparent"
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("")
@@ -27,30 +32,30 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center py-12 bg-background min-h-[60vh]">
+    <div className={pageWrap}>
       <div className="w-full max-w-md mx-auto px-4">
-        <div className="bg-card border border-border rounded-2xl shadow-lg p-8 space-y-6">
+        <div className={`${cardClass} p-5 sm:p-6 space-y-4`}>
           <Link
             href="/login"
-            className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground text-sm"
+            className="inline-flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-foreground text-sm"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Login
           </Link>
+          <div className="text-center space-y-1">
+            <h1 className="text-xl font-semibold text-foreground">Forgot password</h1>
+            <p className="text-sm text-muted-foreground">
+              We&apos;ll send you a link to reset your password.
+            </p>
+          </div>
 
           {!sent ? (
             <>
-              <div className="text-center space-y-2">
-                <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                  <Mail className="h-8 w-8 text-primary" />
-                </div>
-                <h1 className="text-2xl font-bold text-foreground">Forgot Password</h1>
-                <p className="text-muted-foreground text-sm">
-                  Enter your email address and we&apos;ll send you instructions to reset your password.
-                </p>
-              </div>
+              <p className="text-muted-foreground text-sm text-center">
+                Enter your email address and we&apos;ll send you instructions to reset your password.
+              </p>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-3">
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-foreground mb-1">
                     Email Address
@@ -63,7 +68,7 @@ export default function ForgotPasswordPage() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full h-11 px-3 rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                    className={inputClass}
                     placeholder="Enter your email address"
                   />
                   <p className="mt-1 text-xs text-muted-foreground">
@@ -71,26 +76,20 @@ export default function ForgotPasswordPage() {
                   </p>
                 </div>
 
-                {error && (
-                  <p className="text-sm text-destructive">{error}</p>
-                )}
+                {error && <p className="text-sm text-destructive">{error}</p>}
 
-                <Button
-                  type="submit"
-                  className="w-full h-11 font-medium"
-                  disabled={loading}
-                >
+                <button type="submit" className={primaryBtn} disabled={loading}>
                   {loading ? "Sending..." : "Send Reset Instructions"}
-                </Button>
+                </button>
               </form>
             </>
           ) : (
             <>
-              <div className="text-center space-y-4">
-                <div className="mx-auto w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mb-4">
+              <div className="text-center space-y-3">
+                <div className="mx-auto w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center">
                   <Mail className="h-8 w-8 text-green-600 dark:text-green-400" />
                 </div>
-                <h1 className="text-2xl font-bold text-foreground">Check Your Email</h1>
+                <h2 className="text-xl font-bold text-foreground">Check Your Email</h2>
                 <p className="text-muted-foreground text-sm">
                   We&apos;ve sent password reset instructions to <strong className="text-foreground">{email}</strong>
                 </p>
@@ -100,16 +99,17 @@ export default function ForgotPasswordPage() {
               </div>
 
               <div className="space-y-3">
-                <Button
+                <button
                   type="button"
-                  variant="outline"
-                  className="w-full h-11"
                   onClick={() => { setSent(false); setError(null) }}
+                  className="w-full h-11 rounded-lg border border-slate-200 dark:border-slate-700 bg-background font-medium text-foreground hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
                 >
                   Try Different Email
-                </Button>
+                </button>
                 <Link href="/login" className="block">
-                  <Button className="w-full h-11">Back to Login</Button>
+                  <button type="button" className={primaryBtn}>
+                    Back to Login
+                  </button>
                 </Link>
               </div>
             </>
@@ -117,14 +117,14 @@ export default function ForgotPasswordPage() {
 
           <p className="text-center text-xs text-muted-foreground">
             Remember your password?{" "}
-            <Link href="/login" className="text-primary hover:underline font-medium">
+            <Link href="/login" className="text-slate-900 dark:text-slate-100 font-medium hover:underline">
               Sign In
             </Link>
           </p>
         </div>
 
-        <p className="mt-6 text-center text-xs text-muted-foreground">
-          Having trouble? <Link href="/contact-us" className="text-primary hover:underline">Contact support</Link>
+        <p className="mt-4 text-center text-xs text-muted-foreground">
+          Having trouble? <Link href="/contact-us" className="text-slate-600 dark:text-slate-400 hover:underline">Contact support</Link>
         </p>
       </div>
     </div>

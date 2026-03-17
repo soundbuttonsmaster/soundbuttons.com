@@ -32,11 +32,13 @@ export default function Header() {
   const { user, logout } = useAuth()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false)
+  const [addMoreFunDropdownOpen, setAddMoreFunDropdownOpen] = useState(false)
   const [userDropdownOpen, setUserDropdownOpen] = useState(false)
   const [mobileSubmenuOpen, setMobileSubmenuOpen] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [searchOverlayOpen, setSearchOverlayOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const addMoreFunDropdownRef = useRef<HTMLDivElement>(null)
   const userDropdownRef = useRef<HTMLDivElement>(null)
   const searchOverlayInputRef = useRef<HTMLInputElement>(null)
   const categories = getTopLevelCategories()
@@ -55,9 +57,17 @@ export default function Header() {
     [nav, locale]
   )
   const navAfterLinks = useMemo(
+    () => [{ name: nav.memeSoundboard, href: getLocalizedHref("/categories/memes", locale) }],
+    [nav, locale]
+  )
+  const addMoreFunLinks = useMemo(
     () => [
-      { name: nav.memeSoundboard, href: getLocalizedHref("/categories/memes", locale) },
       { name: nav.playRandom, href: getLocalizedHref("/play-random", locale) },
+      { name: nav.aiSoundButtons, href: getLocalizedHref("/ai-sound-buttons", locale) },
+      { name: nav.textToSound, href: getLocalizedHref("/text-to-sound", locale) },
+      { name: nav.leaderboard, href: getLocalizedHref("/leaderboard", locale) },
+      { name: nav.createSound, href: getLocalizedHref("/create-sound", locale) },
+      { name: nav.kidsSoundboard, href: getLocalizedHref("/kids-soundboard", locale) },
     ],
     [nav, locale]
   )
@@ -66,6 +76,7 @@ export default function Header() {
     setMobileMenuOpen(false)
     setMobileSubmenuOpen(null)
     setCategoryDropdownOpen(false)
+    setAddMoreFunDropdownOpen(false)
     setUserDropdownOpen(false)
     setSearchOverlayOpen(false)
   }, [pathname])
@@ -80,8 +91,12 @@ export default function Header() {
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+      const target = e.target as Node
+      if (dropdownRef.current && !dropdownRef.current.contains(target)) {
         setCategoryDropdownOpen(false)
+      }
+      if (addMoreFunDropdownRef.current && !addMoreFunDropdownRef.current.contains(target)) {
+        setAddMoreFunDropdownOpen(false)
       }
     }
     document.addEventListener("mousedown", handleClickOutside)
@@ -179,6 +194,39 @@ export default function Header() {
                     onClick={() => setCategoryDropdownOpen(false)}
                   >
                     {cat.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
+            {/* Add More Fun dropdown */}
+            <div ref={addMoreFunDropdownRef} className="relative inline-block">
+              <button
+                type="button"
+                onClick={() => setAddMoreFunDropdownOpen(!addMoreFunDropdownOpen)}
+                aria-expanded={addMoreFunDropdownOpen}
+                aria-haspopup="true"
+                className={`${navLinkClass} flex items-center gap-0.5`}
+              >
+                {nav.addMoreFun}
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform ${addMoreFunDropdownOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+              <div
+                role="menu"
+                className={`absolute left-1/2 top-full z-50 mt-1 max-h-[70vh] w-56 -translate-x-1/2 overflow-y-auto rounded-lg border bg-white py-2 shadow-xl dark:border-slate-700 dark:bg-slate-900 ${
+                  addMoreFunDropdownOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+                } transition-opacity duration-200`}
+              >
+                {addMoreFunLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    role="menuitem"
+                    className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                    onClick={() => setAddMoreFunDropdownOpen(false)}
+                  >
+                    {link.name}
                   </Link>
                 ))}
               </div>
@@ -388,6 +436,34 @@ export default function Header() {
                         onClick={() => setMobileMenuOpen(false)}
                       >
                         {cat.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setMobileSubmenuOpen((v) => (v === "addMoreFun" ? null : "addMoreFun"))
+                  }
+                  className="flex w-full items-center justify-between rounded-lg px-4 py-3 text-base font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                >
+                  {nav.addMoreFun}
+                  <ChevronRight
+                    className={`h-5 w-5 transition-transform ${mobileSubmenuOpen === "addMoreFun" ? "rotate-90" : ""}`}
+                  />
+                </button>
+                {mobileSubmenuOpen === "addMoreFun" && (
+                  <div className="ml-4 mt-1 space-y-1 border-l border-slate-200 pl-4 dark:border-slate-700">
+                    {addMoreFunLinks.map((link) => (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        className="block py-2 text-sm text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        {link.name}
                       </Link>
                     ))}
                   </div>

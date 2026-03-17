@@ -13,6 +13,12 @@ export interface StringsNav {
   categories: string
   memeSoundboard: string
   playRandom: string
+  addMoreFun: string
+  aiSoundButtons: string
+  textToSound: string
+  leaderboard: string
+  createSound: string
+  kidsSoundboard: string
   searchPlaceholder: string
   joinFree: string
   login: string
@@ -253,6 +259,27 @@ export interface StringsAboutContent {
   langFr: string
 }
 
+export interface StringsAiSoundButtons {
+  heroTitle: string
+  heroDescription: string
+  quickQuestionsLabel: string
+  inputPlaceholder: string
+  ask: string
+  sending: string
+  thinking: string
+  noMatch: string
+  noSoundsInCategory: string
+  errorMessage: string
+  showMore: string
+  showingXOfY: string
+  soundButtonsLabel: string
+  welcomeTitle: string
+  welcomeSubtitle: string
+  tryCategoryBelow: string
+  hereAreCategory: string
+  hereAreSearch: string
+}
+
 export interface LocaleStrings {
   nav: StringsNav
   footer: StringsFooter
@@ -263,6 +290,7 @@ export interface LocaleStrings {
   common: StringsCommon
   about: StringsAbout
   aboutContent: StringsAboutContent
+  aiSoundButtons: StringsAiSoundButtons
 }
 
 const strings: Record<Locale, LocaleStrings> = {
@@ -275,6 +303,12 @@ const strings: Record<Locale, LocaleStrings> = {
       categories: "Categories",
       memeSoundboard: "Meme Soundboard",
       playRandom: "Play Random",
+      addMoreFun: "More Fun",
+      aiSoundButtons: "AI Sound Buttons",
+      textToSound: "Text To Sound",
+      leaderboard: "Leaderboard",
+      createSound: "Create Sound",
+      kidsSoundboard: "Kids Soundboard",
       searchPlaceholder: "Search Sound buttons...",
       joinFree: "Join Free",
       login: "Login",
@@ -526,6 +560,26 @@ const strings: Record<Locale, LocaleStrings> = {
       loading: "Loading...",
       noSoundsFound: "No sounds found",
     },
+    aiSoundButtons: {
+      heroTitle: "AI Sound Buttons",
+      heroDescription: "Ask for a category or describe what you want — play sounds instantly.",
+      quickQuestionsLabel: "Quick picks",
+      inputPlaceholder: "e.g. meme sounds, funny fart, dog barks...",
+      ask: "Ask",
+      sending: "Sending...",
+      thinking: "Thinking...",
+      noMatch: "No category matched. Try a quick pick below or type something like \"funny memes\".",
+      noSoundsInCategory: "No sounds found for this.",
+      errorMessage: "Something went wrong. Please try again.",
+      showMore: "Show more",
+      showingXOfY: "Showing {shown} of {total}",
+      soundButtonsLabel: "Sound Buttons",
+      welcomeTitle: "Welcome to AI Sound Buttons",
+      welcomeSubtitle: "Click a quick pick or type what you want to hear.",
+      tryCategoryBelow: "Try a category below or type your own.",
+      hereAreCategory: "Here are some {name} sound buttons:",
+      hereAreSearch: "Here are sounds for \"{query}\":",
+    },
   },
   es: {
     nav: {
@@ -536,6 +590,12 @@ const strings: Record<Locale, LocaleStrings> = {
       categories: "Categorías",
       memeSoundboard: "Soundboard de Memes",
       playRandom: "Reproducir Aleatorio",
+      addMoreFun: "Más Diversión",
+      aiSoundButtons: "Botones de Sonido IA",
+      textToSound: "Texto a Sonido",
+      leaderboard: "Clasificación",
+      createSound: "Crear Sonido",
+      kidsSoundboard: "Soundboard para Niños",
       searchPlaceholder: "Buscar",
       joinFree: "Unirse Gratis",
       login: "Iniciar Sesión",
@@ -788,6 +848,26 @@ const strings: Record<Locale, LocaleStrings> = {
       loading: "Cargando...",
       noSoundsFound: "No se encontraron sonidos",
     },
+    aiSoundButtons: {
+      heroTitle: "Botones de Sonido IA",
+      heroDescription: "Pide una categoría o describe lo que quieres — reproduce sonidos al instante.",
+      quickQuestionsLabel: "Opciones rápidas",
+      inputPlaceholder: "ej. memes, sonidos de perro, risa...",
+      ask: "Preguntar",
+      sending: "Enviando...",
+      thinking: "Pensando...",
+      noMatch: "No hay categoría. Prueba una opción rápida o escribe algo como \"memes graciosos\".",
+      noSoundsInCategory: "No se encontraron sonidos.",
+      errorMessage: "Algo salió mal. Intenta de nuevo.",
+      showMore: "Ver más",
+      showingXOfY: "Mostrando {shown} de {total}",
+      soundButtonsLabel: "Botones de Sonido",
+      welcomeTitle: "Bienvenido a Botones de Sonido IA",
+      welcomeSubtitle: "Elige una opción rápida o escribe lo que quieres escuchar.",
+      tryCategoryBelow: "Prueba una categoría abajo o escribe lo que quieras.",
+      hereAreCategory: "Aquí tienes botones de sonido de {name}:",
+      hereAreSearch: "Aquí tienes sonidos para \"{query}\":",
+    },
   },
   pt: {
     nav: {
@@ -798,6 +878,12 @@ const strings: Record<Locale, LocaleStrings> = {
       categories: "Categorias",
       memeSoundboard: "Mesa de Som de Memes",
       playRandom: "Reproduzir Aleatório",
+      addMoreFun: "Mais Diversão",
+      aiSoundButtons: "Botões de Som IA",
+      textToSound: "Texto para Som",
+      leaderboard: "Classificação",
+      createSound: "Criar Som",
+      kidsSoundboard: "Soundboard para Crianças",
       searchPlaceholder: "Pesquisar",
       joinFree: "Cadastre-se Grátis",
       login: "Entrar",
@@ -1050,6 +1136,26 @@ const strings: Record<Locale, LocaleStrings> = {
       loading: "Carregando...",
       noSoundsFound: "Nenhum som encontrado",
     },
+    aiSoundButtons: {
+      heroTitle: "Botões de Som IA",
+      heroDescription: "Peça uma categoria ou descreva o que quer — toque sons na hora.",
+      quickQuestionsLabel: "Escolhas rápidas",
+      inputPlaceholder: "ex. memes, sons de cachorro, risada...",
+      ask: "Perguntar",
+      sending: "Enviando...",
+      thinking: "Pensando...",
+      noMatch: "Nenhuma categoria. Tente uma opção rápida ou digite algo como \"memes engraçados\".",
+      noSoundsInCategory: "Nenhum som encontrado.",
+      errorMessage: "Algo deu errado. Tente novamente.",
+      showMore: "Ver mais",
+      showingXOfY: "Mostrando {shown} de {total}",
+      soundButtonsLabel: "Botões de Som",
+      welcomeTitle: "Bem-vindo aos Botões de Som IA",
+      welcomeSubtitle: "Clique em uma opção rápida ou digite o que quer ouvir.",
+      tryCategoryBelow: "Tente uma categoria abaixo ou digite o que quiser.",
+      hereAreCategory: "Aqui estão alguns botões de som de {name}:",
+      hereAreSearch: "Aqui estão sons para \"{query}\":",
+    },
   },
   fr: {
     nav: {
@@ -1060,6 +1166,12 @@ const strings: Record<Locale, LocaleStrings> = {
       categories: "Catégories",
       memeSoundboard: "Table d'harmonie des mèmes",
       playRandom: "Jouer Aléatoire",
+      addMoreFun: "Plus de Fun",
+      aiSoundButtons: "Boutons Son IA",
+      textToSound: "Texte vers Son",
+      leaderboard: "Classement",
+      createSound: "Créer un Son",
+      kidsSoundboard: "Soundboard Enfants",
       searchPlaceholder: "Rechercher",
       joinFree: "S'inscrire Gratuitement",
       login: "Connexion",
@@ -1312,6 +1424,26 @@ const strings: Record<Locale, LocaleStrings> = {
       viewAll: "Voir tout",
       loading: "Chargement...",
       noSoundsFound: "Aucun son trouvé",
+    },
+    aiSoundButtons: {
+      heroTitle: "Boutons Son IA",
+      heroDescription: "Demandez une catégorie ou décrivez ce que vous voulez — jouez des sons instantanément.",
+      quickQuestionsLabel: "Choix rapides",
+      inputPlaceholder: "ex. memes, pets, aboiements...",
+      ask: "Demander",
+      sending: "Envoi...",
+      thinking: "Réflexion...",
+      noMatch: "Aucune catégorie. Essayez un choix rapide ou tapez par ex. \"memes drôles\".",
+      noSoundsInCategory: "Aucun son trouvé.",
+      errorMessage: "Une erreur s'est produite. Réessayez.",
+      showMore: "Voir plus",
+      showingXOfY: "Affichage de {shown} sur {total}",
+      soundButtonsLabel: "Boutons Son",
+      welcomeTitle: "Bienvenue sur Boutons Son IA",
+      welcomeSubtitle: "Cliquez sur un choix rapide ou tapez ce que vous voulez écouter.",
+      tryCategoryBelow: "Essayez une catégorie ci-dessous ou tapez votre demande.",
+      hereAreCategory: "Voici des boutons son de {name} :",
+      hereAreSearch: "Voici des sons pour « {query} » :",
     },
   },
 }

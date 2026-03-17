@@ -50,7 +50,6 @@ const AutoLoadingNewSoundsSection = forwardRef<
   const [isAutoPlaying, setIsAutoPlaying] = useState(false)
   const [isRandomPlaying, setIsRandomPlaying] = useState(false)
   const loadingRef = useRef<HTMLDivElement>(null)
-  const loadMoreButtonRef = useRef<HTMLDivElement>(null)
   const newContentRef = useRef<HTMLDivElement>(null)
   const autoPlayTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const isAutoPlayingRef = useRef(false)
@@ -62,8 +61,6 @@ const AutoLoadingNewSoundsSection = forwardRef<
   )
 
   const soundsPerRow = isMobileDevice ? 4 : 11
-  const soundsPerTwoLines = soundsPerRow * 2
-  const soundsPerFourLines = soundsPerRow * 4
 
   const loadMoreSounds = useCallback(async () => {
     if (loading || !hasMore) return
@@ -460,7 +457,6 @@ const AutoLoadingNewSoundsSection = forwardRef<
           </div>
 
           <div
-            ref={loadMoreButtonRef}
             className={`flex justify-center mt-4 pb-2 load-more-container ${hasMore ? "" : "hidden"}`}
           >
             {hasMore && (

@@ -3,14 +3,7 @@
 import { useState, FormEvent } from "react"
 import { useRouter } from "next/navigation"
 import { Search } from "lucide-react"
-
-function generateSlug(query: string): string {
-  return query
-    .toLowerCase()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/[\s_-]+/g, "-")
-    .replace(/^-+|-+$/g, "") || ""
-}
+import { generateSlug } from "@/lib/utils/slug"
 
 export default function SearchBar({
   searchBasePath = "",
@@ -24,8 +17,9 @@ export default function SearchBar({
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (query.trim()) {
-      const slug = generateSlug(query.trim())
+    const trimmed = query.trim()
+    if (trimmed) {
+      const slug = generateSlug(trimmed)
       if (!slug) return
       const base = searchBasePath || ""
       router.push(base ? `${base}/search/${slug}` : `/search/${slug}`)

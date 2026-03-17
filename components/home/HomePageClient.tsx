@@ -1,11 +1,16 @@
 "use client"
 
 import { useState, useCallback, useMemo } from "react"
+import dynamic from "next/dynamic"
 import SearchBar from "@/components/search-bar"
 import SoundList from "@/components/home/SoundList"
 import AutoLoadingNewSoundsSection from "@/components/home/AutoLoadingNewSoundsSection"
-import AboutContent from "@/components/home/AboutContent"
 import { apiClient } from "@/lib/api/client"
+
+const AboutContent = dynamic(
+  () => import("@/components/home/AboutContent").then((m) => m.default),
+  { ssr: true, loading: () => <div className="min-h-[200px]" aria-hidden /> }
+)
 import { getStrings } from "@/lib/i18n/strings"
 import type { Sound } from "@/lib/types/sound"
 import type { Locale } from "@/lib/i18n/strings"
@@ -70,7 +75,7 @@ export default function HomePageClient({
               {home.heroDescription}
             </p>
             <div className="flex justify-center mt-2 px-2">
-              <div className="flex justify-center max-w-3xl md:max-w-4xl lg:max-w-5xl w-full shadow-lg">
+              <div className="flex justify-center max-w-3xl md:max-w-4xl lg:max-w-6xl xl:max-w-7xl 2xl:max-w-[96rem] w-full shadow-lg">
                 <SearchBar placeholder={home.searchPlaceholder} />
               </div>
             </div>

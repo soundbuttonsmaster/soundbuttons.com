@@ -2,13 +2,18 @@
 
 import { useState, Suspense } from "react"
 import Link from "next/link"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useSearchParams } from "next/navigation"
 import { KeyRound, ArrowLeft } from "lucide-react"
 import { apiClient } from "@/lib/api/client"
-import { Button } from "@/components/ui/button"
+
+const pageWrap = "bg-slate-50 dark:bg-slate-950 py-4 sm:py-6"
+const cardClass = "rounded-xl border border-slate-200 dark:border-slate-800 bg-card shadow-sm"
+const primaryBtn =
+  "inline-flex items-center justify-center gap-2 w-full h-11 rounded-lg font-medium bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200 transition-colors disabled:opacity-60"
+const inputClass =
+  "w-full h-11 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-slate-400 dark:focus:ring-slate-500 focus:border-transparent"
 
 function ResetPasswordForm() {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const tokenFromUrl = searchParams.get("token") ?? ""
   const userIdFromUrl = searchParams.get("user_id") ?? ""
@@ -54,37 +59,37 @@ function ResetPasswordForm() {
 
   if (success) {
     return (
-      <div className="bg-card border border-border rounded-2xl shadow-lg p-8 space-y-6">
-        <div className="text-center space-y-4">
-          <div className="mx-auto w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mb-4">
+      <div className={`${cardClass} p-5 sm:p-6 space-y-4`}>
+        <div className="text-center space-y-3">
+          <div className="mx-auto w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center">
             <KeyRound className="h-8 w-8 text-green-600 dark:text-green-400" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">Password Updated</h1>
+          <h1 className="text-xl font-semibold text-foreground">Password Updated</h1>
           <p className="text-muted-foreground text-sm">
             Your password has been reset. You can now sign in with your new password.
           </p>
         </div>
         <Link href="/login" className="block">
-          <Button className="w-full h-11">Sign In</Button>
+          <button type="button" className={primaryBtn}>Sign In</button>
         </Link>
       </div>
     )
   }
 
   return (
-    <div className="bg-card border border-border rounded-2xl shadow-lg p-8 space-y-6">
+    <div className={`${cardClass} p-5 sm:p-6 space-y-4`}>
       <Link
         href="/login"
-        className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground text-sm"
+        className="inline-flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-foreground text-sm"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to Login
       </Link>
       <div className="text-center space-y-2">
-        <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-          <KeyRound className="h-8 w-8 text-primary" />
+        <div className="mx-auto w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center">
+          <KeyRound className="h-8 w-8 text-slate-600 dark:text-slate-400" />
         </div>
-        <h1 className="text-2xl font-bold text-foreground">Set New Password</h1>
+        <h1 className="text-xl font-semibold text-foreground">Set New Password</h1>
         <p className="text-muted-foreground text-sm">
           Use the link from your email to pre-fill User ID and token, or enter them manually. Then choose a new password.
         </p>
@@ -102,7 +107,7 @@ function ResetPasswordForm() {
             inputMode="numeric"
             value={userId}
             onChange={(e) => setUserId(e.target.value)}
-            className="w-full h-11 px-3 rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            className={inputClass}
             placeholder="From your email link (e.g. 123)"
           />
         </div>
@@ -116,7 +121,7 @@ function ResetPasswordForm() {
             type="text"
             value={token}
             onChange={(e) => setToken(e.target.value)}
-            className="w-full h-11 px-3 rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            className={inputClass}
             placeholder="Paste token from email"
           />
         </div>
@@ -132,7 +137,7 @@ function ResetPasswordForm() {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full h-11 px-3 rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            className={inputClass}
             placeholder="At least 8 characters"
           />
         </div>
@@ -148,20 +153,20 @@ function ResetPasswordForm() {
             required
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className="w-full h-11 px-3 rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            className={inputClass}
             placeholder="Confirm new password"
           />
         </div>
 
         {error && <p className="text-sm text-destructive">{error}</p>}
 
-        <Button type="submit" className="w-full h-11 font-medium" disabled={loading}>
+        <button type="submit" className={primaryBtn} disabled={loading}>
           {loading ? "Resetting..." : "Reset Password"}
-        </Button>
+        </button>
       </form>
 
       <p className="text-center text-xs text-muted-foreground">
-        <Link href="/forgot-password" className="text-primary hover:underline">
+        <Link href="/forgot-password" className="text-slate-900 dark:text-slate-100 font-medium hover:underline">
           Request a new reset link
         </Link>
       </p>
@@ -171,9 +176,9 @@ function ResetPasswordForm() {
 
 export default function ResetPasswordClient() {
   return (
-    <div className="flex flex-col items-center justify-center py-12 bg-background min-h-[60vh]">
+    <div className={pageWrap}>
       <div className="w-full max-w-md mx-auto px-4">
-        <Suspense fallback={<div className="bg-card border border-border rounded-2xl p-8 animate-pulse h-64" />}>
+        <Suspense fallback={<div className={`${cardClass} p-6 animate-pulse h-56`} />}>
           <ResetPasswordForm />
         </Suspense>
       </div>

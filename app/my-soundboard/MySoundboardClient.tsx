@@ -14,12 +14,33 @@ import {
   type DashboardCategory,
   type ProcessedDashboardSound,
 } from "@/lib/api/dashboards"
-import PageHero from "@/components/layout/page-hero"
-import { Button } from "@/components/ui/button"
 import SoundButton from "@/components/sound/sound-button"
 import SoundPicker from "@/components/my-soundboard/SoundPicker"
 import { cn } from "@/lib/utils"
 import type { ProcessedSound } from "@/lib/api/client"
+
+function MySoundboardKidsHero({ title, description }: { title: string; description: string }) {
+  return (
+    <section
+      className="w-full py-8 sm:py-10 bg-gradient-to-br from-pink-100 via-purple-50 to-yellow-100 dark:from-pink-950/50 dark:via-purple-950/40 dark:to-yellow-950/50"
+      suppressHydrationWarning
+    >
+      <div className="w-full max-w-4xl mx-auto px-4 text-center">
+        <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">{title}</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">{description}</p>
+      </div>
+    </section>
+  )
+}
+
+const gradientBtn =
+  "inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-medium text-white bg-gradient-to-r from-pink-400 to-purple-500 hover:from-pink-500 hover:to-purple-600 transition-all shadow-md hover:shadow-lg"
+
+const kidsCard =
+  "rounded-3xl shadow-lg border border-pink-200/60 dark:border-pink-800/40 bg-gradient-to-br from-white/90 to-pink-50/80 dark:from-gray-900/90 dark:to-pink-950/30"
+
+const pageWrap =
+  "min-h-screen bg-gradient-to-br from-amber-50/80 via-pink-50/80 to-violet-50/80 dark:from-amber-950/30 dark:via-pink-950/30 dark:to-violet-950/30 py-8 sm:py-10"
 
 const SOUNDS_PER_PAGE = 8
 
@@ -223,91 +244,99 @@ export default function MySoundboardClient() {
 
   if (!isReady) {
     return (
-      <div className="min-h-[40vh] flex items-center justify-center">
-        <div className="animate-pulse text-muted-foreground">Loading...</div>
+      <div className={pageWrap}>
+        <MySoundboardKidsHero title="My Soundboard" description="Your personal sounds board." />
+        <div className="max-w-md mx-auto px-4 mt-6">
+          <div className={cn(kidsCard, "p-8 flex flex-col items-center justify-center gap-4")}>
+            <div className="animate-pulse text-pink-500 dark:text-pink-400">Loading…</div>
+          </div>
+        </div>
       </div>
     )
   }
 
   if (!token) {
     return (
-      <>
-        <PageHero
+      <div className={pageWrap}>
+        <MySoundboardKidsHero
           title="My Soundboard"
           description="Sign in to view and manage your personal soundboard."
         />
-        <div className="py-12 bg-background">
-          <div className="max-w-md mx-auto px-4 text-center">
-            <div className="bg-card border border-border rounded-2xl p-8 space-y-6">
-              <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-                <LayoutGrid className="h-8 w-8 text-primary" />
-              </div>
-              <h2 className="text-xl font-semibold text-foreground">Sign in to see your soundboard</h2>
-              <p className="text-muted-foreground text-sm">
-                Create and manage your custom soundboards. Add sounds, organize by category, and share.
-              </p>
-              <Link
-                href="/login?redirect=/my-soundboard"
-                className="inline-flex items-center justify-center rounded-md text-sm font-medium bg-primary text-primary-foreground shadow hover:bg-primary/90 h-11 w-full px-4"
-              >
-                <LogIn className="mr-2 h-4 w-4" />
-                Sign In
-              </Link>
-              <p className="text-sm text-muted-foreground">
-                <Link href="/register" className="text-primary hover:underline">Register</Link> to get started.
-              </p>
+        <div className="max-w-md mx-auto px-4 mt-6">
+          <div className={cn(kidsCard, "p-8 space-y-6 text-center")}>
+            <div className="mx-auto w-20 h-20 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center shadow-md">
+              <LayoutGrid className="h-10 w-10 text-white" />
             </div>
+            <h2 className="text-xl font-semibold text-foreground">Sign in to see your soundboard</h2>
+            <p className="text-muted-foreground text-sm">
+              Create and manage your custom soundboards. Add sounds, organize by category, and share.
+            </p>
+            <Link href="/login?redirect=/my-soundboard" className={cn(gradientBtn, "w-full")}>
+              <LogIn className="h-5 w-5" />
+              Sign In
+            </Link>
+            <p className="text-sm text-muted-foreground">
+              <Link href="/register" className="text-pink-600 dark:text-pink-400 hover:underline font-medium">
+                Register
+              </Link>{" "}
+              to get started.
+            </p>
           </div>
         </div>
-      </>
+      </div>
     )
   }
 
   return (
     <>
-      <PageHero
-        title="My Sounds Board"
-        description="Welcome to your personal sounds board!"
-      />
-      <main className="py-8 px-4">
-        <div className="max-w-7xl mx-auto flex justify-between items-start mb-6">
-          <div />
-          <Button onClick={() => setAddDialogOpen(true)}>+ Add Sound Board</Button>
-        </div>
-
-        {loading && (
-          <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto" />
-            <p className="mt-4 text-muted-foreground">Loading dashboards...</p>
+      <div className={pageWrap}>
+        <MySoundboardKidsHero
+          title="My Soundboard"
+          description="Welcome to your personal sounds board!"
+        />
+        <main className="max-w-7xl mx-auto px-4 mt-6">
+          <div className="flex justify-end mb-6">
+            <button type="button" onClick={() => setAddDialogOpen(true)} className={gradientBtn}>
+              <Plus className="h-4 w-4" />
+              Add Sound Board
+            </button>
           </div>
-        )}
 
-        {!loading && myDashboards.length === 0 && (
-          <div className="text-center py-12">
-            <Folder className="mx-auto h-16 w-16 text-muted-foreground mb-4" />
-            <h3 className="text-xl font-semibold mb-2">No soundboards yet</h3>
-            <p className="text-muted-foreground mb-6">Create your first soundboard to get started!</p>
-            <Button onClick={() => setAddDialogOpen(true)}>
-              <Plus className="mr-2 h-4 w-4" />
-              Create Your First Soundboard
-            </Button>
-          </div>
-        )}
+          {loading && (
+            <div className={cn(kidsCard, "p-12 flex flex-col items-center justify-center gap-4")}>
+              <div className="animate-spin rounded-full h-12 w-12 border-2 border-pink-400 border-t-transparent" />
+              <p className="text-muted-foreground">Loading dashboards…</p>
+            </div>
+          )}
 
-        {!loading && myDashboards.length > 0 && (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-            {myDashboards.map((dashboard) => {
-              const visibleCount = visibleSoundsCount[dashboard.id] ?? SOUNDS_PER_PAGE
-              const visibleSounds = (dashboard.sounds || []).slice(0, visibleCount)
-              const hasMore = (dashboard.sounds?.length || 0) > visibleCount
-              const totalSounds = dashboard.sounds?.length || dashboard.sound_ids?.length || 0
-              const isDashboardLoading = loadingSounds[dashboard.id]
+          {!loading && myDashboards.length === 0 && (
+            <div className={cn(kidsCard, "p-12 text-center")}>
+              <div className="mx-auto w-20 h-20 rounded-full bg-gradient-to-br from-pink-200 to-purple-200 dark:from-pink-800/50 dark:to-purple-800/50 flex items-center justify-center mb-4">
+                <Folder className="h-10 w-10 text-pink-600 dark:text-pink-400" />
+              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-2">No soundboards yet</h3>
+              <p className="text-muted-foreground mb-6">Create your first soundboard to get started!</p>
+              <button type="button" onClick={() => setAddDialogOpen(true)} className={gradientBtn}>
+                <Plus className="h-4 w-4" />
+                Create your first soundboard
+              </button>
+            </div>
+          )}
 
-              return (
-                <div
-                  key={dashboard.id}
-                  className="bg-card border border-border rounded-2xl p-4 md:p-6 shadow-sm"
-                >
+          {!loading && myDashboards.length > 0 && (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+              {myDashboards.map((dashboard) => {
+                const visibleCount = visibleSoundsCount[dashboard.id] ?? SOUNDS_PER_PAGE
+                const visibleSounds = (dashboard.sounds || []).slice(0, visibleCount)
+                const hasMore = (dashboard.sounds?.length || 0) > visibleCount
+                const totalSounds = dashboard.sounds?.length || dashboard.sound_ids?.length || 0
+                const isDashboardLoading = loadingSounds[dashboard.id]
+
+                return (
+                  <div
+                    key={dashboard.id}
+                    className={cn(kidsCard, "p-4 md:p-6")}
+                  >
                   <h3 className="text-lg font-semibold mb-4">{dashboard.name}</h3>
                   {isDashboardLoading && (
                     <div className="text-center py-8">
@@ -336,16 +365,15 @@ export default function MySoundboardClient() {
                   )}
                   {!isDashboardLoading && hasMore && (
                     <div className="mt-4">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full"
+                      <button
+                        type="button"
+                        className="w-full px-4 py-2.5 rounded-xl text-sm font-medium border-2 border-pink-200 dark:border-pink-700/50 text-foreground hover:bg-pink-100/50 dark:hover:bg-pink-900/30 transition-colors"
                         onClick={() =>
                           handleLoadMoreSounds(String(dashboard.id), dashboard.sounds?.length || 0)
                         }
                       >
-                        Load More Sounds ({(dashboard.sounds?.length || 0) - visibleCount} remaining)
-                      </Button>
+                        Load more sounds ({(dashboard.sounds?.length || 0) - visibleCount} left)
+                      </button>
                     </div>
                   )}
                 </div>
@@ -353,12 +381,13 @@ export default function MySoundboardClient() {
             })}
           </div>
         )}
-      </main>
+        </main>
+      </div>
 
       {addDialogOpen &&
         createPortal(
           <div
-            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-black/50 backdrop-blur-sm"
+            className="fixed inset-0 z-[100000] flex items-end sm:items-center justify-center sm:p-4 bg-black/50 backdrop-blur-sm"
             onClick={() => setAddDialogOpen(false)}
           >
             <div
@@ -379,8 +408,8 @@ export default function MySoundboardClient() {
               {/* Header */}
               <div className="shrink-0 flex items-center justify-between px-5 sm:px-6 py-4 border-b border-border">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                    <Plus className="h-4 w-4 text-primary" />
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center shrink-0 shadow">
+                    <Plus className="h-4 w-4 text-white" />
                   </div>
                   <div>
                     <h2 className="text-base font-bold text-foreground leading-tight">New Sound Board</h2>
@@ -507,11 +536,14 @@ export default function MySoundboardClient() {
                     type="button"
                     onClick={handleCreateDashboard}
                     disabled={processing || !isFormValid}
-                    className="px-5 py-2 rounded-xl text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
+                    className={cn(
+                      gradientBtn,
+                      "text-sm disabled:opacity-40 disabled:cursor-not-allowed"
+                    )}
                   >
                     {processing ? (
                       <span className="flex items-center gap-2">
-                        <span className="w-3.5 h-3.5 rounded-full border-2 border-primary-foreground border-t-transparent animate-spin" />
+                        <span className="w-3.5 h-3.5 rounded-full border-2 border-white border-t-transparent animate-spin" />
                         Creating…
                       </span>
                     ) : (

@@ -2,13 +2,11 @@
 
 import { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { Heart, LogIn } from "lucide-react"
+import { Heart, LogIn, Loader2 } from "lucide-react"
 import { useAuth } from "@/lib/auth/auth-context"
 import { apiClient } from "@/lib/api/client"
 import type { ProcessedSound } from "@/lib/api/client"
 import type { Sound } from "@/lib/types/sound"
-import PageHero from "@/components/layout/page-hero"
 import SoundList from "@/components/home/SoundList"
 
 const PAGE_SIZE = 50
@@ -28,8 +26,30 @@ function toSound(p: ProcessedSound): Sound {
   }
 }
 
+function FavoritesKidsHero({ title, description }: { title: string; description: string }) {
+  return (
+    <section
+      className="w-full py-8 sm:py-10 bg-gradient-to-br from-pink-100 via-purple-50 to-yellow-100 dark:from-pink-950/50 dark:via-purple-950/40 dark:to-yellow-950/50"
+      suppressHydrationWarning
+    >
+      <div className="w-full max-w-4xl mx-auto px-4 text-center">
+        <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">{title}</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">{description}</p>
+      </div>
+    </section>
+  )
+}
+
+const gradientBtn =
+  "inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-medium text-white bg-gradient-to-r from-pink-400 to-purple-500 hover:from-pink-500 hover:to-purple-600 transition-all shadow-md hover:shadow-lg"
+
+const kidsCard =
+  "rounded-3xl shadow-lg border border-pink-200/60 dark:border-pink-800/40 bg-gradient-to-br from-white/90 to-pink-50/80 dark:from-gray-900/90 dark:to-pink-950/30"
+
+const pageWrap =
+  "min-h-screen bg-gradient-to-br from-amber-50/80 via-pink-50/80 to-violet-50/80 dark:from-amber-950/30 dark:via-pink-950/30 dark:to-violet-950/30 py-8 sm:py-10"
+
 export default function FavoritesClient() {
-  const router = useRouter()
   const { token, isReady } = useAuth()
   const [sounds, setSounds] = useState<Sound[]>([])
   const [loading, setLoading] = useState(true)
@@ -75,86 +95,100 @@ export default function FavoritesClient() {
 
   if (!isReady) {
     return (
-      <div className="min-h-[40vh] flex items-center justify-center">
-        <div className="animate-pulse text-muted-foreground">Loading...</div>
+      <div className={pageWrap}>
+        <FavoritesKidsHero title="My Favorites" description="Your saved sound buttons." />
+        <div className="max-w-md mx-auto px-4 mt-6">
+          <div className={`${kidsCard} p-8 flex flex-col items-center justify-center gap-4`}>
+            <Loader2 className="h-10 w-10 animate-spin text-pink-500 dark:text-pink-400" />
+            <p className="text-sm text-muted-foreground">Loading…</p>
+          </div>
+        </div>
       </div>
     )
   }
 
   if (!token) {
     return (
-      <>
-        <PageHero
+      <div className={pageWrap}>
+        <FavoritesKidsHero
           title="My Favorites"
           description="Sign in to save and view your favorite sound buttons."
         />
-        <div className="py-12 bg-background">
-          <div className="max-w-md mx-auto px-4 text-center">
-            <div className="bg-card border border-border rounded-2xl p-8 space-y-6">
-              <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-                <Heart className="h-8 w-8 text-primary" />
-              </div>
-              <h2 className="text-xl font-semibold text-foreground">Sign in to see your favorites</h2>
-              <p className="text-muted-foreground text-sm">
-                Create an account or sign in to save sound buttons and access them here.
-              </p>
-              <Link
-                href="/login?redirect=/favorites"
-                className="inline-flex items-center justify-center w-full h-11 rounded-md bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
-              >
-                <LogIn className="mr-2 h-4 w-4" />
-                Sign In
-              </Link>
-              <p className="text-sm text-muted-foreground">
-                Don&apos;t have an account? <Link href="/register" className="text-primary hover:underline">Register</Link>
-              </p>
+        <div className="max-w-md mx-auto px-4 mt-6">
+          <div className={`${kidsCard} p-8 space-y-6 text-center`}>
+            <div className="mx-auto w-20 h-20 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center shadow-md">
+              <Heart className="h-10 w-10 text-white" />
             </div>
+            <h2 className="text-xl font-semibold text-foreground">Sign in to see your favorites</h2>
+            <p className="text-muted-foreground text-sm">
+              Create an account or sign in to save sound buttons and access them here.
+            </p>
+            <Link href="/login?redirect=/favorites" className={`${gradientBtn} w-full`}>
+              <LogIn className="h-5 w-5" />
+              Sign In
+            </Link>
+            <p className="text-sm text-muted-foreground">
+              Don&apos;t have an account?{" "}
+              <Link href="/register" className="text-pink-600 dark:text-pink-400 hover:underline font-medium">
+                Register
+              </Link>
+            </p>
           </div>
         </div>
-      </>
+      </div>
     )
   }
 
   return (
-    <>
-      <PageHero
+    <div className={pageWrap}>
+      <FavoritesKidsHero
         title="My Favorites"
         description="Your saved sound buttons. Play, share, or remove from favorites."
       />
-      <div className="py-8 bg-background">
-        <div className="w-full max-w-7xl mx-auto px-4">
-          {loading ? (
-            <div className="min-h-[200px] flex items-center justify-center text-muted-foreground">
-              Loading favorites...
+      <div className="w-full max-w-7xl mx-auto px-4 mt-6">
+        {loading ? (
+          <div className={`${kidsCard} p-12 flex flex-col items-center justify-center gap-4`}>
+            <Loader2 className="h-10 w-10 animate-spin text-pink-500 dark:text-pink-400" />
+            <p className="text-muted-foreground">Loading your favorites…</p>
+          </div>
+        ) : sounds.length === 0 ? (
+          <div className={`${kidsCard} p-12 text-center max-w-lg mx-auto`}>
+            <div className="mx-auto w-20 h-20 rounded-full bg-gradient-to-br from-pink-200 to-purple-200 dark:from-pink-800/50 dark:to-purple-800/50 flex items-center justify-center mb-4">
+              <Heart className="h-10 w-10 text-pink-600 dark:text-pink-400" />
             </div>
-          ) : sounds.length === 0 ? (
-            <div className="text-center py-12">
-              <Heart className="mx-auto h-12 w-12 text-muted-foreground/50 mb-4" />
-              <h2 className="text-lg font-semibold text-foreground mb-2">No favorites yet</h2>
-              <p className="text-muted-foreground text-sm mb-4">
-                Start adding sounds from the home page or search to see them here.
-              </p>
-              <Link
-                href="/"
-                className="inline-flex items-center justify-center px-4 py-2 rounded-md border border-input bg-background font-medium hover:bg-accent hover:text-accent-foreground transition-colors"
-              >
+            <h2 className="text-xl font-semibold text-foreground mb-2">No favorites yet</h2>
+            <p className="text-muted-foreground text-sm mb-6">
+              Add sounds from the home page or search — they&apos;ll show up here.
+            </p>
+            <div className="flex flex-wrap justify-center gap-3">
+              <Link href="/" className={gradientBtn}>
                 Explore sounds
               </Link>
+              <Link
+                href="/profile"
+                className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-medium border-2 border-pink-300 dark:border-pink-600 text-foreground hover:bg-pink-100/50 dark:hover:bg-pink-900/30 transition-colors"
+              >
+                My profile
+              </Link>
             </div>
-          ) : (
-            <SoundList
-              title=""
-              sounds={sounds}
-              initialCount={sounds.length}
-              hasMoreSounds={hasMore}
-              onLoadMore={handleLoadMore}
-              showLoadMore={hasMore}
-              showLoadingIndicator={loadMoreLoading}
-              useCardView
-            />
-          )}
-        </div>
+          </div>
+        ) : (
+          <div className={kidsCard}>
+            <div className="p-4 md:p-6">
+              <SoundList
+                title="Your favorites"
+                sounds={sounds}
+                initialCount={sounds.length}
+                hasMoreSounds={hasMore}
+                onLoadMore={handleLoadMore}
+                showLoadMore={hasMore}
+                showLoadingIndicator={loadMoreLoading}
+                useCardView
+              />
+            </div>
+          </div>
+        )}
       </div>
-    </>
+    </div>
   )
 }

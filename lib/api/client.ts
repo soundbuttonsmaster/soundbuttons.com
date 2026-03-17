@@ -287,6 +287,96 @@ export const apiClient = {
     }
   },
 
+  /** OAuth: map API user to AuthUser shape */
+  _oauthUser(data: { user?: { id?: number; username?: string; email?: string }; token?: string }) {
+    const user = data.user
+    if (!user || !data.token) return null
+    return {
+      id: user.id ?? 0,
+      username: user.username ?? "",
+      email: user.email ?? "",
+      full_name: undefined as string | undefined,
+    }
+  },
+
+  /** Login with Google - POST /auth/google with access_token. Returns token + user. */
+  async loginWithGoogle(
+    accessToken: string
+  ): Promise<{ success: true; token: string; user: { id: number; username: string; email: string; full_name?: string } } | { success: false; message: string }> {
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/google`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ access_token: accessToken }),
+      })
+      const data = (await res.json().catch(() => ({}))) as {
+        status?: boolean
+        token?: string
+        user?: { id: number; username: string; email: string }
+        message?: string
+        error?: string
+      }
+      const mapped = this._oauthUser(data)
+      if (res.ok && mapped) return { success: true, token: data.token!, user: mapped }
+      return { success: false, message: data.message || data.error || "Google sign-in failed" }
+    } catch {
+      return { success: false, message: "Network error" }
+    }
+  },
+
+  /** Login with Discord - POST /auth/discord with access_token. Returns token + user. */
+  async loginWithDiscord(
+    accessToken: string
+  ): Promise<{ success: true; token: string; user: { id: number; username: string; email: string; full_name?: string } } | { success: false; message: string }> {
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/discord`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ access_token: accessToken }),
+      })
+      const data = (await res.json().catch(() => ({}))) as {
+        status?: boolean
+        token?: string
+        user?: { id: number; username: string; email: string }
+        message?: string
+        error?: string
+      }
+      const mapped = this._oauthUser(data)
+      if (res.ok && mapped) return { success: true, token: data.token!, user: mapped }
+      return { success: false, message: data.message || data.error || "Discord sign-in failed" }
+    } catch {
+      return { success: false, message: "Network error" }
+    }
+  },
+
+  /** Login with Apple - POST /auth/apple with id_token and optional user (name, email). Returns token + user. */
+  async loginWithApple(payload: {
+    id_token: string
+    user?: { name?: { firstName?: string; lastName?: string }; email?: string }
+  }): Promise<{ success: true; token: string; user: { id: number; username: string; email: string; full_name?: string } } | { success: false; message: string }> {
+    try {
+      const body: { id_token: string; user?: object } = { id_token: payload.id_token }
+      if (payload.user) body.user = payload.user
+      const res = await fetch(`${API_BASE_URL}/auth/apple`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      })
+      const data = (await res.json().catch(() => ({}))) as {
+        status?: boolean
+        token?: string
+        user?: { id: number; username: string; email: string }
+        message?: string
+        error?: string
+      }
+      const mapped = this._oauthUser(data)
+      if (res.ok && mapped) return { success: true, token: data.token!, user: mapped }
+      return { success: false, message: data.message || data.error || "Apple sign-in failed" }
+    } catch {
+      return { success: false, message: "Network error" }
+    }
+  },
+
   /** Register - POST /register (same as sbmain). Returns no token; call login() after success. */
   async register(
     email: string,
@@ -378,36 +468,32 @@ export const apiClient = {
     }
   },
 
-  /** Get leaderboard entries */
-  async getLeaderboard(
-    page = 1,
-    pageSize = 50
-  ): Promise<{ data: { username: string; score: number; rank: number }[]; meta: { current_page: number; last_page: number; total_items: number } }> {
+  /** Get leaderboard entries (daily, weekly, all_time). API returns { status, leaderboard: { daily, weekly, all_time } } with { id, name, total_views } per entry. */
+  async getLeaderboard(): Promise<{
+    daily: { id: number; name: string; total_views: number }[]
+    weekly: { id: number; name: string; total_views: number }[]
+    all_time: { id: number; name: string; total_views: number }[]
+  }> {
     try {
-      const res = await fetch(
-        `${API_BASE_URL}/leaderboard?page=${page}&limit=${pageSize}`,
-        { next: { revalidate: 60 } }
-      )
-      if (!res.ok) return { data: [], meta: { current_page: page, last_page: 1, total_items: 0 } }
+      const res = await fetch(`${API_BASE_URL}/leaderboard`, { next: { revalidate: 60 } })
+      if (!res.ok)
+        return { daily: [], weekly: [], all_time: [] }
       const json = (await res.json()) as {
-        results?: { username: string; score: number; rank: number }[]
-        data?: { username: string; score: number; rank: number }[]
-        current_page?: number
-        total_pages?: number
-        total_items?: number
+        status?: boolean
+        leaderboard?: {
+          daily?: { id: number; name: string; total_views: number }[]
+          weekly?: { id: number; name: string; total_views: number }[]
+          all_time?: { id: number; name: string; total_views: number }[]
+        }
       }
-      const list = json.results ?? json.data ?? []
-      const total = json.total_items ?? (Array.isArray(list) ? list.length : 0)
+      const lb = json.leaderboard ?? {}
       return {
-        data: Array.isArray(list) ? list : [],
-        meta: {
-          current_page: json.current_page ?? page,
-          last_page: json.total_pages ?? 1,
-          total_items: total,
-        },
+        daily: Array.isArray(lb.daily) ? lb.daily : [],
+        weekly: Array.isArray(lb.weekly) ? lb.weekly : [],
+        all_time: Array.isArray(lb.all_time) ? lb.all_time : [],
       }
     } catch {
-      return { data: [], meta: { current_page: page, last_page: 1, total_items: 0 } }
+      return { daily: [], weekly: [], all_time: [] }
     }
   },
 
@@ -480,6 +566,47 @@ export const apiClient = {
         return { success: true, sound: processSound(raw) }
       }
       return { success: false, message: (data as { message?: string }).message || "Upload failed" }
+    } catch {
+      return { success: false, message: "Network error" }
+    }
+  },
+
+  /**
+   * Text-to-speech via apihut.in (requires token). POST /api/tts/apihut.
+   * Creates a Sound from the generated MP3 and returns it.
+   */
+  async textToSpeechApihut(
+    token: string,
+    payload: { text: string; soundName: string; category: number; language?: string }
+  ): Promise<{ success: true; sound: ProcessedSound } | { success: false; message: string }> {
+    try {
+      const body: Record<string, unknown> = {
+        text: payload.text,
+        soundName: payload.soundName,
+        category: payload.category,
+      }
+      if (payload.language) body.language = payload.language
+      const res = await fetch(`${API_BASE_URL}/tts/apihut`, {
+        method: "POST",
+        headers: {
+          Authorization: `Token ${token}`,
+          "Content-Type": "application/json",
+        } as HeadersInit,
+        body: JSON.stringify(body),
+      })
+      const data = (await res.json().catch(() => ({}))) as {
+        status?: boolean
+        sound?: ApiSound
+        message?: string
+      }
+      const raw = data.sound
+      if (res.status === 201 && raw) {
+        return { success: true, sound: processSound(raw) }
+      }
+      return {
+        success: false,
+        message: data.message || (res.ok ? "Invalid response" : "Text-to-speech failed"),
+      }
     } catch {
       return { success: false, message: "Network error" }
     }
