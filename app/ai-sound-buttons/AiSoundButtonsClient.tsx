@@ -68,7 +68,12 @@ export default function AiSoundButtonsClient() {
   const initialUrlProcessed = useRef(false)
 
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" })
+    if (chat.length < 2) return
+    const last = chat[chat.length - 1]
+    const prev = chat[chat.length - 2]
+    if (last.sender === "bot" && prev.sender === "user") {
+      chatEndRef.current?.scrollIntoView({ behavior: "smooth" })
+    }
   }, [chat, loading])
 
   const findBestCategory = useCallback(
