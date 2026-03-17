@@ -341,7 +341,7 @@ export default function MySoundboardClient() {
                         size="sm"
                         className="w-full"
                         onClick={() =>
-                          handleLoadMoreSounds(dashboard.id, dashboard.sounds?.length || 0)
+                          handleLoadMoreSounds(String(dashboard.id), dashboard.sounds?.length || 0)
                         }
                       >
                         Load More Sounds ({(dashboard.sounds?.length || 0) - visibleCount} remaining)
