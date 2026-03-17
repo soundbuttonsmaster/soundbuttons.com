@@ -44,7 +44,9 @@ const nextConfig: NextConfig = {
     ];
   },
   async redirects() {
-    const redirects: { source: string; destination: string; permanent: boolean }[] = [];
+    const redirects: { source: string; destination: string; permanent: boolean }[] = [
+      { source: "/ads.txt", destination: "https://adstxt.mediavine.com/sites/sound-buttons/ads.txt", permanent: false },
+    ];
     for (const locale of LOCALES) {
       for (const path of NON_LOCALIZED_PATHS) {
         redirects.push({

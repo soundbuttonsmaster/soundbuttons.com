@@ -78,6 +78,8 @@ export default function HomePageClient({
         </div>
       </section>
 
+      <div className="mv-leaderboard w-full min-h-0" aria-hidden="true" />
+
       <div className="flex flex-col bg-background">
         <main className="flex flex-col items-center">
           <div className="w-full max-w-7xl mx-auto pt-2 pb-0 px-2 sm:px-4 lg:px-6">

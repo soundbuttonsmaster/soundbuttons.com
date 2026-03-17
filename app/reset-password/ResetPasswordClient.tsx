@@ -11,7 +11,9 @@ function ResetPasswordForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const tokenFromUrl = searchParams.get("token") ?? ""
+  const userIdFromUrl = searchParams.get("user_id") ?? ""
   const [token, setToken] = useState(tokenFromUrl)
+  const [userId, setUserId] = useState(userIdFromUrl)
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [loading, setLoading] = useState(false)
@@ -34,8 +36,14 @@ function ResetPasswordForm() {
       setError("Reset token is missing. Use the link from your email.")
       return
     }
+    const uid = userId.trim()
+    const parsedUserId = uid ? parseInt(uid, 10) : NaN
+    if (!uid || Number.isNaN(parsedUserId)) {
+      setError("User ID is missing. Use the full link from your email.")
+      return
+    }
     setLoading(true)
-    const res = await apiClient.confirmPasswordReset(t, password)
+    const res = await apiClient.confirmPasswordReset(parsedUserId, t, password, confirmPassword)
     setLoading(false)
     if (res.success) {
       setSuccess(true)
@@ -78,11 +86,26 @@ function ResetPasswordForm() {
         </div>
         <h1 className="text-2xl font-bold text-foreground">Set New Password</h1>
         <p className="text-muted-foreground text-sm">
-          Enter the reset token from your email and choose a new password.
+          Use the link from your email to pre-fill User ID and token, or enter them manually. Then choose a new password.
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="userId" className="block text-sm font-medium text-foreground mb-1">
+            User ID
+          </label>
+          <input
+            id="userId"
+            name="userId"
+            type="text"
+            inputMode="numeric"
+            value={userId}
+            onChange={(e) => setUserId(e.target.value)}
+            className="w-full h-11 px-3 rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            placeholder="From your email link (e.g. 123)"
+          />
+        </div>
         <div>
           <label htmlFor="token" className="block text-sm font-medium text-foreground mb-1">
             Reset Token

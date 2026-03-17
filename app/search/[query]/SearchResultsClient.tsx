@@ -98,6 +98,8 @@ export default function SearchResultsClient({
         </div>
       </PageHero>
 
+      <div className="mv-leaderboard w-full min-h-0" aria-hidden="true" />
+
       <div className="py-8 bg-background">
         <div className="w-full max-w-7xl mx-auto px-4">
           <nav
@@ -116,6 +118,7 @@ export default function SearchResultsClient({
           </nav>
 
           {sounds.length > 0 ? (
+            <div className="trending-sounds-container">
             <>
               <SoundList
                 title={listTitle}
@@ -213,6 +216,7 @@ export default function SearchResultsClient({
                 </section>
               </div>
             </>
+            </div>
           ) : (
             <div className="text-center py-12">
               <p className="text-muted-foreground text-lg mb-4">

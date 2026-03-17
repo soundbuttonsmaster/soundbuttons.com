@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
 import { Upload, LogIn, CheckCircle, AlertCircle } from "lucide-react"
 import { useAuth } from "@/lib/auth/auth-context"
@@ -14,10 +14,21 @@ export default function UploadSoundClient() {
   const { token, isReady } = useAuth()
   const [name, setName] = useState("")
   const [file, setFile] = useState<File | null>(null)
+  const [categoryId, setCategoryId] = useState<number>(0)
+  const [categories, setCategories] = useState<{ id: number; categoryName: string }[]>([])
+  const [categoriesLoading, setCategoriesLoading] = useState(true)
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<"success" | "error" | null>(null)
   const [message, setMessage] = useState("")
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    apiClient.getSoundCategories().then((list) => {
+      setCategories(list)
+      if (list.length > 0) setCategoryId((prev) => (prev === 0 ? list[0].id : prev))
+      setCategoriesLoading(false)
+    })
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -27,12 +38,18 @@ export default function UploadSoundClient() {
       setMessage("Please select an audio file.")
       return
     }
+    if (!categoryId) {
+      setResult("error")
+      setMessage("Please select a category.")
+      return
+    }
     setLoading(true)
     setResult(null)
     setMessage("")
     const formData = new FormData()
-    formData.append("file", file)
-    if (name.trim()) formData.append("name", name.trim())
+    formData.append("soundFile", file)
+    formData.append("soundName", (name.trim() || file.name.replace(/\.[^/.]+$/, "")) || "My sound")
+    formData.append("category", String(categoryId))
     const res = await apiClient.uploadSound(token, formData)
     setLoading(false)
     if (res.success) {
@@ -40,6 +57,7 @@ export default function UploadSoundClient() {
       setMessage("Sound uploaded successfully!")
       setFile(null)
       setName("")
+      if (categories.length > 0) setCategoryId(categories[0].id)
       if (fileInputRef.current) fileInputRef.current.value = ""
     } else {
       setResult("error")
@@ -113,6 +131,27 @@ export default function UploadSoundClient() {
                 />
               </div>
               <div>
+                <label htmlFor="category" className="block text-sm font-medium text-foreground mb-1">
+                  Category <span className="text-destructive">*</span>
+                </label>
+                <select
+                  id="category"
+                  required
+                  value={categoryId || ""}
+                  onChange={(e) => setCategoryId(Number(e.target.value))}
+                  disabled={categoriesLoading}
+                  className="w-full h-11 px-3 rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                >
+                  {categoriesLoading && <option value="">Loading...</option>}
+                  {!categoriesLoading && categories.length === 0 && <option value="">No categories</option>}
+                  {categories.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.categoryName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
                 <label htmlFor="file" className="block text-sm font-medium text-foreground mb-1">
                   Audio file <span className="text-destructive">*</span>
                 </label>
@@ -143,7 +182,7 @@ export default function UploadSoundClient() {
                 </div>
               )}
 
-              <Button type="submit" className="w-full h-11" disabled={loading}>
+              <Button type="submit" className="w-full h-11" disabled={loading || categoriesLoading || !categoryId}>
                 {loading ? "Uploading..." : "Upload sound"}
               </Button>
             </form>

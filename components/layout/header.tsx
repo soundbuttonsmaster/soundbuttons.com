@@ -35,8 +35,10 @@ export default function Header() {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false)
   const [mobileSubmenuOpen, setMobileSubmenuOpen] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
+  const [searchOverlayOpen, setSearchOverlayOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const userDropdownRef = useRef<HTMLDivElement>(null)
+  const searchOverlayInputRef = useRef<HTMLInputElement>(null)
   const categories = getTopLevelCategories()
 
   const locale = getLocaleFromPathname(pathname ?? "")
@@ -65,6 +67,7 @@ export default function Header() {
     setMobileSubmenuOpen(null)
     setCategoryDropdownOpen(false)
     setUserDropdownOpen(false)
+    setSearchOverlayOpen(false)
   }, [pathname])
 
   useEffect(() => {
@@ -105,26 +108,41 @@ export default function Header() {
     if (searchQuery.trim()) {
       const slug = generateSlug(searchQuery.trim())
       if (slug) router.push(getLocalizedHref(`/search/${slug}`, locale))
+      setSearchOverlayOpen(false)
     }
   }
+
+  useEffect(() => {
+    if (searchOverlayOpen) searchOverlayInputRef.current?.focus()
+  }, [searchOverlayOpen])
+
+  useEffect(() => {
+    if (!searchOverlayOpen) return
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSearchOverlayOpen(false)
+    }
+    document.addEventListener("keydown", onKeyDown)
+    return () => document.removeEventListener("keydown", onKeyDown)
+  }, [searchOverlayOpen])
 
   const navLinkClass =
     "px-2 py-1.5 text-sm font-medium rounded-md transition-colors whitespace-nowrap text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800"
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:bg-slate-950/95 dark:supports-[backdrop-filter]:dark:bg-slate-950/80 border-slate-200 dark:border-slate-800">
+      {/* z-[99998] so header stays above PubNation/Mediavine ad-injected elements that load after page (was blocking clicks) */}
+      <header className="sticky top-0 z-[99998] w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:bg-slate-950/95 dark:supports-[backdrop-filter]:dark:bg-slate-950/80 border-slate-200 dark:border-slate-800">
         <div className="relative flex h-14 w-full items-center justify-between gap-4 px-4 sm:px-6">
-          {/* Logo - left */}
-          <Link href={getLocalizedHref("/", locale)} className="flex shrink-0 items-center">
+          {/* Logo - left (z-10 so it stays above centered nav and is clickable) */}
+          <Link href={getLocalizedHref("/", locale)} className="relative z-10 flex shrink-0 items-center">
             <span className="text-base font-bold tracking-tight text-slate-900 dark:text-white sm:text-lg">
               SOUND BUTTONS
             </span>
           </Link>
 
-          {/* Desktop Nav - ABSOLUTE CENTER, all links in DOM for Google sitelinks */}
+          {/* Desktop Nav - ABSOLUTE CENTER; pointer-events-none when hidden so logo/right section stay clickable */}
           <nav
-            className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 md:flex md:items-center md:gap-0.5"
+            className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 pointer-events-none lg:flex lg:items-center lg:gap-0.5 lg:pointer-events-auto"
             aria-label="Main navigation"
           >
             {navBeforeLinks.map((link) => (
@@ -172,12 +190,21 @@ export default function Header() {
             ))}
           </nav>
 
-          {/* Right section: Search + Join + Theme + Mobile menu */}
-          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-            {/* Search - desktop */}
+          {/* Right section (z-10 so it stays above centered nav and is clickable) */}
+          <div className="relative z-10 flex shrink-0 items-center gap-2 sm:gap-3">
+            {/* Search icon - when inline search is hidden (< lg) */}
+            <button
+              type="button"
+              onClick={() => setSearchOverlayOpen(true)}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 lg:hidden"
+              aria-label={nav.searchPlaceholder}
+            >
+              <Search className="h-5 w-5" />
+            </button>
+            {/* Search - desktop (lg only) */}
             <form
               onSubmit={handleSearchSubmit}
-              className="hidden sm:flex sm:items-center sm:gap-1.5 sm:rounded-lg sm:border sm:border-slate-300 sm:bg-slate-50 sm:px-2.5 sm:py-1.5 sm:focus-within:ring-2 sm:focus-within:ring-slate-400/20 dark:border-slate-600 dark:bg-slate-800/50 dark:focus-within:ring-slate-500/20 sm:min-w-[140px] sm:max-w-[180px] lg:max-w-[200px]"
+              className="hidden lg:flex lg:items-center lg:gap-1.5 lg:rounded-lg lg:border lg:border-slate-300 lg:bg-slate-50 lg:px-2.5 lg:py-1.5 lg:focus-within:ring-2 lg:focus-within:ring-slate-400/20 dark:border-slate-600 dark:bg-slate-800/50 dark:focus-within:ring-slate-500/20 lg:min-w-[140px] lg:max-w-[200px]"
             >
               <Search className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-500" />
               <input
@@ -189,13 +216,13 @@ export default function Header() {
               />
             </form>
             {user ? (
-              <div ref={userDropdownRef} className="relative hidden sm:block">
+              <div ref={userDropdownRef} className="relative hidden lg:block">
                 <button
                   type="button"
                   onClick={() => setUserDropdownOpen((v) => !v)}
                   aria-expanded={userDropdownOpen}
                   aria-haspopup="true"
-                  className="hidden shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800 sm:inline-flex"
+                  className="hidden shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800 lg:inline-flex"
                 >
                   <User className="h-4 w-4 shrink-0 text-slate-500 dark:text-slate-400" />
                   <span className="max-w-[120px] truncate">Hi, {displayName}</span>
@@ -272,7 +299,7 @@ export default function Header() {
             ) : (
               <Link
                 href={getLocalizedHref("/register", locale)}
-                className="hidden shrink-0 rounded-lg bg-slate-900 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200 sm:inline-flex"
+                className="hidden shrink-0 rounded-lg bg-slate-900 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200 lg:inline-flex"
               >
                 {nav.joinFree}
               </Link>
@@ -282,7 +309,7 @@ export default function Header() {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 md:hidden"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 lg:hidden"
               aria-label="Toggle menu"
             >
               {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -291,19 +318,19 @@ export default function Header() {
         </div>
       </header>
 
-      {/* Mobile overlay */}
+      {/* Mobile overlay - z-[99999] so above header when menu open */}
       {mobileMenuOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/50 md:hidden"
+          className="fixed inset-0 z-[99999] bg-black/50 lg:hidden"
           onClick={() => setMobileMenuOpen(false)}
           aria-hidden
         />
       )}
 
-      {/* Mobile menu panel */}
+      {/* Mobile menu panel - z-[99999] when open; pointer-events-none when closed so header stays clickable */}
       <div
-        className={`fixed top-0 right-0 z-50 h-full w-full max-w-xs transform bg-white shadow-2xl transition-transform duration-300 dark:bg-slate-950 md:hidden ${
-          mobileMenuOpen ? "translate-x-0" : "translate-x-full"
+        className={`fixed top-0 right-0 z-[99999] h-full w-full max-w-xs transform bg-white shadow-2xl transition-transform duration-300 dark:bg-slate-950 lg:hidden ${
+          mobileMenuOpen ? "translate-x-0 pointer-events-auto" : "translate-x-full pointer-events-none"
         }`}
       >
         <div className="flex h-full flex-col">
@@ -449,6 +476,43 @@ export default function Header() {
           </div>
         </div>
       </div>
+
+      {/* Search overlay - z-[99999] so above header when open */}
+      {searchOverlayOpen && (
+        <div
+          className="fixed inset-0 z-[99999] flex items-start justify-center pt-20 px-4 lg:hidden"
+          aria-modal="true"
+          role="dialog"
+          aria-label="Search"
+        >
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setSearchOverlayOpen(false)}
+            aria-hidden
+          />
+          <div className="relative z-10 w-full max-w-md rounded-xl border border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900">
+            <form onSubmit={handleSearchSubmit} className="flex items-center gap-2 p-2">
+              <Search className="h-5 w-5 shrink-0 text-slate-400 dark:text-slate-500" />
+              <input
+                ref={searchOverlayInputRef}
+                type="search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={nav.searchPlaceholder}
+                className="min-w-0 flex-1 bg-transparent py-2 text-base text-slate-900 placeholder-slate-400 focus:outline-none dark:text-slate-100 dark:placeholder-slate-500"
+              />
+              <button
+                type="button"
+                onClick={() => setSearchOverlayOpen(false)}
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800"
+                aria-label="Close search"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </>
   )
 }

@@ -327,16 +327,23 @@ export const apiClient = {
     }
   },
 
-  /** Confirm password reset with token from email */
+  /** Confirm password reset with token from email. API expects user_id, token, new_password, new_password_confirm. */
   async confirmPasswordReset(
+    userId: number,
     token: string,
-    newPassword: string
+    newPassword: string,
+    newPasswordConfirm: string
   ): Promise<{ success: boolean; message?: string }> {
     try {
       const res = await fetch(`${API_BASE_URL}/password-reset/confirm`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, new_password: newPassword }),
+        body: JSON.stringify({
+          user_id: userId,
+          token,
+          new_password: newPassword,
+          new_password_confirm: newPasswordConfirm,
+        }),
       })
       const data = (await res.json().catch(() => ({}))) as { message?: string }
       if (res.ok) return { success: true, message: data.message || "Password updated successfully" }
@@ -436,13 +443,29 @@ export const apiClient = {
     }
   },
 
-  /** Upload sound (requires token) */
+  /** Sound categories for upload (GET /api/categories). Used for soundFile upload category selection. */
+  async getSoundCategories(): Promise<{ id: number; categoryName: string }[]> {
+    try {
+      const res = await fetch(`${API_BASE_URL}/categories`, { cache: "no-store" })
+      if (!res.ok) return []
+      const data = (await res.json()) as { status?: boolean; categories?: { id: number; categoryName: string }[] }
+      const list = data.categories ?? []
+      return Array.isArray(list) ? list : []
+    } catch {
+      return []
+    }
+  },
+
+  /**
+   * Upload sound (requires token). POST /api/sounds/add.
+   * FormData must include: soundFile (file), soundName (string), category (number, required).
+   */
   async uploadSound(
     token: string,
     formData: FormData
   ): Promise<{ success: true; sound?: ProcessedSound } | { success: false; message: string }> {
     try {
-      const res = await fetch(`${API_BASE_URL}/sounds/upload`, {
+      const res = await fetch(`${API_BASE_URL}/sounds/add`, {
         method: "POST",
         headers: { Authorization: `Token ${token}` } as HeadersInit,
         body: formData,

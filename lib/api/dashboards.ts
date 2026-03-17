@@ -172,7 +172,11 @@ export async function createDashboard(
       "Content-Type": "application/json",
       Authorization: `Token ${token}`,
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify({
+      name: data.name,
+      category: data.category_id,
+      sound_ids: data.sound_ids ?? [],
+    }),
   })
   if (!res.ok) {
     const text = await res.text().catch(() => "")
@@ -203,7 +207,11 @@ export async function updateDashboard(
       "Content-Type": "application/json",
       Authorization: `Token ${token}`,
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify({
+      name: data.name,
+      category: data.category_id,
+      sound_ids: data.sound_ids ?? [],
+    }),
   })
   if (!res.ok) return null
   const result = await res.json()

@@ -150,9 +150,9 @@ export default function TextToSoundClient() {
     setMessage("")
 
     const formData = new FormData()
-    formData.append("file", previewBlob, "text-to-sound.webm")
-    formData.append("name", name)
-    if (categoryId) formData.append("category_id", String(categoryId))
+    formData.append("soundFile", previewBlob, "text-to-sound.webm")
+    formData.append("soundName", name)
+    formData.append("category", String(categoryId || 13))
 
     const res = await apiClient.uploadSound(token, formData)
     setLoading(false)

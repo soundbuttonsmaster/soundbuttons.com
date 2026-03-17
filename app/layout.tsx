@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/ui/theme-provider";
 import { AuthProvider } from "@/lib/auth/auth-context";
 import { PwaProvider } from "@/components/pwa/PwaProvider";
 import ConditionalLayout from "@/components/layout/conditional-layout";
+import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -53,23 +54,19 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {/* Theme is applied by next-themes ThemeProvider (avoids hydration mismatch from inline script) */}
+        {/* PubNation (Mediavine) header script - lazy load */}
         <script
-          dangerouslySetInnerHTML={{
-            __html: `
-(function() {
-  try {
-    const stored = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const isDark = stored === 'dark' || (!stored && prefersDark);
-    document.documentElement.classList.toggle('dark', isDark);
-  } catch (e) {}
-})();
-`,
-          }}
+          type="text/javascript"
+          async
+          data-noptimize="1"
+          data-cfasync="false"
+          src="https://scripts.pubnation.com/tags/50f5fedc-1695-4aba-855d-c4d7ec7f5fd6.js"
         />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning
       >
         <ThemeProvider
           attribute="class"
@@ -79,6 +76,7 @@ export default function RootLayout({
         >
           <AuthProvider>
             <PwaProvider />
+            <GoogleAnalytics />
             <ConditionalLayout>{children}</ConditionalLayout>
           </AuthProvider>
         </ThemeProvider>
