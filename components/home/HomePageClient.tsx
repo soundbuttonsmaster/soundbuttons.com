@@ -1,11 +1,10 @@
 "use client"
 
-import { useState, useCallback, useMemo } from "react"
+import { useMemo } from "react"
 import dynamic from "next/dynamic"
 import SearchBar from "@/components/search-bar"
-import SoundList from "@/components/home/SoundList"
+import AutoLoadingTrendingSection from "@/components/home/AutoLoadingTrendingSection"
 import AutoLoadingNewSoundsSection from "@/components/home/AutoLoadingNewSoundsSection"
-import { apiClient } from "@/lib/api/client"
 
 const AboutContent = dynamic(
   () => import("@/components/home/AboutContent").then((m) => m.default),
@@ -34,34 +33,6 @@ export default function HomePageClient({
 }: HomePageClientProps) {
   const home = useMemo(() => getStrings(locale).home, [locale])
   const localePrefix = locale === "en" ? "" : `/${locale}`
-  const [trendingSounds, setTrendingSounds] = useState(initialTrendingSounds)
-  const [currentTrendingPage, setCurrentTrendingPage] = useState(
-    initialTrendingMeta?.current_page || 1
-  )
-  const [totalTrendingPages, setTotalTrendingPages] = useState(
-    initialTrendingMeta?.last_page || 1
-  )
-
-  const loadMoreTrending = useCallback(async () => {
-    if (currentTrendingPage >= totalTrendingPages) return false
-    try {
-      const nextPage = currentTrendingPage + 1
-      const loadMoreCount = isMobileDevice ? 8 : 22
-      const { data: newSounds, meta } = await apiClient.getTrendingSounds(
-        nextPage,
-        loadMoreCount
-      )
-      if (newSounds?.length) {
-        setTrendingSounds((prev) => [...prev, ...newSounds])
-        setCurrentTrendingPage(nextPage)
-        setTotalTrendingPages(meta?.last_page ?? totalTrendingPages)
-        return true
-      }
-    } catch {
-      // ignore
-    }
-    return false
-  }, [currentTrendingPage, totalTrendingPages, isMobileDevice])
 
   return (
     <>
@@ -89,19 +60,13 @@ export default function HomePageClient({
         <main className="flex flex-col items-center">
           <div className="w-full max-w-7xl mx-auto pt-2 pb-0 px-2 sm:px-4 lg:px-6">
             <div className="trending-sounds-container">
-              <SoundList
-                title={home.trendingTitle}
-                sounds={trendingSounds}
-                initialCount={isMobileDevice ? 16 : 44}
-                loadMoreCount={isMobileDevice ? 8 : 22}
-                viewAllLink={`${localePrefix}/trends`}
-                onLoadMore={loadMoreTrending}
-                hasMoreSounds={currentTrendingPage < totalTrendingPages}
-                maxLines={4}
-                useCompactView
-                showLoadMore
-                showLoadingIndicator={false}
+              <AutoLoadingTrendingSection
+                initialSounds={initialTrendingSounds}
+                initialMeta={initialTrendingMeta}
                 isMobileDevice={isMobileDevice}
+                title={home.trendingTitle}
+                viewAllLink={`${localePrefix}/trends`}
+                locale={locale}
               />
             </div>
 

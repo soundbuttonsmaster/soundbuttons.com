@@ -111,6 +111,7 @@ const SoundListWithRef = forwardRef(function SoundListInner<T extends { id: numb
     const soundEndedHandlersRef = useRef<Map<number, (e: Event) => void>>(
       new Map()
     )
+    const contentEndRef = useRef<HTMLDivElement>(null)
     const deferredSounds = useDeferredValue(displayedSounds)
 
     useEffect(() => {
@@ -131,7 +132,15 @@ const SoundListWithRef = forwardRef(function SoundListInner<T extends { id: numb
       if (loading || !onLoadMore) return
       setLoading(true)
       try {
-        await onLoadMore()
+        const gotMore = await onLoadMore()
+        if (gotMore && contentEndRef.current) {
+          setTimeout(() => {
+            contentEndRef.current?.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            })
+          }, 150)
+        }
       } catch {
         // ignore
       } finally {
@@ -150,7 +159,10 @@ const SoundListWithRef = forwardRef(function SoundListInner<T extends { id: numb
         : 3
 
     const maxSounds = maxLines * soundsPerRow
-    const limitedSounds = deferredSounds.slice(0, maxSounds)
+    const limitedSounds =
+      deferredSounds.length > maxSounds
+        ? deferredSounds
+        : deferredSounds.slice(0, maxSounds)
 
     const rows: T[][] = []
     for (let i = 0; i < limitedSounds.length; i += soundsPerRow) {
@@ -479,6 +491,7 @@ const SoundListWithRef = forwardRef(function SoundListInner<T extends { id: numb
                 </div>
               ))}
             </div>
+            <div ref={contentEndRef} className="min-h-0" aria-hidden />
             {canLoadMore && (
               <div className="mt-6 flex justify-center load-more-container">
                 <button
