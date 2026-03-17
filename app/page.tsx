@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     description: HOME_DESCRIPTION,
     images: [
       {
-        url: `${SITE.baseUrl}/opengraph-image`,
+        url: `${SITE.baseUrl}/home.jpg`,
         width: 1200,
         height: 630,
         alt: HOME_TITLE,
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
     title: HOME_TITLE,
     description: HOME_DESCRIPTION,
     images: [
-      { url: `${SITE.baseUrl}/opengraph-image`, alt: HOME_TITLE, width: 1200, height: 630 },
+      { url: `${SITE.baseUrl}/home.jpg`, alt: HOME_TITLE, width: 1200, height: 630 },
     ],
   },
   robots: {
@@ -144,19 +144,6 @@ export default async function HomePage() {
 
   const BASE = SITE.baseUrl
 
-  const webSiteSchema = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: "SoundButtons.com",
-    url: `${BASE}/`,
-    description: HOME_DESCRIPTION,
-    potentialAction: {
-      "@type": "SearchAction",
-      target: `${BASE}/search/{search_term_string}`,
-      "query-input": "required name=search_term_string",
-    },
-  }
-
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -187,86 +174,6 @@ export default async function HomePage() {
       name: sound.name,
       url: `${BASE}/${generateSlug(sound.name)}/${sound.id}`,
     })),
-  }
-
-  const personOrgSchema = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "Person",
-        name: "Siya P",
-        jobTitle: "Founder & Creator",
-        worksFor: { "@type": "Organization", name: "SoundButtons.com" },
-        email: SITE.email,
-        telephone: "+1-555-847-2638",
-        address: {
-          "@type": "PostalAddress",
-          streetAddress: "2847 Digital Avenue, Suite 102",
-          addressLocality: "San Francisco",
-          addressRegion: "CA",
-          postalCode: "94105",
-          addressCountry: "US",
-        },
-        sameAs: [BASE],
-      },
-      {
-        "@type": "Organization",
-        name: "SoundButtons.com",
-        url: `${BASE}/`,
-        logo: `${BASE}/opengraph-image`,
-        contactPoint: {
-          "@type": "ContactPoint",
-          telephone: "+1-555-847-2638",
-          contactType: "Customer Service",
-          email: SITE.email,
-          areaServed: "Worldwide",
-          availableLanguage: ["en", "es", "fr", "pt"],
-        },
-        address: {
-          "@type": "PostalAddress",
-          streetAddress: "2847 Digital Avenue, Suite 102",
-          addressLocality: "San Francisco",
-          addressRegion: "CA",
-          postalCode: "94105",
-          addressCountry: "US",
-        },
-        founder: { "@type": "Person", name: "Siya P" },
-      },
-    ],
-  }
-
-  const webSiteIdSchema = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "@id": `${BASE}/#website`,
-    name: HOME_TITLE,
-    alternateName: ["SoundButtons", "SoundButtons.com", "Meme Soundboard"],
-    url: BASE,
-    description: HOME_DESCRIPTION,
-    inLanguage: "en-US",
-    potentialAction: {
-      "@type": "SearchAction",
-      target: {
-        "@type": "EntryPoint",
-        urlTemplate: `${BASE}/search/{search_term_string}`,
-      },
-      "query-input": "required name=search_term_string",
-    },
-  }
-
-  const organizationIdSchema = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "@id": `${BASE}/#organization`,
-    name: "Sound Buttons",
-    url: BASE,
-    logo: {
-      "@type": "ImageObject",
-      url: `${BASE}/icons/icon-192x192.png`,
-      width: 192,
-      height: 192,
-    },
-    sameAs: [BASE],
   }
 
   const siteNavSchema = {
@@ -316,27 +223,11 @@ export default async function HomePage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteSchema) }}
-      />
-      <script
-        type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(personOrgSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteIdSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationIdSchema) }}
       />
       <script
         type="application/ld+json"

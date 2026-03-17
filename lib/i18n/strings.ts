@@ -19,6 +19,11 @@ export interface StringsNav {
   register: string
   upload: string
   menu: string
+  signedInAs: string
+  myProfile: string
+  mySoundboard: string
+  myFavorites: string
+  logout: string
 }
 
 export interface StringsFooter {
@@ -276,6 +281,11 @@ const strings: Record<Locale, LocaleStrings> = {
       register: "Register",
       upload: "Upload",
       menu: "Menu",
+      signedInAs: "Signed in as",
+      myProfile: "My Profile",
+      mySoundboard: "My Sounds Board",
+      myFavorites: "Favorites",
+      logout: "Logout",
     },
     footer: {
       whyChoose: "Why Choose SoundButtons.com?",
@@ -532,6 +542,11 @@ const strings: Record<Locale, LocaleStrings> = {
       register: "Registrarse",
       upload: "Subir",
       menu: "Menú",
+      signedInAs: "Conectado como",
+      myProfile: "Mi Perfil",
+      mySoundboard: "Mi Soundboard",
+      myFavorites: "Favoritos",
+      logout: "Cerrar Sesión",
     },
     footer: {
       whyChoose: "¿Por qué elegir SoundButtons.com?",
@@ -789,6 +804,11 @@ const strings: Record<Locale, LocaleStrings> = {
       register: "Cadastrar",
       upload: "Enviar",
       menu: "Menu",
+      signedInAs: "Conectado como",
+      myProfile: "Meu Perfil",
+      mySoundboard: "Meu Soundboard",
+      myFavorites: "Favoritos",
+      logout: "Sair",
     },
     footer: {
       whyChoose: "Por que escolher SoundButtons.com?",
@@ -1046,6 +1066,11 @@ const strings: Record<Locale, LocaleStrings> = {
       register: "S'inscrire",
       upload: "Télécharger",
       menu: "Menu",
+      signedInAs: "Connecté en tant que",
+      myProfile: "Mon profil",
+      mySoundboard: "Ma table d'harmonie",
+      myFavorites: "Favoris",
+      logout: "Déconnexion",
     },
     footer: {
       whyChoose: "Pourquoi choisir SoundButtons.com ?",

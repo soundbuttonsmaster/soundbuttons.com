@@ -274,7 +274,7 @@ export default function KidsSoundboardClient({
             ) : sounds.length > 0 ? (
               <SoundList
                 title={listTitle}
-                sounds={sounds as any}
+                sounds={sounds}
                 initialCount={isMobileDevice ? 18 : 36}
                 loadMoreCount={isMobileDevice ? 9 : 18}
                 onLoadMore={loadMore}

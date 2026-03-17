@@ -19,9 +19,9 @@ import { getSoundDetailPath } from "@/lib/utils/slug"
 import { getStrings, getLocaleFromPathname } from "@/lib/i18n/strings"
 import type { Locale } from "@/lib/i18n/strings"
 
-interface SoundListProps {
+interface SoundListProps<T = Sound> {
   title: string
-  sounds: Sound[]
+  sounds: T[]
   initialCount?: number
   loadMoreCount?: number
   viewAllLink?: string
@@ -34,7 +34,7 @@ interface SoundListProps {
   showRedirectButton?: boolean
   showLoadingIndicator?: boolean
   customCardComponent?: React.ComponentType<{
-    sound: Sound
+    sound: T
     isAboveTheFold?: boolean
     onRainEffect?: (imageUrl: string) => void
   }>
@@ -42,8 +42,8 @@ interface SoundListProps {
   isMobileDevice?: boolean
   /** Cap desktop columns (e.g. 8 for "You Might Like" - my-instants) */
   maxCols?: number
-  /** Custom detail path for each sound (e.g. /sound-effects/slug/id) */
-  getDetailPath?: (sound: Sound) => string
+  /** Custom detail path for each sound (e.g. /sound-effects/slug/id). Not used when customCardComponent is provided. */
+  getDetailPath?: (sound: T) => string
   /** Locale for i18n; defaults to pathname-derived locale */
   locale?: Locale
 }
@@ -54,38 +54,43 @@ export interface SoundListRef {
   playRandomSound: () => void
 }
 
-const SoundList = forwardRef<SoundListRef, SoundListProps>(
-  (
-    {
-      title,
-      sounds,
-      initialCount = 20,
-      loadMoreCount = 10,
-      viewAllLink,
-      onLoadMore,
-      hasMoreSounds = false,
-      maxLines = 4,
-      useCardView = false,
-      useCompactView = false,
-      showLoadMore = true,
-      showRedirectButton = false,
-      showLoadingIndicator = true,
-      customCardComponent,
-      onRainEffect,
-      isMobileDevice: isMobileDeviceProp,
-      maxCols,
-      getDetailPath,
-      locale: localeProp,
-    },
-    ref
-  ) => {
+/** Generic call signature so <SoundList sounds={kidsSounds} customCardComponent={KidsCardSound} /> infers T = KidsSoundboard */
+type SoundListComponent = <T = Sound>(
+  props: SoundListProps<T> & React.RefAttributes<SoundListRef>
+) => React.ReactElement | null
+
+const SoundListWithRef = forwardRef(function SoundListInner<T = Sound>(
+  {
+    title,
+    sounds,
+    initialCount = 20,
+    loadMoreCount = 10,
+    viewAllLink,
+    onLoadMore,
+    hasMoreSounds = false,
+    maxLines = 4,
+    useCardView = false,
+    useCompactView = false,
+    showLoadMore = true,
+    showRedirectButton = false,
+    showLoadingIndicator = true,
+    customCardComponent,
+    onRainEffect,
+    isMobileDevice: isMobileDeviceProp,
+    maxCols,
+    getDetailPath,
+    locale: localeProp,
+  }: SoundListProps<T>,
+  ref: React.Ref<SoundListRef>
+) {
     const pathname = usePathname()
     const locale = localeProp ?? getLocaleFromPathname(pathname ?? "")
     const { home, common } = useMemo(() => getStrings(locale), [locale])
-    const effectiveGetDetailPath = useMemo(() => {
+    const effectiveGetDetailPath = useMemo((): ((s: T) => string) | undefined => {
       if (getDetailPath) return getDetailPath
       if (locale !== "en") {
-        return (s: Sound) => `/${locale}${getSoundDetailPath(s.name ?? "", s.id)}`
+        return (s: T) =>
+          `/${locale}${getSoundDetailPath((s as Sound).name ?? "", (s as Sound).id)}`
       }
       return undefined
     }, [getDetailPath, locale])
@@ -94,7 +99,7 @@ const SoundList = forwardRef<SoundListRef, SoundListProps>(
     const [isMobileDevice, setIsMobileDevice] = useState(
       isMobileDeviceProp ?? false
     )
-    const [displayedSounds, setDisplayedSounds] = useState<Sound[]>(sounds)
+    const [displayedSounds, setDisplayedSounds] = useState<T[]>(sounds)
     const [isAutoPlaying, setIsAutoPlaying] = useState(false)
     const [isRandomPlaying, setIsRandomPlaying] = useState(false)
     const [currentAutoPlayIndex, setCurrentAutoPlayIndex] = useState(0)
@@ -515,6 +520,7 @@ const SoundList = forwardRef<SoundListRef, SoundListProps>(
   }
 )
 
-SoundList.displayName = "SoundList"
+SoundListWithRef.displayName = "SoundList"
 
+const SoundList = SoundListWithRef as SoundListComponent
 export default SoundList

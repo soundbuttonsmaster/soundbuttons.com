@@ -3,6 +3,7 @@ import { headers } from "next/headers"
 import { apiClient } from "@/lib/api/client"
 import HomePageClient from "@/components/home/HomePageClient"
 import { SITE, getLocaleBase } from "@/lib/constants/site"
+import { generateSlug } from "@/lib/utils/slug"
 
 export const revalidate = 60
 
@@ -32,7 +33,7 @@ export const metadata: Metadata = {
       "Reproduce miles de botones de sonido con los mejores sonidos, botón de meme, bromas, efectos sonoros y audio de alta calidad en un poderoso soundboard desbloqueado.",
     url: BASE,
     siteName: "Sound Buttons",
-    images: [{ url: `${BASE}/opengraph-image`, width: 1200, height: 630, type: "image/png" as const, alt: "Botones de Sonido", secureUrl: `${BASE}/opengraph-image` }],
+    images: [{ url: `${SITE.baseUrl}/home.jpg`, width: 1200, height: 630, type: "image/jpeg" as const, alt: "Botones de Sonido", secureUrl: `${SITE.baseUrl}/home.jpg` }],
     locale: "es_ES",
   },
   twitter: {
@@ -42,7 +43,7 @@ export const metadata: Metadata = {
     title: "Myinstants: Botones de Sonido con Soundboard de Memes",
     description:
       "Reproduce miles de botones de sonido con los mejores sonidos, botón de meme, bromas, efectos sonoros y audio de alta calidad en un poderoso soundboard desbloqueado.",
-    images: [`${BASE}/opengraph-image`],
+    images: [{ url: `${SITE.baseUrl}/home.jpg`, alt: "Botones de Sonido", width: 1200, height: 630 }],
   },
   robots: { index: true, follow: true },
 }
@@ -79,7 +80,35 @@ export default async function EsHomePage() {
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement: [{ "@type": "ListItem", position: 1, name: "soundboard", item: BASE }],
+    itemListElement: [{ "@type": "ListItem", position: 1, name: "Inicio", item: BASE }],
+  }
+
+  const allSoundsForList = [...trendingSounds, ...newSounds]
+  const itemListSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Botones de Sonido con Soundboard de Memes",
+    description: "Reproduce miles de botones de sonido con los mejores sonidos, botón de meme, bromas, efectos sonoros y audio de alta calidad.",
+    numberOfItems: allSoundsForList.length,
+    itemListElement: allSoundsForList.map((sound, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: sound.name,
+      url: `${BASE}/${generateSlug(sound.name)}/${sound.id}`,
+    })),
+  }
+
+  const siteNavSchema = {
+    "@context": "https://schema.org",
+    "@graph": [
+      { "@type": "SiteNavigationElement", "@id": `${BASE}/#navigation`, name: "Inicio", url: `${BASE}/` },
+      { "@type": "SiteNavigationElement", "@id": `${BASE}/#navigation`, name: "Nuevo", url: `${BASE}/new` },
+      { "@type": "SiteNavigationElement", "@id": `${BASE}/#navigation`, name: "Tendencia", url: `${BASE}/trends` },
+      { "@type": "SiteNavigationElement", "@id": `${BASE}/#navigation`, name: "Categorías", url: `${BASE}/categories` },
+      { "@type": "SiteNavigationElement", "@id": `${BASE}/#navigation`, name: "Soundboard de Memes", url: `${BASE}/meme-soundboard` },
+      { "@type": "SiteNavigationElement", "@id": `${BASE}/#navigation`, name: "Efectos de Sonido", url: `${BASE}/sound-effects` },
+      { "@type": "SiteNavigationElement", "@id": `${BASE}/#navigation`, name: "Reproducir Aleatorio", url: `${BASE}/play-random` },
+    ],
   }
 
   return (
@@ -87,6 +116,14 @@ export default async function EsHomePage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(siteNavSchema) }}
       />
       <HomePageClient
         initialTrendingSounds={trendingSounds}

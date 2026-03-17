@@ -1,11 +1,12 @@
 "use client"
 
 import Link from "next/link"
-import { Menu, X, ChevronDown, ChevronRight, Search } from "lucide-react"
+import { Menu, X, ChevronDown, ChevronRight, Search, User, LayoutGrid, Heart, Upload, LogOut } from "lucide-react"
 import { useState, useEffect, useRef, FormEvent, useMemo } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
 import { LanguageChanger } from "@/components/ui/language-changer"
+import { useAuth } from "@/lib/auth/auth-context"
 import { getTopLevelCategories } from "@/lib/constants/categories"
 import { getStrings, getLocaleFromPathname } from "@/lib/i18n/strings"
 import { getLocalizedHref } from "@/lib/i18n/paths"
@@ -18,18 +19,29 @@ function generateSlug(query: string): string {
     .replace(/^-+|-+$/g, "") || ""
 }
 
+function getDisplayName(user: { full_name?: string; username: string; email: string }): string {
+  if (user.full_name?.trim()) return user.full_name.trim()
+  if (user.username?.trim()) return user.username.trim()
+  if (user.email) return user.email.split("@")[0] || user.email
+  return user.email || "User"
+}
+
 export default function Header() {
   const pathname = usePathname()
   const router = useRouter()
+  const { user, logout } = useAuth()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false)
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false)
   const [mobileSubmenuOpen, setMobileSubmenuOpen] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const userDropdownRef = useRef<HTMLDivElement>(null)
   const categories = getTopLevelCategories()
 
   const locale = getLocaleFromPathname(pathname ?? "")
   const nav = useMemo(() => getStrings(locale).nav, [locale])
+  const displayName = user ? getDisplayName(user) : ""
 
   const navBeforeLinks = useMemo(
     () => [
@@ -52,6 +64,7 @@ export default function Header() {
     setMobileMenuOpen(false)
     setMobileSubmenuOpen(null)
     setCategoryDropdownOpen(false)
+    setUserDropdownOpen(false)
   }, [pathname])
 
   useEffect(() => {
@@ -71,6 +84,17 @@ export default function Header() {
     document.addEventListener("mousedown", handleClickOutside)
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
+
+  useEffect(() => {
+    if (!userDropdownOpen) return
+    const handleClickOutside = (e: MouseEvent) => {
+      if (userDropdownRef.current && !userDropdownRef.current.contains(e.target as Node)) {
+        setUserDropdownOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [userDropdownOpen])
 
   const toggleMobileSubmenu = (menu: string) => {
     setMobileSubmenuOpen(mobileSubmenuOpen === menu ? null : menu)
@@ -164,12 +188,95 @@ export default function Header() {
                 className="w-full min-w-0 bg-transparent text-sm text-slate-900 placeholder-slate-400 focus:outline-none dark:text-slate-100 dark:placeholder-slate-500"
               />
             </form>
-            <Link
-              href={getLocalizedHref("/register", locale)}
-              className="hidden shrink-0 rounded-lg bg-slate-900 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200 sm:inline-flex"
-            >
-              {nav.joinFree}
-            </Link>
+            {user ? (
+              <div ref={userDropdownRef} className="relative hidden sm:block">
+                <button
+                  type="button"
+                  onClick={() => setUserDropdownOpen((v) => !v)}
+                  aria-expanded={userDropdownOpen}
+                  aria-haspopup="true"
+                  className="hidden shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800 sm:inline-flex"
+                >
+                  <User className="h-4 w-4 shrink-0 text-slate-500 dark:text-slate-400" />
+                  <span className="max-w-[120px] truncate">Hi, {displayName}</span>
+                  <ChevronDown
+                    className={`h-4 w-4 shrink-0 transition-transform ${userDropdownOpen ? "rotate-180" : ""}`}
+                  />
+                </button>
+                {userDropdownOpen && (
+                  <div
+                    className="absolute right-0 top-full z-50 mt-1 w-56 rounded-lg border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-900"
+                    role="menu"
+                  >
+                    <div className="border-b border-slate-100 px-3 py-2 dark:border-slate-800">
+                      <p className="text-xs text-slate-500 dark:text-slate-400">{nav.signedInAs}</p>
+                      <p className="truncate text-sm font-semibold text-slate-900 dark:text-white">
+                        {user.username || displayName}
+                      </p>
+                    </div>
+                    <div className="py-1">
+                      <Link
+                        href={getLocalizedHref("/profile", locale)}
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                        role="menuitem"
+                      >
+                        <User className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+                        {nav.myProfile}
+                      </Link>
+                      <Link
+                        href={getLocalizedHref("/my-soundboard", locale)}
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                        role="menuitem"
+                      >
+                        <LayoutGrid className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+                        {nav.mySoundboard}
+                      </Link>
+                      <Link
+                        href={getLocalizedHref("/favorites", locale)}
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                        role="menuitem"
+                      >
+                        <Heart className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+                        {nav.myFavorites}
+                      </Link>
+                      <Link
+                        href={getLocalizedHref("/upload-sound", locale)}
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                        role="menuitem"
+                      >
+                        <Upload className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+                        {nav.upload}
+                      </Link>
+                    </div>
+                    <div className="border-t border-slate-100 py-1 dark:border-slate-800">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setUserDropdownOpen(false)
+                          logout()
+                        }}
+                        className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+                        role="menuitem"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        {nav.logout}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link
+                href={getLocalizedHref("/register", locale)}
+                className="hidden shrink-0 rounded-lg bg-slate-900 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200 sm:inline-flex"
+              >
+                {nav.joinFree}
+              </Link>
+            )}
             <LanguageChanger />
             <ThemeToggle />
             <button
@@ -270,20 +377,73 @@ export default function Header() {
                 </Link>
               ))}
               <div className="border-t border-slate-200 pt-4 dark:border-slate-800">
-                <Link
-                  href={getLocalizedHref("/login", locale)}
-                  className="block rounded-lg px-4 py-3 text-base font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {nav.login}
-                </Link>
-                <Link
-                  href={getLocalizedHref("/register", locale)}
-                  className="mt-2 block rounded-lg bg-slate-900 px-4 py-3 text-center text-base font-medium text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {nav.register}
-                </Link>
+                {user ? (
+                  <div className="space-y-1">
+                    <p className="px-4 py-2 text-xs text-slate-500 dark:text-slate-400">
+                      {nav.signedInAs} {displayName}
+                    </p>
+                    <Link
+                      href={getLocalizedHref("/profile", locale)}
+                      className="flex items-center gap-2.5 rounded-lg px-4 py-3 text-base font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <User className="h-5 w-5 text-slate-400" />
+                      {nav.myProfile}
+                    </Link>
+                    <Link
+                      href={getLocalizedHref("/my-soundboard", locale)}
+                      className="flex items-center gap-2.5 rounded-lg px-4 py-3 text-base font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <LayoutGrid className="h-5 w-5 text-slate-400" />
+                      {nav.mySoundboard}
+                    </Link>
+                    <Link
+                      href={getLocalizedHref("/favorites", locale)}
+                      className="flex items-center gap-2.5 rounded-lg px-4 py-3 text-base font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <Heart className="h-5 w-5 text-slate-400" />
+                      {nav.myFavorites}
+                    </Link>
+                    <Link
+                      href={getLocalizedHref("/upload-sound", locale)}
+                      className="flex items-center gap-2.5 rounded-lg px-4 py-3 text-base font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <Upload className="h-5 w-5 text-slate-400" />
+                      {nav.upload}
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMobileMenuOpen(false)
+                        logout()
+                      }}
+                      className="flex w-full items-center gap-2.5 rounded-lg px-4 py-3 text-base font-medium text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+                    >
+                      <LogOut className="h-5 w-5" />
+                      {nav.logout}
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <Link
+                      href={getLocalizedHref("/login", locale)}
+                      className="block rounded-lg px-4 py-3 text-base font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {nav.login}
+                    </Link>
+                    <Link
+                      href={getLocalizedHref("/register", locale)}
+                      className="mt-2 block rounded-lg bg-slate-900 px-4 py-3 text-center text-base font-medium text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {nav.register}
+                    </Link>
+                  </>
+                )}
               </div>
             </nav>
           </div>
