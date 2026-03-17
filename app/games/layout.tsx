@@ -9,7 +9,11 @@ export const metadata: Metadata = {
     "Discover kids games sound buttons on SoundButtons! Play fun, safe, and interactive sound effects perfect for children and enjoy endless audio entertainment.",
   keywords:
     "kids games, fun games, sound games, tic tac toe, whack a mole, sound effects, children games, colorful games, interactive games",
-  robots: { index: true, follow: true },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { "max-image-preview": "large", "max-snippet": -1 },
+  },
   alternates: {
     canonical: `${BASE}/games`,
     languages: { en: `${BASE}/games`, "x-default": `${BASE}/games` },
@@ -21,7 +25,14 @@ export const metadata: Metadata = {
       "Discover kids games sound buttons on SoundButtons! Play fun, safe, and interactive sound effects perfect for children.",
     url: `${BASE}/games`,
     siteName: "Sound Buttons",
-    images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: "Kids Games" }],
+    images: [
+      {
+        url: `${BASE}/games/opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: "Kids Games",
+      },
+    ],
     locale: "en_US",
   },
   twitter: {
@@ -31,7 +42,14 @@ export const metadata: Metadata = {
     title: "Kids Games - Fun Sound Buttons for Everyone",
     description:
       "Discover kids games sound buttons on SoundButtons! Play fun, safe, and interactive sound effects.",
-    images: [`${BASE}/og.png`],
+    images: [
+      {
+        url: `${BASE}/games/opengraph-image`,
+        alt: "Kids Games",
+        width: 1200,
+        height: 630,
+      },
+    ],
   },
 }
 

@@ -42,12 +42,12 @@ export const metadata: Metadata = {
     determiner: "the",
     images: [
       {
-        url: "/og.png",
+        url: `${BASE}/about-us/opengraph-image`,
         width: 1200,
         height: 630,
         type: "image/png",
         alt: TITLE,
-        secureUrl: `${BASE}/og.png`,
+        secureUrl: `${BASE}/about-us/opengraph-image`,
       },
     ],
   },
@@ -57,7 +57,9 @@ export const metadata: Metadata = {
     creator: "@soundbuttons",
     title: TITLE,
     description: DESCRIPTION,
-    images: [{ url: "/og.png", alt: TITLE }],
+    images: [
+      { url: `${BASE}/about-us/opengraph-image`, alt: TITLE, width: 1200, height: 630 },
+    ],
   },
   themeColor: "#2563eb",
   formatDetection: { telephone: false },

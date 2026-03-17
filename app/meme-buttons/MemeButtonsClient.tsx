@@ -78,7 +78,7 @@ export default function MemeButtonsClient({
   return (
     <>
       <PageHero
-        title="Meme Buttons - Play Viral Meme Sound Effects"
+        title="Meme Buttons: 100,000+ Sound Buttons with Soundboard Unblocked"
         description="Play the best meme buttons! Thousands of viral meme sounds, funny sound effects, and trending audio. Free meme sound buttons for Discord, TikTok, streaming, and more."
       >
         <div className="flex justify-center mt-2 px-2">

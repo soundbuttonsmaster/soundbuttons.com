@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   title: { absolute: "Upload Sound Button - Share Your Sounds | SoundButtons.com" },
   description:
     "Upload your own sound buttons to SoundButtons.com. Share meme sounds, sound effects, and audio clips with the community.",
+  publisher: "SoundButtons.com",
   robots: { index: false, follow: true },
   alternates: { canonical: `${BASE}/upload-sound` },
   openGraph: {
@@ -16,7 +17,14 @@ export const metadata: Metadata = {
       "Upload your own sound buttons to SoundButtons.com. Share meme sounds, sound effects, and audio clips with the community.",
     url: `${BASE}/upload-sound`,
     siteName: "Sound Buttons",
-    images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: "Upload Sound Button" }],
+    images: [
+      {
+        url: `${BASE}/upload-sound/opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: "Upload Sound Button",
+      },
+    ],
     locale: "en_US",
   },
   twitter: {
@@ -26,7 +34,14 @@ export const metadata: Metadata = {
     title: "Upload Sound Button - Share Your Sounds | SoundButtons.com",
     description:
       "Upload your own sound buttons to SoundButtons.com. Share meme sounds, sound effects, and audio clips with the community.",
-    images: [`${BASE}/og.png`],
+    images: [
+      {
+        url: `${BASE}/upload-sound/opengraph-image`,
+        alt: "Upload Sound Button",
+        width: 1200,
+        height: 630,
+      },
+    ],
   },
 }
 

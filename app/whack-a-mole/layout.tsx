@@ -9,6 +9,7 @@ export const metadata: Metadata = {
     "Play the fun Whack-a-Mole game with amazing sound effects! Hit the moles as they pop up and score points. Perfect for kids and families!",
   keywords:
     "whack a mole game, sound game, kids game, interactive game, sound effects, fun game, family game, arcade game",
+  publisher: "SoundButtons.com",
   robots: { index: true, follow: true },
   alternates: { canonical: `${BASE}/whack-a-mole` },
   openGraph: {
@@ -18,7 +19,14 @@ export const metadata: Metadata = {
       "Play the fun Whack-a-Mole game with amazing sound effects! Hit the moles as they pop up and score points. Perfect for kids and families!",
     url: `${BASE}/whack-a-mole`,
     siteName: "Sound Buttons",
-    images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: "Whack-a-Mole Game" }],
+    images: [
+      {
+        url: `${BASE}/whack-a-mole/opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: "Whack-a-Mole Game",
+      },
+    ],
     locale: "en_US",
   },
   twitter: {
@@ -28,7 +36,14 @@ export const metadata: Metadata = {
     title: "Whack-a-Mole Game With Sound Buttons",
     description:
       "Play the fun Whack-a-Mole game with amazing sound effects! Hit the moles and score points.",
-    images: [`${BASE}/og.png`],
+    images: [
+      {
+        url: `${BASE}/whack-a-mole/opengraph-image`,
+        alt: "Whack-a-Mole Game",
+        width: 1200,
+        height: 630,
+      },
+    ],
   },
 }
 

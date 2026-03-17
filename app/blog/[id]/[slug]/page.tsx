@@ -147,7 +147,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       name: "SoundButtons.com",
       logo: {
         "@type": "ImageObject",
-        url: `${BASE}/og.png`,
+        url: `${BASE}/opengraph-image`,
       },
     },
     mainEntityOfPage: {

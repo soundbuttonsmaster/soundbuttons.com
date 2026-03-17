@@ -159,8 +159,11 @@ export default function SoundDetailClient({
             <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800/90">
               <div className="px-4 pb-2 pt-4 sm:px-5 sm:pt-5">
                 <h1 className="mb-2 text-center text-xl font-bold text-slate-900 dark:text-white sm:text-2xl">
-                  {getDisplaySoundName(sound.name)} Sound Buttons
+                  {getDisplaySoundName(sound.name)} Sound Button - Free Download & Play
                 </h1>
+                <p className="mb-2 text-center text-sm text-slate-600 dark:text-slate-400">
+                  Play and download {getDisplaySoundName(sound.name).toLowerCase()} sound button for free! Perfect for memes, TikTok, Discord, and content creation. High-quality MP3 download available instantly on SoundButtons.com.
+                </p>
                 <div className="flex flex-wrap items-center justify-center gap-2 text-xs">
                   <Link
                     href={categoryLink}

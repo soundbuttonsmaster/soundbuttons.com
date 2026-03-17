@@ -38,7 +38,7 @@ export default function SoundEffectsClient({ initialEffects }: SoundEffectsClien
       </div>
 
       <PageHero
-        title="Sound Effects Library"
+        title="Sound Effects Library: 100,000+ Free Download Sound Effects for Videos, Games & More"
         description="Discover and download high-quality sound effects for your creative projects. Perfect for videos, games, podcasts, and multimedia content."
       >
         <div className="flex justify-center mt-2 px-2">

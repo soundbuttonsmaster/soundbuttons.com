@@ -48,7 +48,14 @@ export async function generateMetadata({ params }: SoundEffectPageProps): Promis
       description,
       url: canonicalUrl,
       siteName: "Sound Buttons",
-      images: [{ url: `${SITE.baseUrl}/og.png`, width: 1200, height: 630 }],
+      images: [
+        {
+          url: `${SITE.baseUrl}/sound-effects/opengraph-image`,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
       ...(soundEffect.soundFile && {
         audio: soundEffectsApi.getSoundFileUrl(soundEffect),
       }),
@@ -57,6 +64,14 @@ export async function generateMetadata({ params }: SoundEffectPageProps): Promis
       card: "summary_large_image",
       title,
       description,
+      images: [
+        {
+          url: `${SITE.baseUrl}/sound-effects/opengraph-image`,
+          alt: title,
+          width: 1200,
+          height: 630,
+        },
+      ],
     },
   }
 }

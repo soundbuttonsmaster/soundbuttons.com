@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     creator: "@soundbuttons",
     title: "Register - Create Account | SoundButtons.com",
     description:
-      "Create a free account to save favorites, upload sounds, and build your soundboard.",
+      "Create a free SoundButtons.com account to save favorites, upload sounds, and build your own soundboard.",
   },
 }
 

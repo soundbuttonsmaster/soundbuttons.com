@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     creator: "@soundbuttons",
     title: "User Reviews - SoundButtons.com",
     description:
-      "Read what our users say about SoundButtons.com. Share your own experience and rate our service.",
+      "Read what our users say about SoundButtons.com. Share your own experience and rate our service to help us improve.",
   },
   themeColor: "#2563eb",
   appleWebApp: { capable: true, title: "SoundButtons", statusBarStyle: "default" },

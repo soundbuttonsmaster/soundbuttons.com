@@ -27,9 +27,28 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description,
       url: canonicalUrl,
       siteName: "Sound Buttons",
-      images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: `Sound Effects - ${tagDisplayName}` }],
+      images: [
+        {
+          url: `${BASE}/sound-effects/opengraph-image`,
+          width: 1200,
+          height: 630,
+          alt: `Sound Effects - ${tagDisplayName}`,
+        },
+      ],
     },
-    twitter: { card: "summary_large_image", title: `Sound Effects: ${tagDisplayName}`, description },
+    twitter: {
+      card: "summary_large_image",
+      title: `Sound Effects: ${tagDisplayName}`,
+      description,
+      images: [
+        {
+          url: `${BASE}/sound-effects/opengraph-image`,
+          alt: `Sound Effects - ${tagDisplayName}`,
+          width: 1200,
+          height: 630,
+        },
+      ],
+    },
   }
 }
 

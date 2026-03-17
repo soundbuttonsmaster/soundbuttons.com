@@ -14,13 +14,7 @@ export const metadata: Metadata = {
   publisher: "SoundButtons.com",
   applicationName: "Sound Buttons",
   metadataBase: new URL("https://soundbuttons.com"),
-  robots: {
-    index: true,
-    follow: true,
-    "max-image-preview": "large",
-    "max-snippet": -1,
-    "max-video-preview": -1,
-  },
+  robots: { index: false, follow: false },
   alternates: {
     canonical: "https://soundbuttons.com/forgot-password",
   },

@@ -7,7 +7,12 @@ export const metadata: Metadata = {
   title: { absolute: "Text to Sound Button - Convert Text to Fun Audio Effects" },
   description:
     "Convert your text into fun audio using Text to Sound Button on SoundButtons. Create, play, and share custom sound effects easily and enjoy endless audio fun.",
-  robots: { index: true, follow: true },
+  publisher: "SoundButtons.com",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
+  },
   alternates: {
     canonical: `${BASE}/text-to-sound`,
     languages: { en: `${BASE}/text-to-sound`, "x-default": `${BASE}/text-to-sound` },
@@ -19,7 +24,14 @@ export const metadata: Metadata = {
       "Convert your text into fun audio using Text to Sound Button on SoundButtons. Create, play, and share custom sound effects easily and enjoy endless audio fun.",
     url: `${BASE}/text-to-sound`,
     siteName: "Sound Buttons",
-    images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: "Text to Sound Button" }],
+    images: [
+      {
+        url: `${BASE}/text-to-sound/opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: "Text to Sound Button",
+      },
+    ],
     locale: "en_US",
   },
   twitter: {
@@ -29,7 +41,14 @@ export const metadata: Metadata = {
     title: "Text to Sound Button - Convert Text to Fun Audio Effects",
     description:
       "Convert your text into fun audio using Text to Sound Button on SoundButtons. Create, play, and share custom sound effects easily.",
-    images: [`${BASE}/og.png`],
+    images: [
+      {
+        url: `${BASE}/text-to-sound/opengraph-image`,
+        alt: "Text to Sound Button",
+        width: 1200,
+        height: 630,
+      },
+    ],
   },
 }
 

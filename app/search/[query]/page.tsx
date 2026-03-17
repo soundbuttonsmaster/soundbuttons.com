@@ -41,8 +41,8 @@ export async function generateMetadata({
   }
 
   const name = toTitleCase(searchQuery)
-  const title = `${name} Soundboard: Play Instant Sound Effect Button`
-  const description = `Play and download ${searchQuery} sound buttons for free! Instant play, high-quality MP3 downloads. Perfect for memes, TikTok, Discord, and content creation. No registration required on SoundButtons.com.`
+  const title = `${name} Soundboard: ${totalItems} Play Instant Sound Effect Button`
+  const description = `Play and download ${searchQuery} sound buttons for free! Instant play, high-quality MP3 downloads. Perfect for memes, TikTok, Discord, and content creation.`
   const keywords = `${searchQuery}, ${searchQuery} sound buttons, ${searchQuery} sound effects, ${searchQuery} meme, ${searchQuery} audio, ${searchQuery} download, sound buttons, sound effects, meme soundboard`
   const canonicalUrl = `${BASE}/search/${query}`
 
@@ -92,7 +92,14 @@ export async function generateMetadata({
       creator: "@soundbuttons",
       title,
       description,
-      images: [`${BASE}/search/${query}/opengraph-image`],
+      images: [
+        {
+          url: `${BASE}/search/${query}/opengraph-image`,
+          alt: `${name} Sound Buttons - SoundButtons.com`,
+          width: 1200,
+          height: 630,
+        },
+      ],
     },
   }
 }

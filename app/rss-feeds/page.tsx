@@ -10,15 +10,37 @@ export const metadata: Metadata = {
   title: { absolute: "RSS Feeds - Subscribe to Sound Buttons Updates | SoundButtons.com" },
   description:
     "Subscribe to SoundButtons.com RSS feeds for new sound buttons, trending sounds, and site updates.",
+  publisher: "SoundButtons.com",
   robots: { index: true, follow: true },
   alternates: { canonical: `${BASE}/rss-feeds` },
   openGraph: {
     type: "website",
     title: "RSS Feeds - Subscribe to Sound Buttons Updates | SoundButtons.com",
+    description:
+      "Subscribe to SoundButtons.com RSS feeds for new sound buttons, trending sounds, and site updates.",
     url: `${BASE}/rss-feeds`,
     siteName: "Sound Buttons",
+    images: [
+      {
+        url: `${BASE}/rss-feeds/opengraph-image`,
+        width: 1200,
+        height: 630,
+        type: "image/png",
+        alt: "RSS Feeds - Subscribe to Sound Buttons Updates | SoundButtons.com",
+      },
+    ],
   },
-  twitter: { card: "summary", title: "RSS Feeds | SoundButtons.com" },
+  twitter: {
+    card: "summary_large_image",
+    site: "@soundbuttons",
+    creator: "@soundbuttons",
+    title: "RSS Feeds | SoundButtons.com",
+    description:
+      "Subscribe to SoundButtons.com RSS feeds for new sound buttons, trending sounds, and site updates.",
+    images: [
+      { url: `${BASE}/rss-feeds/opengraph-image`, alt: "RSS Feeds | SoundButtons.com", width: 1200, height: 630 },
+    ],
+  },
 }
 
 const RSS_FEEDS = [

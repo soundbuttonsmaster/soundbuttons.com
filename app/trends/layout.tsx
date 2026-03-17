@@ -28,7 +28,14 @@ export const metadata: Metadata = {
       "Discover the most popular trending sound buttons and viral meme soundboard and sound effects on SoundButtons.com.",
     url: `${BASE}/trends`,
     siteName: "Sound Buttons",
-    images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: "Trending Sound Buttons & Viral Meme Soundboard" }],
+    images: [
+      {
+        url: `${BASE}/trends/opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: "Trending Sound Buttons & Viral Meme Soundboard",
+      },
+    ],
     locale: "en_US",
   },
   twitter: {
@@ -38,7 +45,14 @@ export const metadata: Metadata = {
     title: "Trending Sound Buttons & Viral Meme Soundboard",
     description:
       "Discover the most popular trending sound buttons and viral meme soundboard and sound effects on SoundButtons.com.",
-    images: [`${BASE}/og.png`],
+    images: [
+      {
+        url: `${BASE}/trends/opengraph-image`,
+        alt: "Trending Sound Buttons & Viral Meme Soundboard",
+        width: 1200,
+        height: 630,
+      },
+    ],
   },
 }
 

@@ -9,7 +9,12 @@ export const metadata: Metadata = {
     "Download high-quality sound effects for your meme soundboard! Perfect for unblocked sound buttons, viral content, and free downloads with no registration.",
   keywords:
     "sound effects, sound buttons, meme soundboard, unblocked sound buttons, free sound effects, download sound effects, sound effect library, audio library, sound design, sound effects for videos, sound effects for games, sound effects for podcasts, sound effects for streaming, professional sound effects, royalty free sound effects, sound buttons unblocked, soundboard download, funny sounds, notification sounds, ringtone sounds",
-  robots: { index: true, follow: true },
+  publisher: "SoundButtons.com",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
+  },
   alternates: {
     canonical: `${BASE}/sound-effects`,
     languages: { en: `${BASE}/sound-effects`, "x-default": `${BASE}/sound-effects` },
@@ -21,7 +26,14 @@ export const metadata: Metadata = {
       "Download high-quality sound effects for your meme soundboard! Perfect for unblocked sound buttons, viral content, and free downloads.",
     url: `${BASE}/sound-effects`,
     siteName: "Sound Buttons",
-    images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: "Sound Effects Library" }],
+    images: [
+      {
+        url: `${BASE}/sound-effects/opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: "Sound Effects Library",
+      },
+    ],
     locale: "en_US",
   },
   twitter: {
@@ -31,7 +43,14 @@ export const metadata: Metadata = {
     title: "Sound Effects - Download Free Sound Effect for Videos",
     description:
       "Download high-quality sound effects for your meme soundboard! Perfect for unblocked sound buttons, viral content, and free downloads.",
-    images: [`${BASE}/og.png`],
+    images: [
+      {
+        url: `${BASE}/sound-effects/opengraph-image`,
+        alt: "Sound Effects Library",
+        width: 1200,
+        height: 630,
+      },
+    ],
   },
 }
 

@@ -37,7 +37,14 @@ export const metadata: Metadata = {
       "Learn all about sound buttons and explore 100,000+ sounds for memes, streaming, and content creation. Discover, play, and download your favorite audio clips!",
     url: `${BASE}/sound-buttons`,
     siteName: "Sound Buttons",
-    images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: "Sound Buttons Guide | SoundButtons.com" }],
+    images: [
+      {
+        url: `${BASE}/sound-buttons/opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: "Sound Buttons Guide | SoundButtons.com",
+      },
+    ],
     locale: "en_US",
   },
   twitter: {
@@ -47,7 +54,14 @@ export const metadata: Metadata = {
     title: "Sound Buttons Guide - Meme Soundboard Unblocked",
     description:
       "Learn all about sound buttons and explore 100,000+ sounds for memes, streaming, and content creation.",
-    images: [`${BASE}/og.png`],
+    images: [
+      {
+        url: `${BASE}/sound-buttons/opengraph-image`,
+        alt: "Sound Buttons Guide | SoundButtons.com",
+        width: 1200,
+        height: 630,
+      },
+    ],
   },
   themeColor: "#2563eb",
   appleWebApp: { capable: true, title: "SoundButtons", statusBarStyle: "default" },

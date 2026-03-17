@@ -6,7 +6,8 @@ const BASE = SITE.baseUrl
 export const metadata: Metadata = {
   title: { absolute: "Search Sound Buttons - Find Sound Effects & Meme Soundboard | SoundButtons.com" },
   description:
-    "Search our vast collection of sound buttons, sound effects, meme sounds, and audio clips. Find the perfect sound for your videos, memes, streams, and more. Free to download and use.",
+    "Search our vast collection of sound buttons, sound effects, meme sounds, and audio clips. Find the perfect sound for your videos, memes, streams, and more.",
+  publisher: "SoundButtons.com",
   keywords:
     "search sound buttons, search sound effects, search meme sounds, audio search, sound button finder, sound effect search, meme audio search, free sound search, soundboard search",
   robots: {
@@ -31,7 +32,14 @@ export const metadata: Metadata = {
       "Search our vast collection of sound buttons, sound effects, meme sounds, and audio clips. Find the perfect sound for your videos, memes, streams, and more. Free to download and use.",
     url: `${BASE}/search`,
     siteName: "Sound Buttons",
-    images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: "Search Sound Buttons - Find Sound Effects & Meme Soundboard" }],
+    images: [
+      {
+        url: `${BASE}/search/opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: "Search Sound Buttons - Find Sound Effects & Meme Soundboard",
+      },
+    ],
     locale: "en_US",
     alternateLocale: ["fr_FR"],
   },
@@ -41,8 +49,15 @@ export const metadata: Metadata = {
     creator: "@soundbuttons",
     title: "Search Sound Buttons - Find Sound Effects & Meme Soundboard | SoundButtons.com",
     description:
-      "Search our vast collection of sound buttons, sound effects, meme sounds, and audio clips. Find the perfect sound for your videos, memes, streams, and more. Free to download and use.",
-    images: [`${BASE}/og.png`],
+      "Search our vast collection of sound buttons, sound effects, meme sounds, and audio clips. Find the perfect sound for your videos, memes, streams, and more.",
+    images: [
+      {
+        url: `${BASE}/search/opengraph-image`,
+        alt: "Search Sound Buttons - Find Sound Effects & Meme Soundboard",
+        width: 1200,
+        height: 630,
+      },
+    ],
   },
 }
 

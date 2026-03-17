@@ -333,7 +333,7 @@ const strings: Record<Locale, LocaleStrings> = {
       noResults: "No sounds found. Try a different search.",
       loadMore: "Load more",
       resultsTitleTemplate: "{query} - Sound Buttons | SoundButtons.com",
-      heroTitleTemplate: "{count} {query} Sound Buttons",
+      heroTitleTemplate: "{count} {query} Sound Buttons: Unblocked Meme Soundboard",
       heroDescriptionTemplate: "Found {count} sound buttons - free to play and download",
       searchMorePlaceholder: "Search for more... (e.g. meme, fart, game)",
       soundListTitleTemplate: "{query} Sound Buttons",

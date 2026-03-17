@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     siteName: "Sound Buttons",
     images: [
       {
-        url: `${BASE}/og.png`,
+        url: `${BASE}/sound-buttons-unblocked-for-school/opengraph-image`,
         width: 1200,
         height: 630,
         alt: "Sound Buttons for School",
@@ -59,7 +59,14 @@ export const metadata: Metadata = {
     title: "Sound Buttons Unblocked for School - Play Free Sounds Online",
     description:
       "Access sound buttons unblocked for school on SoundButtons. Play and download free sound effects safely, create fun buttons, and enjoy audio anywhere, anytime.",
-    images: [`${BASE}/og.png`],
+    images: [
+      {
+        url: `${BASE}/sound-buttons-unblocked-for-school/opengraph-image`,
+        alt: "Sound Buttons for School",
+        width: 1200,
+        height: 630,
+      },
+    ],
   },
   themeColor: "#2563eb",
   appleWebApp: { capable: true, title: "SoundButtons", statusBarStyle: "default" },

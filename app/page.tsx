@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     description: HOME_DESCRIPTION,
     images: [
       {
-        url: "/og.png",
+        url: `${SITE.baseUrl}/opengraph-image`,
         width: 1200,
         height: 630,
         alt: HOME_TITLE,
@@ -63,7 +63,9 @@ export const metadata: Metadata = {
     creator: "@soundbuttons",
     title: HOME_TITLE,
     description: HOME_DESCRIPTION,
-    images: [{ url: "/og.png", alt: HOME_TITLE }],
+    images: [
+      { url: `${SITE.baseUrl}/opengraph-image`, alt: HOME_TITLE, width: 1200, height: 630 },
+    ],
   },
   robots: {
     index: true,
@@ -211,7 +213,7 @@ export default async function HomePage() {
         "@type": "Organization",
         name: "SoundButtons.com",
         url: `${BASE}/`,
-        logo: `${BASE}/og.png`,
+        logo: `${BASE}/opengraph-image`,
         contactPoint: {
           "@type": "ContactPoint",
           telephone: "+1-555-847-2638",

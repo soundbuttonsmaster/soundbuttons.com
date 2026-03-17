@@ -43,7 +43,14 @@ export const metadata: Metadata = {
     title: "Meme Soundboard: Play Instant Sound Effects Buttons",
     description:
       "Best free soundboard with 100,000+ sound buttons including meme soundboard unblocked, gaming sounds, Discord effects, viral audio - instant play & download.",
-    images: [`${BASE}/soundboard/opengraph-image`],
+    images: [
+      {
+        url: `${BASE}/soundboard/opengraph-image`,
+        alt: "Soundboard - Play & Download the Best Soundboard Buttons Online",
+        width: 1200,
+        height: 630,
+      },
+    ],
   },
 }
 

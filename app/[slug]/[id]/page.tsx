@@ -98,7 +98,14 @@ export async function generateMetadata({ params }: SoundPageProps): Promise<Meta
       creator: "@soundbuttons",
       title,
       description,
-      images: [`${SITE.baseUrl}/${canonicalSlug}/${sound.id}/opengraph-image`],
+      images: [
+        {
+          url: `${SITE.baseUrl}/${canonicalSlug}/${sound.id}/opengraph-image`,
+          alt: `${sound.name} - SoundButtons.com`,
+          width: 1200,
+          height: 630,
+        },
+      ],
     },
   }
 }

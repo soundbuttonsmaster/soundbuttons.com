@@ -25,7 +25,14 @@ export const metadata: Metadata = {
     siteName: "SoundButtons.com",
     title: TITLE,
     description: DESCRIPTION,
-    // Uses opengraph-image.tsx in this route for dynamic OG image
+    images: [
+      {
+        url: `${BASE}/404/opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: "Page Not Found | SoundButtons.com",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
@@ -33,6 +40,14 @@ export const metadata: Metadata = {
     creator: "@soundbuttons",
     title: TITLE,
     description: DESCRIPTION,
+    images: [
+      {
+        url: `${BASE}/404/opengraph-image`,
+        alt: "Page Not Found | SoundButtons.com",
+        width: 1200,
+        height: 630,
+      },
+    ],
   },
   themeColor: "#2563eb",
   formatDetection: { telephone: false },

@@ -9,7 +9,12 @@ export const metadata: Metadata = {
     "Play the most fun and challenging Tic Tac Toe game with sound buttons! Pick your sound and color, play against a smart bot, and enjoy winner effects. Try now!",
   keywords:
     "tic tac toe, tiktok toe, sound game, kids game, puzzle game, sound effects, interactive game, fun game",
-  robots: { index: true, follow: true },
+  publisher: "SoundButtons.com",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
+  },
   alternates: { canonical: `${BASE}/tic-tac-toe` },
   openGraph: {
     type: "website",
@@ -18,7 +23,14 @@ export const metadata: Metadata = {
       "Play the most fun and challenging Tic Tac Toe game with sound buttons! Pick your sound and color, play against a smart bot, and enjoy winner effects. Try now!",
     url: `${BASE}/tic-tac-toe`,
     siteName: "Sound Buttons",
-    images: [{ url: `${BASE}/og.png`, width: 1200, height: 630, alt: "Tic Tac Toe Game" }],
+    images: [
+      {
+        url: `${BASE}/tic-tac-toe/opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: "Tic Tac Toe Game",
+      },
+    ],
     locale: "en_US",
   },
   twitter: {
@@ -28,7 +40,14 @@ export const metadata: Metadata = {
     title: "Play Tic Tac Toe with Sound Buttons",
     description:
       "Play the most fun and challenging Tic Tac Toe game with sound buttons! Pick your sound, play against a smart bot.",
-    images: [`${BASE}/og.png`],
+    images: [
+      {
+        url: `${BASE}/tic-tac-toe/opengraph-image`,
+        alt: "Tic Tac Toe Game",
+        width: 1200,
+        height: 630,
+      },
+    ],
   },
 }
 

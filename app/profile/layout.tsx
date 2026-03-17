@@ -37,7 +37,8 @@ export const metadata: Metadata = {
     site: "@soundbuttons",
     creator: "@soundbuttons",
     title: "My Profile | SoundButtons.com",
-    description: "Manage your account and view your sounds.",
+    description:
+      "Manage your SoundButtons.com account. View your soundboard, uploads, and access your saved favorites.",
   },
 }
 
