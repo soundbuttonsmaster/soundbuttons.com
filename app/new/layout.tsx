@@ -5,6 +5,7 @@ const BASE = SITE.baseUrl
 
 export const viewport: Viewport = {
   width: "device-width",
+  themeColor: "#2563eb",
 }
 
 export const metadata: Metadata = {
@@ -47,7 +48,6 @@ export const metadata: Metadata = {
     description:
       "Discover the latest sound buttons and soundboard with fresh, trending audio clips updated daily to play, download, and share for memes, gaming, and entertainment!",
   },
-  themeColor: "#2563eb",
   appleWebApp: { capable: true, title: "SoundButtons", statusBarStyle: "default" },
   formatDetection: { telephone: false },
   other: {

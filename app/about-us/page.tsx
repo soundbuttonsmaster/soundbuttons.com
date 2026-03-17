@@ -1,4 +1,4 @@
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { SITE } from "@/lib/constants/site"
 
 const BASE = SITE.baseUrl
@@ -61,7 +61,6 @@ export const metadata: Metadata = {
       { url: `${BASE}/about-us/opengraph-image`, alt: TITLE, width: 1200, height: 630 },
     ],
   },
-  themeColor: "#2563eb",
   formatDetection: { telephone: false },
   appleWebApp: {
     capable: true,
@@ -102,6 +101,10 @@ export const metadata: Metadata = {
     "twitter:app:url:googleplay": `${BASE}/`,
     "twitter:app:name:googleplay": "SoundButtons",
   },
+}
+
+export const viewport: Viewport = {
+  themeColor: "#2563eb",
 }
 
 export default function AboutUsPage() {

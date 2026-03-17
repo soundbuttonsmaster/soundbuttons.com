@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SITE } from "@/lib/constants/site";
@@ -38,12 +38,15 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
   },
-  themeColor: "#e53935",
   appleWebApp: {
     capable: true,
     title: "SoundButtons",
     statusBarStyle: "black-translucent",
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#e53935",
 };
 
 export default function RootLayout({

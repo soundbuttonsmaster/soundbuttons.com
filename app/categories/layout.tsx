@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next"
 
 export const viewport: Viewport = {
   width: "device-width",
+  themeColor: "#2563eb",
 }
 
 export const metadata: Metadata = {
@@ -45,7 +46,6 @@ export const metadata: Metadata = {
     description:
       "Browse all sound button categories on SoundButtons.com! From memes to music, gaming to comedy, find and explore thousands of organized sound effects.",
   },
-  themeColor: "#2563eb",
   appleWebApp: {
     capable: true,
     title: "SoundButtons",

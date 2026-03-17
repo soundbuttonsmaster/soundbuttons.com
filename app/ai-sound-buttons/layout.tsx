@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next"
 
 export const viewport: Viewport = {
   width: "device-width",
+  themeColor: "#2563eb",
 }
 
 export const metadata: Metadata = {
@@ -32,7 +33,6 @@ export const metadata: Metadata = {
     siteName: "Sound Buttons",
     // Uses opengraph-image.tsx for dynamic OG image
   },
-  themeColor: "#2563eb",
   appleWebApp: {
     capable: true,
     title: "SoundButtons",
