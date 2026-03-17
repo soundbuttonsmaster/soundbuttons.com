@@ -152,7 +152,7 @@ const SoundListWithRef = forwardRef(function SoundListInner<T = Sound>(
     const maxSounds = maxLines * soundsPerRow
     const limitedSounds = deferredSounds.slice(0, maxSounds)
 
-    const rows: Sound[][] = []
+    const rows: T[][] = []
     for (let i = 0; i < limitedSounds.length; i += soundsPerRow) {
       rows.push(limitedSounds.slice(i, i + soundsPerRow))
     }
