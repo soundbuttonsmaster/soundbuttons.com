@@ -19,7 +19,7 @@ import { getSoundDetailPath } from "@/lib/utils/slug"
 import { getStrings, getLocaleFromPathname } from "@/lib/i18n/strings"
 import type { Locale } from "@/lib/i18n/strings"
 
-interface SoundListProps<T = Sound> {
+interface SoundListProps<T extends { id: number } = Sound> {
   title: string
   sounds: T[]
   initialCount?: number
@@ -55,11 +55,11 @@ export interface SoundListRef {
 }
 
 /** Generic call signature so <SoundList sounds={kidsSounds} customCardComponent={KidsCardSound} /> infers T = KidsSoundboard */
-type SoundListComponent = <T = Sound>(
+type SoundListComponent = <T extends { id: number } = Sound>(
   props: SoundListProps<T> & React.RefAttributes<SoundListRef>
 ) => React.ReactElement | null
 
-const SoundListWithRef = forwardRef(function SoundListInner<T = Sound>(
+const SoundListWithRef = forwardRef(function SoundListInner<T extends { id: number } = Sound>(
   {
     title,
     sounds,
@@ -90,7 +90,7 @@ const SoundListWithRef = forwardRef(function SoundListInner<T = Sound>(
       if (getDetailPath) return getDetailPath
       if (locale !== "en") {
         return (s: T) =>
-          `/${locale}${getSoundDetailPath((s as Sound).name ?? "", (s as Sound).id)}`
+          `/${locale}${getSoundDetailPath((s as unknown as Sound).name ?? "", (s as unknown as Sound).id)}`
       }
       return undefined
     }, [getDetailPath, locale])
@@ -446,7 +446,7 @@ const SoundListWithRef = forwardRef(function SoundListInner<T = Sound>(
                         <Fragment key={`${sound.id}-${index}`}>
                           {                          useCompactView ? (
                             <SoundButton
-                              sound={sound}
+                              sound={sound as unknown as Sound}
                               isAboveTheFold={
                                 index < (isMobileDevice ? 12 : 44)
                               }
@@ -462,7 +462,7 @@ const SoundListWithRef = forwardRef(function SoundListInner<T = Sound>(
                             })
                           ) : (
                             <SoundButton
-                              sound={sound}
+                              sound={sound as unknown as Sound}
                               isAboveTheFold={
                                 useCardView
                                   ? index < (isMobileDevice ? 12 : 18)

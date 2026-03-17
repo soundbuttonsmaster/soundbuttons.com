@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import LoginClient from "./LoginClient"
 
 export default function LoginPage() {
@@ -20,7 +21,9 @@ export default function LoginPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      <LoginClient />
+      <Suspense fallback={<div className="flex min-h-[40vh] items-center justify-center">Loading...</div>}>
+        <LoginClient />
+      </Suspense>
     </>
   )
 }
