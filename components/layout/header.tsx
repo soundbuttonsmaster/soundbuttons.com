@@ -1,9 +1,10 @@
 "use client"
 
 import Link from "next/link"
-import { Menu, X, ChevronDown, ChevronRight, Search, User, LayoutGrid, Heart, Upload, LogOut } from "lucide-react"
+import { Menu, X, ChevronDown, ChevronRight, Search, User, LayoutGrid, Heart, Upload, LogOut, Moon, Sun } from "lucide-react"
 import { useState, useEffect, useRef, FormEvent, useMemo } from "react"
 import { usePathname, useRouter } from "next/navigation"
+import { useTheme } from "next-themes"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
 import { LanguageChanger } from "@/components/ui/language-changer"
 import { useAuth } from "@/lib/auth/auth-context"
@@ -46,6 +47,10 @@ export default function Header() {
   const locale = getLocaleFromPathname(pathname ?? "")
   const nav = useMemo(() => getStrings(locale).nav, [locale])
   const displayName = user ? getDisplayName(user) : ""
+  const { theme, setTheme, resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+  const isDark = mounted && (resolvedTheme || theme) === "dark"
 
   const navBeforeLinks = useMemo(
     () => [
@@ -318,6 +323,33 @@ export default function Header() {
                       </Link>
                     </div>
                     <div className="border-t border-slate-100 py-1 dark:border-slate-800">
+                      <div
+                        className="flex items-center justify-between gap-3 px-3 py-2 text-sm text-slate-700 dark:text-slate-300"
+                        role="menuitem"
+                      >
+                        <span className="flex items-center gap-2.5">
+                          {isDark ? (
+                            <Moon className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+                          ) : (
+                            <Sun className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+                          )}
+                          Dark mode
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setTheme(isDark ? "light" : "dark")}
+                          className="relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border border-slate-200 bg-slate-100 transition-colors dark:border-slate-600 dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
+                          role="switch"
+                          aria-checked={isDark}
+                          aria-label="Toggle dark mode"
+                        >
+                          <span
+                            className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ${
+                              isDark ? "translate-x-5" : "translate-x-0.5"
+                            }`}
+                          />
+                        </button>
+                      </div>
                       <button
                         type="button"
                         onClick={() => {
@@ -343,7 +375,7 @@ export default function Header() {
               </Link>
             )}
             <LanguageChanger />
-            <ThemeToggle />
+            {!user && <ThemeToggle />}
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
