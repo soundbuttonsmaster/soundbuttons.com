@@ -6,7 +6,6 @@ import { ThemeProvider } from "@/components/ui/theme-provider";
 import { AuthProvider } from "@/lib/auth/auth-context";
 import { PwaProvider } from "@/components/pwa/PwaProvider";
 import ConditionalLayout from "@/components/layout/conditional-layout";
-import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -66,6 +65,21 @@ export default function RootLayout({
           data-cfasync="false"
           src="https://scripts.pubnation.com/tags/50f5fedc-1695-4aba-855d-c4d7ec7f5fd6.js"
         />
+        {/* Google tag (gtag.js) - standard snippet */}
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-7JTM90LHN4"
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-7JTM90LHN4');
+            `,
+          }}
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
@@ -79,7 +93,6 @@ export default function RootLayout({
         >
           <AuthProvider>
             <PwaProvider />
-            <GoogleAnalytics />
             <ConditionalLayout>{children}</ConditionalLayout>
           </AuthProvider>
         </ThemeProvider>
