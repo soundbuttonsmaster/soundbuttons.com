@@ -2,7 +2,7 @@ import { notFound, permanentRedirect } from "next/navigation"
 import { headers } from "next/headers"
 import type { Metadata } from "next"
 import SoundDetailClient from "@/components/sound/sound-detail-client"
-import { apiClient } from "@/lib/api/client"
+import { apiClient, fetchSoundCommentsServer, type SoundComment } from "@/lib/api/client"
 import type { Sound } from "@/lib/types/sound"
 import { getCategoryById } from "@/lib/constants/categories"
 import { SITE, getLocaleBase } from "@/lib/constants/site"
@@ -31,8 +31,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const canonicalSlug = generateSlug(sound.name)
   const canonicalUrl = `${base}/${canonicalSlug}/${sound.id}`
   const soundName = toTitleCase(getNameForTitle(sound.name))
-  const title = `${soundName} Efecto de Sonido Descargar: Botón de Soundboard Instantáneo`
-  const description = `¡Reproduce y descarga el efecto de sonido ${getDisplaySoundName(sound.name)} al instante! Explora el soundboard de memes, botones de sonido y efectos de sonido para entretenimiento, bromas y creación de contenido.`
+  const title = `${soundName} Efecto de Sonido Descargar`
+  const description = `¡Reproduce y descarga el efecto ${soundName} al instante! Botones de sonido para memes, TikTok y Discord en SoundButtons.com.`
   const ogImageUrl = `${base}/${canonicalSlug}/${sound.id}/opengraph-image`
 
   return {
@@ -95,6 +95,16 @@ export default async function EsSoundDetailPage({ params }: Props) {
     // ignore
   }
 
+  let initialComments: SoundComment[] = []
+  let initialCommentsTotal = 0
+  try {
+    const commentsData = await fetchSoundCommentsServer(sound.id, 1, 5)
+    initialComments = commentsData.results
+    initialCommentsTotal = commentsData.total_count
+  } catch {
+    // ignore
+  }
+
   const categoryId = sound.category_id ?? 13
   const category = getCategoryById(categoryId)
   const categorySlug = category?.slug ?? "memes"
@@ -145,6 +155,8 @@ export default async function EsSoundDetailPage({ params }: Props) {
         localePrefix="/es"
         locale="es"
         isMobileDevice={isMobile}
+        initialComments={initialComments}
+        initialCommentsTotal={initialCommentsTotal}
       />
     </>
   )

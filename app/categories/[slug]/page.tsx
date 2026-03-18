@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!category) return { title: "Category Not Found" }
 
   const displayName = category.name.replace(/ Soundboard$/, "")
-  const title = `${category.name}: Meme Soundboard Unblocked`
+  const title = `${displayName} Soundboard: Meme Buttons Unblocked`
   const description = `Discover and play the best ${displayName} sound buttons to download, share, and enjoy high-quality sound effects for memes, videos, pranks, and endless fun!`
   const canonicalUrl = `${BASE}/categories/${slug}`
 
@@ -51,7 +51,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     openGraph: {
       type: "website",
-      title: `${category.name} - SoundButtons.Com`,
+      title,
       description,
       url: canonicalUrl,
       siteName: "Sound Buttons",
@@ -72,7 +72,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: "summary_large_image",
       site: "@soundbuttons",
       creator: "@soundbuttons",
-      title: `${category.name} - SoundButtons.Com`,
+      title,
       description,
       images: [`${BASE}/categories/${slug}/opengraph-image`],
     },

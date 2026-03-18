@@ -19,8 +19,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!category) return { title: "Category Not Found" }
   const base = getLocaleBase("es")
   const canonicalUrl = `${base}/categories/${slug}`
-  const title = `Botones de Sonido de ${category.name}: Soundboard de Memes Desbloqueado`
-  const description = `¡Descubre y reproduce los mejores botones de sonido de ${category.name} para descargar, compartir y disfrutar efectos sonoros de alta calidad para memes, videos, bromas y entretenimiento sin fin!`
+  const categoryName = category.name.replace(/ Soundboard$/, "")
+  const title = `${categoryName} Soundboard: Meme Buttons Unblocked`
+  const description = `Descubre los mejores botones de sonido de ${category.name}. Descarga y comparte efectos sonoros de alta calidad para memes, videos y entretenimiento.`
   const ogImageUrl = `${base}/categories/${slug}/opengraph-image`
 
   return {

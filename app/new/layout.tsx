@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next"
 import { SITE } from "@/lib/constants/site"
 
 const BASE = SITE.baseUrl
+const NEW_DESCRIPTION =
+  "Discover the latest sound buttons and soundboard with fresh, trending audio clips updated daily to play, download, and share for memes and entertainment!"
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -10,8 +12,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: { absolute: "New Sound Buttons: Fresh Meme Soundboard Audio Updated Daily" },
-  description:
-    "Discover the latest sound buttons and soundboard with fresh, trending audio clips updated daily to play, download, and share for memes, gaming, and entertainment!",
+  description: NEW_DESCRIPTION,
   keywords:
     "new sound buttons, latest sound effects, fresh audio clips, new meme sounds, trending sound buttons, latest soundboard, new audio effects, fresh sound effects, new gaming sounds, latest meme buttons, new notification sounds, fresh soundboard, new viral sounds, latest audio clips, new comedy sounds, fresh meme sounds, new music sounds, latest sound effects, new unblocked sounds, fresh gaming sounds, new discord sounds, latest meme effects, new tiktok sounds, fresh notification sounds, new streaming sounds, latest comedy effects, new entertainment sounds, fresh viral effects, new content creation sounds, latest gaming effects, new social media sounds",
   authors: [{ name: "SoundButtons.com" }],
@@ -34,8 +35,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     title: "New Sound Buttons: Fresh Meme Soundboard Audio Updated Daily",
-    description:
-      "Discover the latest sound buttons and soundboard with fresh, trending audio clips updated daily to play, download, and share for memes, gaming, and entertainment!",
+    description: NEW_DESCRIPTION,
     url: `${BASE}/new`,
     siteName: "Sound Buttons",
     locale: "en_US",
@@ -45,8 +45,7 @@ export const metadata: Metadata = {
     site: "@soundbuttons",
     creator: "@soundbuttons",
     title: "New Sound Buttons: Fresh Meme Soundboard Audio Updated Daily",
-    description:
-      "Discover the latest sound buttons and soundboard with fresh, trending audio clips updated daily to play, download, and share for memes, gaming, and entertainment!",
+    description: NEW_DESCRIPTION,
   },
   appleWebApp: { capable: true, title: "SoundButtons", statusBarStyle: "default" },
   formatDetection: { telephone: false },

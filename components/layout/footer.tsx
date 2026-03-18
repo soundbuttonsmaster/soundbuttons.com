@@ -73,7 +73,6 @@ export default function Footer() {
               <li><Link href={getLocalizedHref("/new", locale)} className="text-gray-300 hover:text-white transition-colors">{f.newSoundButtons}</Link></li>
               <li><Link href={getLocalizedHref("/trends", locale)} className="text-gray-300 hover:text-white transition-colors">{f.trending}</Link></li>
               <li><Link href={getLocalizedHref("/reviews", locale)} className="text-gray-300 hover:text-white transition-colors">{f.userReviews}</Link></li>
-              <li><Link href={getLocalizedHref("/games", locale)} className="text-gray-300 hover:text-white transition-colors">{f.games}</Link></li>
               <li><Link href={getLocalizedHref("/kids-soundboard", locale)} className="text-gray-300 hover:text-white transition-colors">{f.kidsSoundboard}</Link></li>
               <li><Link href={getLocalizedHref("/sound-effects", locale)} className="text-gray-300 hover:text-white transition-colors">{f.soundEffects}</Link></li>
               <li><Link href={getLocalizedHref("/login", locale)} className="text-gray-300 hover:text-white transition-colors">{f.signIn}</Link></li>

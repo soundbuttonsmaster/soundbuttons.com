@@ -10,9 +10,9 @@ const PAGE_SIZE = 44
 const BASE = getLocaleBase("pt")
 
 export const metadata: Metadata = {
-  title: { absolute: "Botões de Som em Alta & Meme Soundboard Viral" },
+  title: { absolute: "Botões de Som em Alta e Meme Soundboard Viral" },
   description:
-    "Descubra os botões de som mais populares em alta e os meme soundboard virais e efeitos sonoros no SoundButtons.com.",
+    "Descubra os botões de som mais populares e efeitos sonoros virais no SoundButtons.com. Toque, baixe e compartilhe o áudio viral.",
   authors: [{ name: "SoundButtons.com" }],
   creator: "SoundButtons.com",
   publisher: "SoundButtons.com",
@@ -28,9 +28,9 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    title: "Botões de Som em Alta & Meme Soundboard Viral",
+    title: "Botões de Som em Alta e Meme Soundboard Viral",
     description:
-      "Descubra os botões de som mais populares em alta e os meme soundboard virais e efeitos sonoros no SoundButtons.com.",
+      "Descubra os botões de som mais populares e efeitos sonoros virais no SoundButtons.com. Toque, baixe e compartilhe o áudio viral.",
     url: `${BASE}/trends`,
     siteName: "Sound Buttons",
     images: [{ url: `${BASE}/trends/opengraph-image`, width: 1200, height: 630, type: "image/png" as const, alt: "Botões de Som em Alta", secureUrl: `${BASE}/trends/opengraph-image` }],
@@ -40,9 +40,9 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "@soundbuttons",
     creator: "@soundbuttons",
-    title: "Botões de Som em Alta & Meme Soundboard Viral",
+    title: "Botões de Som em Alta e Meme Soundboard Viral",
     description:
-      "Descubra os botões de som mais populares em alta e os meme soundboard virais e efeitos sonoros no SoundButtons.com.",
+      "Descubra os botões de som mais populares e efeitos sonoros virais no SoundButtons.com. Toque, baixe e compartilhe o áudio viral.",
     images: [`${BASE}/trends/opengraph-image`],
   },
   robots: { index: true, follow: true },
@@ -80,7 +80,7 @@ export default async function PtTrendsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      <TrendsPageClient initialSounds={initialSounds} initialMeta={meta} isMobileDevice={isMobile} />
+      <TrendsPageClient initialSounds={initialSounds} initialMeta={meta} isMobileDevice={isMobile} locale="pt" />
     </>
   )
 }

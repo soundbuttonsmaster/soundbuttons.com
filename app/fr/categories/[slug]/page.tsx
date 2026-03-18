@@ -18,8 +18,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!category) return { title: "Category Not Found" }
   const base = getLocaleBase("fr")
   const canonicalUrl = `${base}/categories/${slug}`
-  const title = `${category.name} Boutons sonores : Table d'harmonie de mèmes débloquée`
-  const description = `Découvrez et utilisez les meilleurs boutons sonores ${category.name} à télécharger, partager et apprécier pour des effets sonores de haute qualité pour des mèmes, des vidéos, des farces et un divertissement sans fin !`
+  const categoryName = category.name.replace(/ Soundboard$/, "")
+  const title = `${categoryName} Soundboard : Boutons de mèmes débloqués`
+  const description = `Découvrez les meilleurs boutons sonores ${category.name}. Téléchargez et partagez des effets sonores de haute qualité pour mèmes, vidéos et divertissement.`
   const ogImageUrl = `${base}/categories/${slug}/opengraph-image`
   return {
     title: { absolute: title },

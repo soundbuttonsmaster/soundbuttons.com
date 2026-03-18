@@ -2,7 +2,7 @@ import { notFound, permanentRedirect } from "next/navigation"
 import { headers } from "next/headers"
 import type { Metadata } from "next"
 import SoundDetailClient from "@/components/sound/sound-detail-client"
-import { apiClient } from "@/lib/api/client"
+import { apiClient, fetchSoundCommentsServer, type SoundComment } from "@/lib/api/client"
 import type { Sound } from "@/lib/types/sound"
 import { getCategoryById } from "@/lib/constants/categories"
 import { SITE, getLocaleBase } from "@/lib/constants/site"
@@ -28,8 +28,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const canonicalSlug = generateSlug(sound.name)
   const canonicalUrl = `${base}/${canonicalSlug}/${sound.id}`
   const soundName = toTitleCase(getNameForTitle(sound.name))
-  const title = `${soundName} Download de Efeito Sonoro: Botão de Soundboard Instantâneo`
-  const description = `Reproduza e baixe o efeito sonoro ${getDisplaySoundName(sound.name)} instantaneamente! Explore o soundboard de memes, botões de som e efeitos sonoros para entretenimento, brincadeiras e criação de conteúdo.`
+  const title = `${soundName} Efeito Sonoro: Soundboard Botão`
+  const description = `Reproduza e baixe o efeito ${soundName} instantaneamente! Botões de som para memes, TikTok e Discord no SoundButtons.com.`
   const ogImageUrl = `${base}/${canonicalSlug}/${sound.id}/opengraph-image`
   return {
     title: { absolute: title },
@@ -81,6 +81,14 @@ export default async function PtSoundDetailPage({ params }: Props) {
 
   try { await apiClient.updateViews(sound.id) } catch { /* ignore */ }
 
+  let initialComments: SoundComment[] = []
+  let initialCommentsTotal = 0
+  try {
+    const commentsData = await fetchSoundCommentsServer(sound.id, 1, 5)
+    initialComments = commentsData.results
+    initialCommentsTotal = commentsData.total_count
+  } catch { /* ignore */ }
+
   const categoryId = sound.category_id ?? 13
   const category = getCategoryById(categoryId)
   const categorySlug = category?.slug ?? "memes"
@@ -123,6 +131,8 @@ export default async function PtSoundDetailPage({ params }: Props) {
         localePrefix="/pt"
         locale="pt"
         isMobileDevice={isMobile}
+        initialComments={initialComments}
+        initialCommentsTotal={initialCommentsTotal}
       />
     </>
   )

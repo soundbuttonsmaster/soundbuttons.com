@@ -8,9 +8,9 @@ export const revalidate = 3600
 const BASE = getLocaleBase("fr")
 
 export const metadata: Metadata = {
-  title: { absolute: "Rechercher des Boutons Sonores - Trouver des Effets Sonores et des Sons de Mèmes | SoundButtons.com" },
+  title: { absolute: "Rechercher Boutons Sonores et Effets de Mèmes" },
   description:
-    "Recherchez dans notre vaste collection de boutons sonores, effets sonores, sons de mèmes et clips audio. Trouvez le son parfait pour vos vidéos, mèmes, streams et plus encore. Gratuit à télécharger et utiliser.",
+    "Recherchez des boutons sonores, effets sonores, mèmes et clips audio. Trouvez le son parfait pour vos vidéos, streams et plus. Gratuit à télécharger.",
   authors: [{ name: "SoundButtons.com" }],
   creator: "SoundButtons.com",
   publisher: "SoundButtons.com",
@@ -26,21 +26,21 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    title: "Rechercher des Boutons Sonores - Trouver des Effets Sonores et des Sons de Mèmes | SoundButtons.com",
+    title: "Rechercher Boutons Sonores et Effets de Mèmes",
     description:
-      "Recherchez dans notre vaste collection de boutons sonores, effets sonores, sons de mèmes et clips audio. Trouvez le son parfait pour vos vidéos, mèmes, streams et plus encore. Gratuit à télécharger et utiliser.",
+      "Recherchez des boutons sonores, effets sonores, mèmes et clips audio. Trouvez le son parfait pour vos vidéos, streams et plus. Gratuit à télécharger.",
     url: `${BASE}/search`,
     siteName: "Sound Buttons",
-    images: [{ url: `${BASE}/search/opengraph-image`, width: 1200, height: 630, type: "image/png" as const, alt: "Rechercher des Boutons Sonores", secureUrl: `${BASE}/search/opengraph-image` }],
+    images: [{ url: `${BASE}/search/opengraph-image`, width: 1200, height: 630, type: "image/png" as const, alt: "Rechercher Boutons Sonores", secureUrl: `${BASE}/search/opengraph-image` }],
     locale: "fr_FR",
   },
   twitter: {
     card: "summary_large_image",
     site: "@soundbuttons",
     creator: "@soundbuttons",
-    title: "Rechercher des Boutons Sonores - Trouver des Effets Sonores et des Sons de Mèmes | SoundButtons.com",
+    title: "Rechercher Boutons Sonores et Effets de Mèmes",
     description:
-      "Recherchez dans notre vaste collection de boutons sonores, effets sonores, sons de mèmes et clips audio. Trouvez le son parfait pour vos vidéos, mèmes, streams et plus encore. Gratuit à télécharger et utiliser.",
+      "Recherchez des boutons sonores, effets sonores, mèmes et clips audio. Trouvez le son parfait pour vos vidéos, streams et plus. Gratuit à télécharger.",
     images: [`${BASE}/search/opengraph-image`],
   },
   robots: { index: true, follow: true },
@@ -73,7 +73,7 @@ export default async function FrSearchPage({ searchParams }: { searchParams: Pro
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      <SearchPageClient />
+      <SearchPageClient locale="fr" />
     </>
   )
 }

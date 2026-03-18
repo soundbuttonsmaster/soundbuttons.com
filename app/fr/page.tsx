@@ -10,9 +10,9 @@ export const revalidate = 60
 const BASE = getLocaleBase("fr")
 
 export const metadata: Metadata = {
-  title: { absolute: "Myinstants: Boutons sonores 999 999+ Table d'harmonie des mèmes déverrouillée" },
+  title: { absolute: "Myinstants: Boutons sonores avec table d'harmonie de mèmes" },
   description:
-    "Myinstants: Sound Buttons est la collection ultime de tables d'harmonie, de boutons sonores et de tables d'harmonie de mèmes non bloquées, avec des milliards de tables d'harmonie et de boutons de mèmes.",
+    "Jouez des milliers de boutons sonores, mèmes, blagues et effets sonores de haute qualité sur un puissant soundboard débloqué.",
   authors: [{ name: "SoundButtons.com" }],
   creator: "SoundButtons.com",
   publisher: "SoundButtons.com",
@@ -28,9 +28,9 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    title: "Myinstants: Boutons sonores 999 999+ Table d'harmonie des mèmes déverrouillée",
+    title: "Myinstants: Boutons sonores avec table d'harmonie de mèmes",
     description:
-      "Myinstants: Sound Buttons est la collection ultime de tables d'harmonie, de boutons sonores et de tables d'harmonie de mèmes non bloquées, avec des milliards de tables d'harmonie et de boutons de mèmes.",
+      "Jouez des milliers de boutons sonores, mèmes, blagues et effets sonores de haute qualité sur un puissant soundboard débloqué.",
     url: BASE,
     siteName: "Sound Buttons",
     images: [{ url: `${SITE.baseUrl}/home.jpg`, width: 1200, height: 630, type: "image/jpeg" as const, alt: "Boutons sonores", secureUrl: `${SITE.baseUrl}/home.jpg` }],
@@ -40,9 +40,9 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "@soundbuttons",
     creator: "@soundbuttons",
-    title: "Myinstants: Boutons sonores 999 999+ Table d'harmonie des mèmes déverrouillée",
+    title: "Myinstants: Boutons sonores avec table d'harmonie de mèmes",
     description:
-      "Myinstants: Sound Buttons est la collection ultime de tables d'harmonie, de boutons sonores et de tables d'harmonie de mèmes non bloquées, avec des milliards de tables d'harmonie et de boutons de mèmes.",
+      "Jouez des milliers de boutons sonores, mèmes, blagues et effets sonores de haute qualité sur un puissant soundboard débloqué.",
     images: [{ url: `${SITE.baseUrl}/home.jpg`, alt: "Boutons sonores", width: 1200, height: 630 }],
   },
   robots: { index: true, follow: true },

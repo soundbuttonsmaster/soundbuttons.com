@@ -51,7 +51,8 @@ export default function CategoryDetailClient({
   const loadingRef = useRef<HTMLDivElement>(null)
 
   const displayName = category.name.replace(/ Soundboard$/, "")
-  const categoryDescription = `Discover ${displayName} sound buttons: free meme soundboard unblocked for videos & streams. Play, download & share ${displayName} sound effects!`
+  const categoryDescription = cat.detailHeroDescriptionTemplate.replace(/{categoryName}/g, displayName)
+  const categoryHeroTitle = cat.detailHeroTitleTemplate.replace(/{categoryName}/g, displayName)
 
   const loadMoreSounds = useCallback(async (): Promise<boolean> => {
     if (loading || !hasMore) return false
@@ -96,7 +97,7 @@ export default function CategoryDetailClient({
   return (
     <>
       <PageHero
-        title={`${displayName} Sound Buttons`}
+        title={categoryHeroTitle}
         description={categoryDescription}
       >
         <div className="flex justify-center mt-2 px-2">

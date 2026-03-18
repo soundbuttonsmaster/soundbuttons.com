@@ -1,0 +1,201 @@
+English 
+
+Category page 
+Meta title: {category name} Soundboard: Meme Buttons Unblocked
+
+
+==========================================================
+🇪🇸 Spanish
+
+Home Page: /es
+
+Meta title: Myinstants: Botones de Sonido con Soundboard de Memes
+Meta description: Reproduce miles de botones de sonido, memes, bromas y efectos sonoros de alta calidad en un poderoso soundboard desbloqueado.
+H1: Botones de Sonido y Soundboard de Memes: Más de 100,000 Botones de Memes Desbloqueados
+Short description: Explora una enorme colección de botones de sonido divertidos, soundboard de memes, efectos sonoros y soundboards desbloqueados, ¡todo gratis! Crea botones de sonido personalizados desde tu smartphone, computadora de escritorio, Chromebook o tablet.
+
+
+New Page: /es/new
+
+Meta title: Nuevos Botones de Sonido: Soundboard Actualizado
+Meta description: Descubre los botones de sonido y soundboard más recientes con audio en tendencia, actualizados diariamente para memes, juegos y entretenimiento.
+H1: Nuevos Botones de Sonido y Soundboard Frescos
+Short description: Descubre botones de sonido con audio en tendencia, actualizados diariamente. Reproduce, descarga y comparte sonidos nuevos para memes, juegos y streams.
+
+
+Trending Page: /es/trends
+
+Meta title: Botones de Sonido en Tendencia y Memes Virales
+Meta description: Descubre los botones de sonido más populares y efectos sonoros virales en SoundButtons.com. Reproduce, descarga y comparte el audio viral.
+H1: Botones de Sonido en Tendencia y Memes Virales
+Short description: Descubre los botones de sonido en tendencia y efectos sonoros virales en SoundButtons.com. Reproduce, descarga y comparte el audio que todos están usando.
+
+
+Categories Page: /es/categories
+
+Meta title: Categorías de Botones de Sonido | SoundButtons.com
+Meta description: Navega todas las categorías de botones de sonido en SoundButtons.com. Desde memes hasta música y juegos, explora miles de efectos sonoros organizados.
+H1: Categorías de Botones de Sonido
+Short description: Explora miles de botones de sonido por categoría. Desde memes virales hasta efectos clásicos, encuentra el audio perfecto para contenido, juegos o entretenimiento.
+
+
+Search Page: /es/search
+
+Meta title: Buscar Botones de Sonido y Efectos de Memes
+Meta description: Busca botones de sonido, efectos de sonido, memes y clips de audio. Encuentra el sonido perfecto para videos, streams y más. Gratis para descargar.
+H1: Buscar Botones de Sonido
+Short description: Encuentra efectos de sonido perfectos, sonidos de memes y clips de audio de nuestra extensa colección.
+
+
+Sound Detail Page: /es/[sound]
+
+Meta title:  {sound name} Efecto de Sonido Descargar
+Meta description: ¡Reproduce y descarga el efecto {sound name} al instante! Botones de sonido para memes, TikTok y Discord en SoundButtons.com.
+H1: {sound name} Botón de Sonido
+Short description: Reproduce y descarga el botón {sound name} gratis. Perfecto para memes, TikTok y Discord. MP3 de alta calidad en SoundButtons.com.
+
+
+Category Detail Page: /es/categories/[category]
+
+Meta title: {category name} Soundboard: Meme Buttons Unblocked
+Meta description: Descubre los mejores botones de sonido de {category name}. Descarga y comparte efectos sonoros de alta calidad para memes, videos y entretenimiento.
+H1: Botones de Sonido de {category name}
+Short description: Descubre botones de sonido de {category name}: soundboard gratis para videos y streams. ¡Reproduce, descarga y comparte efectos sonoros!
+
+
+Search Results Page: /es/search/[query]
+
+Meta title: {search name} Soundboard : Botón de Efecto de Sonido Instantáneo
+Meta description: Reproduce y descarga {sound count} botones de sonido {search name} gratis. MP3 de alta calidad para memes, TikTok y Discord.
+H1: Botones de Sonido {search name}: Soundboard de Memes Desbloqueado
+
+
+==============================================================
+🇧🇷 Portuguese (Brazil)
+Home Page: /pt
+
+Meta title: Myinstants: Botões de som com mesa de som de memes
+Meta description: Toque milhares de botões de som com os melhores sons, botão de meme, pegadinhas, efeitos sonoros e áudio de alta qualidade em um poderoso soundboard desbloqueado.
+H1: Botões de som com mesa de som de memes : Mais de 100.000 botões de memes
+Short description: Explore uma enorme coleção de botões de som hilários, mesas de som de memes, efeitos sonoros e botões de memes, tudo grátis! Crie botões de som personalizados no seu smartphone, computador, Chromebook ou tablet.
+
+
+
+New Page: /pt/new
+
+Meta title: Novos Botões de Som: Soundboard Atualizado Diário
+Meta description: Descubra os mais recentes botões de som e soundboard com áudio em alta, atualizados diariamente para memes, jogos e entretenimento.
+H1: Novos Botões de Som e Lançamentos de Soundboard
+Short description: Descubra botões de som com áudio em alta atualizados diariamente. Toque, baixe e compartilhe sons novos para memes, jogos e streams.
+
+
+Trending Page: /pt/trends
+
+Meta title: Botões de Som em Alta e Meme Soundboard Viral
+Meta description: Descubra os botões de som mais populares e efeitos sonoros virais no SoundButtons.com. Toque, baixe e compartilhe o áudio viral.
+H1: Botões de Som em Alta e Meme Soundboard Viral
+Short description: Descubra botões de som em alta e efeitos sonoros de meme soundboard viral no SoundButtons.com. Toque, baixe e compartilhe o áudio mais usado.
+
+
+Categories Page: /pt/categories
+
+Meta title: Categorias de Botões de Som | SoundButtons.com
+Meta description: Navegue todas as categorias de botões de som no SoundButtons.com. De memes a música e jogos, explore milhares de efeitos sonoros organizados.
+H1: Categorias de Botões de Som
+Short description: Explore milhares de botões de som por categoria. De memes virais a efeitos clássicos, encontre o áudio perfeito para conteúdo, jogos ou entretenimento.
+
+
+Search Page: /pt/search
+
+Meta title: Pesquisar Botões de Som e Efeitos de Memes
+Meta description: Pesquise botões de som, efeitos sonoros, memes e clipes de áudio. Encontre o som perfeito para vídeos, streams e mais. Grátis para baixar.
+H1: Pesquisar Botões de Som 
+Short description: Encontre efeitos sonoros perfeitos, sons de memes e clipes de áudio da nossa extensa coleção.
+
+
+Sound Detail Page: /pt/[sound]
+
+Meta title: {sound name} Efeito Sonoro: Soundboard Botão
+Meta description: Reproduza e baixe o efeito {sound name} instantaneamente! Botões de som para memes, TikTok e Discord no SoundButtons.com.
+H1: {sound name} Botão de Som 
+Short description: Reproduza e baixe o botão {sound name} de graça. Perfeito para memes, TikTok e Discord. MP3 em alta qualidade no SoundButtons.com.
+
+
+Category Detail Page: /pt/categories/[category]
+
+Meta title: {category name} Soundboard: Botões de Memes Desbloqueados
+Meta description: Descubra os melhores botões de som de {category name}. Baixe e compartilhe efeitos sonoros de alta qualidade para memes, vídeos e entretenimento.
+H1: Botões de Som de {category name}
+Short description: Descubra botões de som de {category name}: soundboard grátis para vídeos e streams. Toque, baixe e compartilhe efeitos sonoros!
+
+
+Search Results Page: /pt/search/[query]
+
+Meta title: {search name} Soundboard: Botão de Efeito Sonoro Instantâneo
+Meta description: Reproduza e baixe {sound count} botões de som {search name} de graça. MP3 em alta qualidade para memes, TikTok e Discord.
+H1:Botões de Som {search name}: Soundboard de Memes Desbloqueado
+
+=========================================================
+🇫🇷 French
+
+Home Page: /fr
+
+Meta title: Myinstants: Boutons sonores avec table d'harmonie de mèmes
+Meta description: ouez des milliers de boutons sonores, mèmes, blagues et effets sonores de haute qualité sur un puissant soundboard débloqué.
+H1: Myinstants:Boutons sonores et table d'harmonie de mèmes : 100 000+ boutons de mèmes débloqués
+Short description: Myinstants Découvrez une vaste collection de boutons sonores hilarants, de sons viraux débloqués et de tables d'harmonie, le tout gratuitement ! Vous pouvez créer vos propres boutons sonores personnalisés directement depuis votre smartphone, ordinateur, Chromebook ou tablette.
+
+
+New Page: /fr/new
+
+Meta title: Nouveaux Boutons Sonores: Soundboard Mis à Jour
+Meta description: Découvrez les derniers boutons sonores et soundboard avec des clips audio tendance, mis à jour quotidiennement pour mèmes, jeux et divertissement.
+H1: Nouveaux Boutons Sonores et Soundboard Récents
+Short description: Découvrez des boutons sonores avec des clips audio tendance mis à jour chaque jour. Jouez, téléchargez et partagez des sons inédits pour mèmes, jeux et streams.
+
+
+Trending Page: /fr/trends
+
+Meta title: Boutons Sonores Tendance et Mèmes Viraux
+Meta description: Découvrez les boutons sonores les plus populaires et effets sonores viraux sur SoundButtons.com. Jouez, téléchargez et partagez l'audio viral.
+H1: Boutons Sonores Tendance et Mèmes Viraux
+Short description: Découvrez les boutons sonores tendance et effets sonores viraux sur SoundButtons.com. Jouez, téléchargez et partagez l'audio utilisé partout.
+
+
+Categories Page: /fr/categories
+
+Meta title: Catégories de Boutons Sonores | SoundButtons.com
+Meta description: Parcourez toutes les catégories de boutons sonores sur SoundButtons.com. Des mèmes à la musique et aux jeux, explorez des milliers d'effets sonores.
+H1: Catégories de Boutons Sonores
+Short description: Explorez des milliers de boutons sonores par catégorie. Des mèmes viraux aux effets classiques, trouvez l'audio parfait pour votre contenu ou divertissement.
+
+
+Search Page: /fr/search
+
+Meta title: Rechercher Boutons Sonores et Effets de Mèmes
+Meta description: Recherchez des boutons sonores, effets sonores, mèmes et clips audio. Trouvez le son parfait pour vos vidéos, streams et plus. Gratuit à télécharger. 
+H1: Rechercher des Boutons Sonores
+Short description: Trouvez les effets sonores parfaits, sons de mèmes et clips audio de notre vaste collection.
+
+
+Sound Detail Page: /fr/[sound]
+
+Meta title:{sound name} Téléchargement d'Effet Sonore
+Meta description: Jouez et téléchargez l'effet {sound name} instantanément ! Boutons sonores pour mèmes, TikTok et Discord sur SoundButtons.com.
+H1: {sound name} Bouton sonore
+Short description: Jouez et téléchargez le bouton {sound name} gratuitement. Parfait pour les mèmes, TikTok et Discord. MP3 haute qualité sur SoundButtons.com.
+
+
+Category Detail Page: /fr/categories/[category]
+
+Meta title: {category name} Soundboard : Boutons de mèmes débloqués 
+Meta description: Découvrez les meilleurs boutons sonores {category name}. Téléchargez et partagez des effets sonores de haute qualité pour mèmes, vidéos et divertissement.
+H1: {category name} Boutons Sonores
+Short description: Découvrez les boutons sonores {category name} : soundboard gratuit pour vidéos et streams. Jouez, téléchargez et partagez les effets sonores!
+
+
+Search Results Page: /fr/search/[query]
+
+Meta title: {search name} Soundboard :Bouton d'Effet Sonore Instantané
+Meta description: Jouez et téléchargez {sound count} boutons sonores {search name} gratuitement. MP3 haute qualité pour mèmes, TikTok et Discord.
+H1: Boutons Sonores {search name}: Soundboard de Mèmes Débloqué

@@ -10,9 +10,9 @@ const PAGE_SIZE = 44
 const BASE = getLocaleBase("fr")
 
 export const metadata: Metadata = {
-  title: { absolute: "Table d'harmonie des sons tendance et des mèmes viraux" },
+  title: { absolute: "Boutons Sonores Tendance et Mèmes Viraux" },
   description:
-    "Découvrez les boutons sonores les plus populaires et les effets sonores viraux les plus tendance sur SoundButtons.com.",
+    "Découvrez les boutons sonores les plus populaires et effets sonores viraux sur SoundButtons.com. Jouez, téléchargez et partagez l'audio viral.",
   authors: [{ name: "SoundButtons.com" }],
   creator: "SoundButtons.com",
   publisher: "SoundButtons.com",
@@ -28,9 +28,9 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    title: "Table d'harmonie des sons tendance et des mèmes viraux",
+    title: "Boutons Sonores Tendance et Mèmes Viraux",
     description:
-      "Découvrez les boutons sonores les plus populaires et les effets sonores viraux les plus tendance sur SoundButtons.com.",
+      "Découvrez les boutons sonores les plus populaires et effets sonores viraux sur SoundButtons.com. Jouez, téléchargez et partagez l'audio viral.",
     url: `${BASE}/trends`,
     siteName: "Sound Buttons",
     images: [{ url: `${BASE}/trends/opengraph-image`, width: 1200, height: 630, type: "image/png" as const, alt: "Boutons sonores en tendance", secureUrl: `${BASE}/trends/opengraph-image` }],
@@ -40,9 +40,9 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "@soundbuttons",
     creator: "@soundbuttons",
-    title: "Table d'harmonie des sons tendance et des mèmes viraux",
+    title: "Boutons Sonores Tendance et Mèmes Viraux",
     description:
-      "Découvrez les boutons sonores les plus populaires et les effets sonores viraux les plus tendance sur SoundButtons.com.",
+      "Découvrez les boutons sonores les plus populaires et effets sonores viraux sur SoundButtons.com. Jouez, téléchargez et partagez l'audio viral.",
     images: [`${BASE}/trends/opengraph-image`],
   },
   robots: { index: true, follow: true },
@@ -80,7 +80,7 @@ export default async function FrTrendsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      <TrendsPageClient initialSounds={initialSounds} initialMeta={meta} isMobileDevice={isMobile} />
+      <TrendsPageClient initialSounds={initialSounds} initialMeta={meta} isMobileDevice={isMobile} locale="fr" />
     </>
   )
 }

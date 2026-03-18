@@ -11,6 +11,7 @@ import {
   Heart,
   LayoutGrid,
   Eye,
+  Flame,
 } from "lucide-react"
 import { useAuth } from "@/lib/auth/auth-context"
 import { apiClient } from "@/lib/api/client"
@@ -41,10 +42,18 @@ const gradientBtn =
 const kidsCard =
   "rounded-3xl shadow-lg border border-pink-200/60 dark:border-pink-800/40 bg-gradient-to-br from-white/90 to-pink-50/80 dark:from-gray-900/90 dark:to-pink-950/30"
 
+function getStreakOutlineClass(streak: number): string {
+  if (streak >= 100) return "p-[3px] rounded-full bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-400"
+  if (streak >= 30) return "p-[3px] rounded-full bg-gradient-to-r from-orange-400 via-rose-500 to-orange-400"
+  if (streak >= 7) return "p-[3px] rounded-full bg-gradient-to-r from-orange-300 to-rose-400"
+  return ""
+}
+
 export default function ProfileClient() {
   const { user, token, isReady } = useAuth()
   const [userSounds, setUserSounds] = useState<ProcessedSound[]>([])
   const [soundsLoading, setSoundsLoading] = useState(false)
+  const [profileStreak, setProfileStreak] = useState<number | null>(null)
 
   useEffect(() => {
     if (!isReady) return
@@ -55,6 +64,11 @@ export default function ProfileClient() {
       .then((res) => setUserSounds(res.data))
       .catch(() => setUserSounds([]))
       .finally(() => setSoundsLoading(false))
+  }, [isReady, token])
+
+  useEffect(() => {
+    if (!isReady || !token) return
+    apiClient.getMyStreak(token).then((d) => setProfileStreak(d.current_streak)).catch(() => setProfileStreak(null))
   }, [isReady, token])
 
   const pageWrap =
@@ -112,16 +126,28 @@ export default function ProfileClient() {
       <div className="w-full max-w-5xl mx-auto px-4 space-y-6">
         <div className={`${kidsCard} p-6 md:p-8`}>
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 mb-6">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center shrink-0 shadow-md">
-              <span className="text-2xl sm:text-3xl font-bold text-white">
-                {user?.username?.[0]?.toUpperCase() ??
-                  user?.email?.[0]?.toUpperCase() ??
-                  "?"}
-              </span>
+            <div className={profileStreak != null && profileStreak > 0 ? getStreakOutlineClass(profileStreak) : ""}>
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center shrink-0 shadow-md overflow-hidden">
+                <span className="text-2xl sm:text-3xl font-bold text-white">
+                  {user?.username?.[0]?.toUpperCase() ??
+                    user?.email?.[0]?.toUpperCase() ??
+                    "?"}
+                </span>
+              </div>
             </div>
             <div className="flex-1 text-center sm:text-left">
-              <h2 className="text-xl sm:text-2xl font-bold text-foreground">
+              <h2 className="text-xl sm:text-2xl font-bold text-foreground flex flex-wrap items-center gap-2 justify-center sm:justify-start">
                 Welcome, {user?.username ?? user?.email}!
+                {profileStreak != null && profileStreak > 0 && (
+                  <Link
+                    href="/streak"
+                    className="inline-flex items-center gap-1 text-orange-500 dark:text-orange-400 hover:underline"
+                  >
+                    <Flame className="h-5 w-5 shrink-0" />
+                    <span className="tabular-nums font-semibold">{profileStreak}</span>
+                    <span className="text-sm font-normal text-muted-foreground">streak</span>
+                  </Link>
+                )}
               </h2>
               <p className="text-sm text-muted-foreground mt-0.5">{user?.email}</p>
               <p className="text-xs text-muted-foreground mt-1">ID: {user?.id}</p>

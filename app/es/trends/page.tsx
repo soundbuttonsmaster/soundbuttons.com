@@ -10,9 +10,9 @@ const PAGE_SIZE = 44
 const BASE = getLocaleBase("es")
 
 export const metadata: Metadata = {
-  title: { absolute: "Botones de Sonido en Tendencia y Soundboard de Memes Viral" },
+  title: { absolute: "Botones de Sonido en Tendencia y Memes Virales" },
   description:
-    "Descubre los botones de sonido más populares en tendencia y el soundboard de memes viral y efectos sonoros en SoundButtons.com.",
+    "Descubre los botones de sonido más populares y efectos sonoros virales en SoundButtons.com. Reproduce, descarga y comparte el audio viral.",
   authors: [{ name: "SoundButtons.com" }],
   creator: "SoundButtons.com",
   publisher: "SoundButtons.com",
@@ -28,9 +28,9 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    title: "Botones de Sonido en Tendencia y Soundboard de Memes Viral",
+    title: "Botones de Sonido en Tendencia y Memes Virales",
     description:
-      "Descubre los botones de sonido más populares en tendencia y el soundboard de memes viral y efectos sonoros en SoundButtons.com.",
+      "Descubre los botones de sonido más populares y efectos sonoros virales en SoundButtons.com. Reproduce, descarga y comparte el audio viral.",
     url: `${BASE}/trends`,
     siteName: "Sound Buttons",
     images: [{ url: `${BASE}/trends/opengraph-image`, width: 1200, height: 630, type: "image/png" as const, alt: "Botones de Sonido en Tendencia", secureUrl: `${BASE}/trends/opengraph-image` }],
@@ -40,9 +40,9 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "@soundbuttons",
     creator: "@soundbuttons",
-    title: "Botones de Sonido en Tendencia y Soundboard de Memes Viral",
+    title: "Botones de Sonido en Tendencia y Memes Virales",
     description:
-      "Descubre los botones de sonido más populares en tendencia y el soundboard de memes viral y efectos sonoros en SoundButtons.com.",
+      "Descubre los botones de sonido más populares y efectos sonoros virales en SoundButtons.com. Reproduce, descarga y comparte el audio viral.",
     images: [`${BASE}/trends/opengraph-image`],
   },
   robots: { index: true, follow: true },
@@ -84,6 +84,7 @@ export default async function EsTrendsPage() {
         initialSounds={initialSounds}
         initialMeta={meta}
         isMobileDevice={isMobile}
+        locale="es"
       />
     </>
   )

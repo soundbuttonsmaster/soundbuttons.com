@@ -3,8 +3,8 @@
  * Same API as sbmain
  */
 
-const API_BASE_URL = "https://api-v6.soundbuttons.com/api"
-const MEDIA_BASE_URL = "https://api-v6.soundbuttons.com/media"
+export const API_BASE_URL = "http://192.168.1.14:8002/api"
+const MEDIA_BASE_URL = "http://192.168.1.14:8002/media"
 
 export interface ApiSound {
   id: number
@@ -39,6 +39,17 @@ export interface ProcessedSound {
   category_name?: string
   is_liked?: boolean
   is_favorited?: boolean
+}
+
+/** Comment on a sound; replies are nested. */
+export interface SoundComment {
+  id: number
+  user: { id: number; username: string; current_streak?: number }
+  body: string
+  created_at: string
+  likes_count: number
+  is_liked: boolean
+  replies: SoundComment[]
 }
 
 function processSound(raw: ApiSound): ProcessedSound {
@@ -141,6 +152,81 @@ export const apiClient = {
       await fetch(`${API_BASE_URL}/sounds/views/${soundId}`, { method: "POST" })
     } catch {
       // ignore
+    }
+  },
+
+  /** Record play for streak (authenticated, fire-and-forget). Call when user actually plays a sound. */
+  async recordPlay(soundId: number, token: string): Promise<void> {
+    try {
+      await fetch(`${API_BASE_URL}/sounds/play/${soundId}`, {
+        method: "POST",
+        headers: { Authorization: `Token ${token}` },
+      })
+    } catch {
+      // ignore
+    }
+  },
+
+  /** Get current user's streak status (authenticated). */
+  async getMyStreak(token: string): Promise<{
+    current_streak: number
+    longest_streak: number
+    plays_today: number
+    goal_today: number
+    logged_in_today: boolean
+    last_activity_date: string | null
+  }> {
+    const res = await fetch(`${API_BASE_URL}/user/streak`, {
+      headers: { Authorization: `Token ${token}` },
+      cache: "no-store",
+    })
+    if (!res.ok)
+      return {
+        current_streak: 0,
+        longest_streak: 0,
+        plays_today: 0,
+        goal_today: 5,
+        logged_in_today: false,
+        last_activity_date: null,
+      }
+    const json = (await res.json()) as {
+      current_streak?: number
+      longest_streak?: number
+      plays_today?: number
+      goal_today?: number
+      logged_in_today?: boolean
+      last_activity_date?: string | null
+    }
+    return {
+      current_streak: json.current_streak ?? 0,
+      longest_streak: json.longest_streak ?? 0,
+      plays_today: json.plays_today ?? 0,
+      goal_today: json.goal_today ?? 5,
+      logged_in_today: json.logged_in_today ?? false,
+      last_activity_date: json.last_activity_date ?? null,
+    }
+  },
+
+  /** Get streak leaderboard (public). offset 0, limit 20 then load more up to 100. */
+  async getStreakLeaderboard(
+    offset = 0,
+    limit = 20
+  ): Promise<{
+    results: { rank: number; user_id: number; username: string; current_streak: number }[]
+    total: number
+  }> {
+    const res = await fetch(
+      `${API_BASE_URL}/streak/leaderboard?offset=${offset}&limit=${limit}`,
+      { next: { revalidate: 60 } }
+    )
+    if (!res.ok) return { results: [], total: 0 }
+    const json = (await res.json()) as {
+      results?: { rank: number; user_id: number; username: string; current_streak: number }[]
+      total?: number
+    }
+    return {
+      results: Array.isArray(json.results) ? json.results : [],
+      total: json.total ?? 0,
     }
   },
 
@@ -611,4 +697,138 @@ export const apiClient = {
       return { success: false, message: "Network error" }
     }
   },
+
+  /** Sound comments (discussion) - GET paginated, optional auth for is_liked */
+  async getSoundComments(
+    soundId: number,
+    page = 1,
+    pageSize = 5,
+    token?: string | null
+  ): Promise<{
+    success: boolean
+    count?: number
+    total_count?: number
+    results?: SoundComment[]
+    message?: string
+  }> {
+    try {
+      const url = `${API_BASE_URL}/sounds/${soundId}/comments?page=${page}&page_size=${pageSize}`
+      const headers: HeadersInit = {}
+      if (token) headers["Authorization"] = `Token ${token}`
+      const res = await fetch(url, { headers })
+      const data = (await res.json().catch(() => ({}))) as {
+        status?: boolean
+        count?: number
+        total_count?: number
+        results?: SoundComment[]
+        message?: string
+      }
+      if (!res.ok) {
+        return { success: false, message: data.message || "Failed to load comments" }
+      }
+      return {
+        success: true,
+        count: data.count,
+        total_count: data.total_count,
+        results: data.results ?? [],
+      }
+    } catch {
+      return { success: false, message: "Network error" }
+    }
+  },
+
+  /** POST comment (auth required). */
+  async postSoundComment(
+    soundId: number,
+    body: string,
+    token: string,
+    parentId?: number | null
+  ): Promise<{ success: boolean; comment?: SoundComment; message?: string }> {
+    try {
+      const res = await fetch(`${API_BASE_URL}/sounds/${soundId}/comments`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${token}`,
+        },
+        body: JSON.stringify({ body: body.trim(), parent_id: parentId ?? null }),
+      })
+      const data = (await res.json().catch(() => ({}))) as {
+        status?: boolean
+        comment?: SoundComment
+        message?: string
+        errors?: Record<string, string[]>
+      }
+      if (res.ok && data.comment) {
+        return { success: true, comment: data.comment }
+      }
+      const msg = data.errors?.body?.[0] ?? data.message ?? "Failed to post comment"
+      return { success: false, message: msg }
+    } catch {
+      return { success: false, message: "Network error" }
+    }
+  },
+
+  /** Like a comment (auth required). Returns updated likes_count. */
+  async likeComment(
+    commentId: number,
+    token: string
+  ): Promise<{ success: boolean; likes_count?: number; message?: string }> {
+    try {
+      const res = await fetch(`${API_BASE_URL}/sounds/comments/${commentId}/like`, {
+        method: "POST",
+        headers: { Authorization: `Token ${token}` },
+      })
+      const data = (await res.json().catch(() => ({}))) as {
+        status?: boolean
+        likes_count?: number
+        message?: string
+      }
+      if (res.ok) return { success: true, likes_count: data.likes_count ?? 0 }
+      return { success: false, message: data.message ?? "Failed to like" }
+    } catch {
+      return { success: false, message: "Network error" }
+    }
+  },
+
+  /** Remove like from comment (auth required). */
+  async unlikeComment(
+    commentId: number,
+    token: string
+  ): Promise<{ success: boolean; likes_count?: number; message?: string }> {
+    try {
+      const res = await fetch(`${API_BASE_URL}/sounds/comments/${commentId}/like`, {
+        method: "DELETE",
+        headers: { Authorization: `Token ${token}` },
+      })
+      const data = (await res.json().catch(() => ({}))) as {
+        status?: boolean
+        likes_count?: number
+        message?: string
+      }
+      if (res.ok) return { success: true, likes_count: data.likes_count ?? 0 }
+      return { success: false, message: data.message ?? "Failed to remove like" }
+    } catch {
+      return { success: false, message: "Network error" }
+    }
+  },
+}
+
+/** Server-side fetch for initial comments (SSR). No auth; is_liked will be false. */
+export async function fetchSoundCommentsServer(
+  soundId: number,
+  page = 1,
+  pageSize = 5
+): Promise<{ results: SoundComment[]; total_count: number }> {
+  try {
+    const res = await fetch(
+      `${API_BASE_URL}/sounds/${soundId}/comments?page=${page}&page_size=${pageSize}`,
+      { next: { revalidate: 60 } }
+    )
+    if (!res.ok) return { results: [], total_count: 0 }
+    const data = (await res.json()) as { results?: SoundComment[]; total_count?: number }
+    return { results: data.results ?? [], total_count: data.total_count ?? 0 }
+  } catch {
+    return { results: [], total_count: 0 }
+  }
 }

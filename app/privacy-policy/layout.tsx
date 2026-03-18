@@ -1,4 +1,7 @@
 import type { Metadata, Viewport } from "next"
+import { SITE } from "@/lib/constants/site"
+
+const BASE = SITE.baseUrl
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -74,10 +77,27 @@ export const metadata: Metadata = {
   },
 }
 
+const breadcrumbSchema = {
+  "@context": "https://schema.org" as const,
+  "@type": "BreadcrumbList" as const,
+  itemListElement: [
+    { "@type": "ListItem" as const, position: 1, name: "Home", item: `${BASE}/` },
+    { "@type": "ListItem" as const, position: 2, name: "privacy-policy", item: `${BASE}/privacy-policy` },
+  ],
+}
+
 export default function PrivacyPolicyLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  return <>{children}</>
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      {children}
+    </>
+  )
 }

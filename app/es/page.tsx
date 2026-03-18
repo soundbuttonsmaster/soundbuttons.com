@@ -12,7 +12,7 @@ const BASE = getLocaleBase("es")
 export const metadata: Metadata = {
   title: { absolute: "Myinstants: Botones de Sonido con Soundboard de Memes" },
   description:
-    "Reproduce miles de botones de sonido con los mejores sonidos, botón de meme, bromas, efectos sonoros y audio de alta calidad en un poderoso soundboard desbloqueado.",
+    "Reproduce miles de botones de sonido, memes, bromas y efectos sonoros de alta calidad en un poderoso soundboard desbloqueado.",
   authors: [{ name: "SoundButtons.com" }],
   creator: "SoundButtons.com",
   publisher: "SoundButtons.com",
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     type: "website",
     title: "Myinstants: Botones de Sonido con Soundboard de Memes",
     description:
-      "Reproduce miles de botones de sonido con los mejores sonidos, botón de meme, bromas, efectos sonoros y audio de alta calidad en un poderoso soundboard desbloqueado.",
+      "Reproduce miles de botones de sonido, memes, bromas y efectos sonoros de alta calidad en un poderoso soundboard desbloqueado.",
     url: BASE,
     siteName: "Sound Buttons",
     images: [{ url: `${SITE.baseUrl}/home.jpg`, width: 1200, height: 630, type: "image/jpeg" as const, alt: "Botones de Sonido", secureUrl: `${SITE.baseUrl}/home.jpg` }],
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     creator: "@soundbuttons",
     title: "Myinstants: Botones de Sonido con Soundboard de Memes",
     description:
-      "Reproduce miles de botones de sonido con los mejores sonidos, botón de meme, bromas, efectos sonoros y audio de alta calidad en un poderoso soundboard desbloqueado.",
+      "Reproduce miles de botones de sonido, memes, bromas y efectos sonoros de alta calidad en un poderoso soundboard desbloqueado.",
     images: [{ url: `${SITE.baseUrl}/home.jpg`, alt: "Botones de Sonido", width: 1200, height: 630 }],
   },
   robots: { index: true, follow: true },

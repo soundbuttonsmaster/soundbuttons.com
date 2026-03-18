@@ -1,13 +1,15 @@
 "use client"
 
-import { useState, useCallback, useEffect, useRef } from "react"
+import { useState, useCallback, useEffect, useRef, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import PageHero from "@/components/layout/page-hero"
 import SearchBar from "@/components/search-bar"
 import SoundList from "@/components/home/SoundList"
 import { apiClient } from "@/lib/api/client"
+import { getStrings } from "@/lib/i18n/strings"
 import type { Sound } from "@/lib/types/sound"
+import type { Locale } from "@/lib/i18n/strings"
 
 const PAGE_SIZE = 35
 
@@ -24,14 +26,17 @@ interface NewPageClientProps {
   initialSounds: Sound[]
   initialMeta: { current_page: number; last_page: number; total_items: number }
   isMobileDevice: boolean
+  locale?: Locale
 }
 
 export default function NewPageClient({
   initialSounds,
   initialMeta,
   isMobileDevice,
+  locale = "en",
 }: NewPageClientProps) {
   const router = useRouter()
+  const newPage = useMemo(() => getStrings(locale).newPage, [locale])
   const [sounds, setSounds] = useState<Sound[]>(initialSounds)
   const [page, setPage] = useState(initialMeta.current_page)
   const [loading, setLoading] = useState(false)
@@ -83,12 +88,12 @@ export default function NewPageClient({
   return (
     <>
       <PageHero
-        title="New Sound Buttons & Fresh Soundboard Drops"
-        description="Discover the latest sound buttons with trending audio clips updated daily. Play, download, and share brand-new sounds for memes, gaming, streaming, and every entertainment moment."
+        title={newPage.heroTitle}
+        description={newPage.heroDescription}
       >
         <div className="flex justify-center mt-2 px-2">
           <div className="flex justify-center max-w-3xl md:max-w-4xl lg:max-w-5xl w-full shadow-lg">
-            <SearchBar placeholder="Search Sound buttons..." />
+            <SearchBar placeholder={locale === "en" ? "Search Sound buttons..." : getStrings(locale).nav.searchPlaceholder} />
           </div>
         </div>
       

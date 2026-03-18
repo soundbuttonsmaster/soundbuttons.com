@@ -86,6 +86,10 @@ export interface StringsHome {
 
 export interface StringsSearch {
   pageTitle: string
+  /** Hero title for main /search page (no query yet) */
+  heroTitle: string
+  /** Hero description for main /search page */
+  heroDescription: string
   noResults: string
   loadMore: string
   /** Title for document/meta: "{query} - Sound Buttons | SoundButtons.com" */
@@ -104,7 +108,40 @@ export interface StringsSearch {
   tryDifferentSearch: string
 }
 
+export interface StringsNewPage {
+  heroTitle: string
+  heroDescription: string
+}
+
+export interface StringsTrendsPage {
+  heroTitle: string
+  heroDescription: string
+}
+
+export interface StringsSoundDetailDiscussion {
+  title: string
+  postComment: string
+  reply: string
+  like: string
+  loadMoreComments: string
+  logInToComment: string
+  justNow: string
+  minutesAgo: string
+  hoursAgo: string
+  daysAgo: string
+  commentPosted: string
+  replyPosted: string
+  errorPosting: string
+  placeholder: string
+  submit: string
+  cancel: string
+}
+
 export interface StringsSoundDetail {
+  /** H1 template: "{soundName} Sound Button" */
+  h1Template: string
+  /** Short description under H1: "Play and download..." */
+  shortDescriptionTemplate: string
   youMightLike: string
   aboutThisSound: string
   howToUse: string
@@ -122,11 +159,16 @@ export interface StringsSoundDetail {
   downloadForFree: string
   useInContent: string
   shareWithFriends: string
+  discussion: StringsSoundDetailDiscussion
 }
 
 export interface StringsCategory {
   categories: string
   subcategories: string
+  /** Category detail hero title: "{categoryName} Sound Buttons" */
+  detailHeroTitleTemplate: string
+  /** Category detail hero description */
+  detailHeroDescriptionTemplate: string
   exploreMore: string
   newSounds: string
   trending: string
@@ -285,6 +327,8 @@ export interface LocaleStrings {
   footer: StringsFooter
   home: StringsHome
   search: StringsSearch
+  newPage: StringsNewPage
+  trendsPage: StringsTrendsPage
   soundDetail: StringsSoundDetail
   category: StringsCategory
   common: StringsCommon
@@ -374,6 +418,8 @@ const strings: Record<Locale, LocaleStrings> = {
     },
     search: {
       pageTitle: "Search Sound Buttons",
+      heroTitle: "Search Sound Buttons",
+      heroDescription: "Find the perfect sound effects, meme sounds, and audio clips from our extensive collection.",
       noResults: "No sounds found. Try a different search.",
       loadMore: "Load more",
       resultsTitleTemplate: "{query} - Sound Buttons | SoundButtons.com",
@@ -387,7 +433,20 @@ const strings: Record<Locale, LocaleStrings> = {
       trendingSounds: "Trending Sounds",
       tryDifferentSearch: "Try searching with different keywords or browse our categories",
     },
+    newPage: {
+      heroTitle: "New Sound Buttons & Fresh Soundboard Drops",
+      heroDescription:
+        "Discover the latest sound buttons with trending audio clips updated daily. Play, download, and share brand-new sounds for memes, gaming, streaming, and every entertainment moment.",
+    },
+    trendsPage: {
+      heroTitle: "Trending Sound Buttons & Viral Meme Soundboard",
+      heroDescription:
+        "Discover the most popular trending sound buttons and viral meme soundboard sound effects on SoundButtons.com. Play, download, and share the audio everyone is using across social media, gaming chats, and creator communities.",
+    },
     soundDetail: {
+      h1Template: "{soundName} Sound Button - Free Download & Play",
+      shortDescriptionTemplate:
+        "Play and download {soundName} sound button for free! Perfect for memes, TikTok, Discord, and content creation. High-quality MP3 download available instantly on SoundButtons.com.",
       youMightLike: "You Might Like",
       aboutThisSound: "About This Sound",
       howToUse: "How to Use This Sound",
@@ -405,6 +464,24 @@ const strings: Record<Locale, LocaleStrings> = {
       downloadForFree: "Download for free:",
       useInContent: "Use in content:",
       shareWithFriends: "Share with friends:",
+      discussion: {
+        title: "Discussion",
+        postComment: "Post comment",
+        reply: "Reply",
+        like: "Like",
+        loadMoreComments: "Load more comments",
+        logInToComment: "Log in to comment",
+        justNow: "just now",
+        minutesAgo: "{n}m",
+        hoursAgo: "{n}h",
+        daysAgo: "{n}d",
+        commentPosted: "Comment posted",
+        replyPosted: "Reply posted",
+        errorPosting: "Failed to post. Try again.",
+        placeholder: "Write a comment...",
+        submit: "Post",
+        cancel: "Cancel",
+      },
     },
     about: {
       aboutTitle: "About SoundButtons.com",
@@ -549,6 +626,9 @@ const strings: Record<Locale, LocaleStrings> = {
     category: {
       categories: "Categories",
       subcategories: "Subcategories",
+      detailHeroTitleTemplate: "{categoryName} Sound Buttons",
+      detailHeroDescriptionTemplate:
+        "Discover {categoryName} sound buttons: free meme soundboard unblocked for videos & streams. Play, download & share {categoryName} sound effects!",
       exploreMore: "Explore more with our",
       newSounds: "new sounds",
       trending: "trending sounds",
@@ -661,11 +741,13 @@ const strings: Record<Locale, LocaleStrings> = {
     },
     search: {
       pageTitle: "Buscar Sound Buttons",
+      heroTitle: "Buscar Botones de Sonido",
+      heroDescription: "Encuentra efectos de sonido perfectos, sonidos de memes y clips de audio de nuestra extensa colección.",
       noResults: "No se encontraron sonidos. Prueba otra búsqueda.",
       loadMore: "Cargar más",
       resultsTitleTemplate: "{query} - Botones de Sonido | SoundButtons.com",
-      heroTitleTemplate: "{query} Botón de Sonido: Mesa de Memes Desbloqueada",
-      heroDescriptionTemplate: "Encontrados {count} botones de sonido - gratis para reproducir y descargar",
+      heroTitleTemplate: "Botones de Sonido {query}: Soundboard de Memes Desbloqueado",
+      heroDescriptionTemplate: "Reproduce y descarga {count} botones de sonido {query} gratis. MP3 de alta calidad para memes, TikTok y Discord.",
       searchMorePlaceholder: "Buscar más... (ej. meme, fart, game)",
       soundListTitleTemplate: "{query} botones de sonido",
       loadingMore: "Cargando más sonidos...",
@@ -674,7 +756,20 @@ const strings: Record<Locale, LocaleStrings> = {
       trendingSounds: "Sonidos en tendencia",
       tryDifferentSearch: "Prueba con otras palabras o explora nuestras categorías",
     },
+    newPage: {
+      heroTitle: "Nuevos Botones de Sonido y Soundboard Frescos",
+      heroDescription:
+        "Descubre botones de sonido con audio en tendencia, actualizados diariamente. Reproduce, descarga y comparte sonidos nuevos para memes, juegos y streams.",
+    },
+    trendsPage: {
+      heroTitle: "Botones de Sonido en Tendencia y Memes Virales",
+      heroDescription:
+        "Descubre los botones de sonido en tendencia y efectos sonoros virales en SoundButtons.com. Reproduce, descarga y comparte el audio que todos están usando.",
+    },
     soundDetail: {
+      h1Template: "{soundName} Botón de Sonido",
+      shortDescriptionTemplate:
+        "Reproduce y descarga el botón {soundName} gratis. Perfecto para memes, TikTok y Discord. MP3 de alta calidad en SoundButtons.com.",
       youMightLike: "También te puede gustar",
       aboutThisSound: "Acerca de este sonido",
       howToUse: "Cómo usar este sonido",
@@ -692,6 +787,24 @@ const strings: Record<Locale, LocaleStrings> = {
       downloadForFree: "Descargar gratis:",
       useInContent: "Usar en contenido:",
       shareWithFriends: "Compartir con amigos:",
+      discussion: {
+        title: "Comentarios",
+        postComment: "Publicar comentario",
+        reply: "Responder",
+        like: "Me gusta",
+        loadMoreComments: "Cargar más comentarios",
+        logInToComment: "Inicia sesión para comentar",
+        justNow: "ahora mismo",
+        minutesAgo: "{n}m",
+        hoursAgo: "{n}h",
+        daysAgo: "{n}d",
+        commentPosted: "Comentario publicado",
+        replyPosted: "Respuesta publicada",
+        errorPosting: "Error al publicar. Inténtalo de nuevo.",
+        placeholder: "Escribe un comentario...",
+        submit: "Publicar",
+        cancel: "Cancelar",
+      },
     },
     about: {
       aboutTitle: "Acerca de SoundButtons.com",
@@ -837,6 +950,9 @@ const strings: Record<Locale, LocaleStrings> = {
     category: {
       categories: "Categorías",
       subcategories: "Subcategorías",
+      detailHeroTitleTemplate: "Botones de Sonido de {categoryName}",
+      detailHeroDescriptionTemplate:
+        "Descubre botones de sonido de {categoryName}: soundboard gratis para videos y streams. ¡Reproduce, descarga y comparte efectos sonoros!",
       exploreMore: "Explora más con nuestros",
       newSounds: "nuevos sonidos",
       trending: "sonidos en tendencia",
@@ -949,11 +1065,13 @@ const strings: Record<Locale, LocaleStrings> = {
     },
     search: {
       pageTitle: "Pesquisar Sound Buttons",
+      heroTitle: "Pesquisar Botões de Som",
+      heroDescription: "Encontre efeitos sonoros perfeitos, sons de memes e clipes de áudio da nossa extensa coleção.",
       noResults: "Nenhum som encontrado. Tente outra pesquisa.",
       loadMore: "Carregar mais",
       resultsTitleTemplate: "{query} - Botões de Som | SoundButtons.com",
-      heroTitleTemplate: "{query} Botão de Som: Mesa de Som de Memes Desbloqueada",
-      heroDescriptionTemplate: "Encontrados {count} botões de som - grátis para reproduzir e baixar",
+      heroTitleTemplate: "Botões de Som {query}: Soundboard de Memes Desbloqueado",
+      heroDescriptionTemplate: "Reproduza e baixe {count} botões de som {query} de graça. MP3 em alta qualidade para memes, TikTok e Discord.",
       searchMorePlaceholder: "Pesquisar mais... (ex. meme, fart, game)",
       soundListTitleTemplate: "{query} botões de som",
       loadingMore: "Carregando mais sons...",
@@ -962,7 +1080,20 @@ const strings: Record<Locale, LocaleStrings> = {
       trendingSounds: "Sons em alta",
       tryDifferentSearch: "Tente outras palavras ou explore nossas categorias",
     },
+    newPage: {
+      heroTitle: "Novos Botões de Som e Lançamentos de Soundboard",
+      heroDescription:
+        "Descubra botões de som com áudio em alta atualizados diariamente. Toque, baixe e compartilhe sons novos para memes, jogos e streams.",
+    },
+    trendsPage: {
+      heroTitle: "Botões de Som em Alta e Meme Soundboard Viral",
+      heroDescription:
+        "Descubra botões de som em alta e efeitos sonoros de meme soundboard viral no SoundButtons.com. Toque, baixe e compartilhe o áudio mais usado.",
+    },
     soundDetail: {
+      h1Template: "{soundName} Botão de Som",
+      shortDescriptionTemplate:
+        "Reproduza e baixe o botão {soundName} de graça. Perfeito para memes, TikTok e Discord. MP3 em alta qualidade no SoundButtons.com.",
       youMightLike: "Você também pode gostar",
       aboutThisSound: "Sobre este som",
       howToUse: "Como usar este som",
@@ -980,6 +1111,24 @@ const strings: Record<Locale, LocaleStrings> = {
       downloadForFree: "Baixar grátis:",
       useInContent: "Usar em conteúdo:",
       shareWithFriends: "Compartilhar com amigos:",
+      discussion: {
+        title: "Discussão",
+        postComment: "Comentar",
+        reply: "Responder",
+        like: "Curtir",
+        loadMoreComments: "Carregar mais comentários",
+        logInToComment: "Faça login para comentar",
+        justNow: "agora",
+        minutesAgo: "{n}m",
+        hoursAgo: "{n}h",
+        daysAgo: "{n}d",
+        commentPosted: "Comentário publicado",
+        replyPosted: "Resposta publicada",
+        errorPosting: "Falha ao publicar. Tente novamente.",
+        placeholder: "Escreva um comentário...",
+        submit: "Publicar",
+        cancel: "Cancelar",
+      },
     },
     about: {
       aboutTitle: "Sobre o SoundButtons.com",
@@ -1125,6 +1274,9 @@ const strings: Record<Locale, LocaleStrings> = {
     category: {
       categories: "Categorias",
       subcategories: "Subcategorias",
+      detailHeroTitleTemplate: "Botões de Som de {categoryName}",
+      detailHeroDescriptionTemplate:
+        "Descubra botões de som de {categoryName}: soundboard grátis para vídeos e streams. Toque, baixe e compartilhe efeitos sonoros!",
       exploreMore: "Explore mais com nossos",
       newSounds: "novos sons",
       trending: "sons em alta",
@@ -1217,9 +1369,9 @@ const strings: Record<Locale, LocaleStrings> = {
         "SoundButtons.com est une plateforme qui vous permet de créer vos propres boutons sonores depuis n'importe quel appareil. C'est gratuit pour créer des soundboards de mèmes, effets sonores et plus.",
     },
     home: {
-      heroTitle: "Boutons sonores et table d'harmonie de mèmes : 100 000+ boutons de mèmes débloqués",
+      heroTitle: "Myinstants:Boutons sonores et table d'harmonie de mèmes : 100 000+ boutons de mèmes débloqués",
       heroDescription:
-        "Découvrez une vaste collection de boutons sonores hilarants, de sons viraux débloqués et de tables d'harmonie, le tout gratuitement ! Créez des boutons sonores personnalisés depuis votre smartphone, ordinateur, Chromebook ou tablette.",
+        "Myinstants Découvrez une vaste collection de boutons sonores hilarants, de sons viraux débloqués et de tables d'harmonie, le tout gratuitement ! Vous pouvez créer vos propres boutons sonores personnalisés directement depuis votre smartphone, ordinateur, Chromebook ou tablette.",
       searchPlaceholder: "Rechercher",
       trendingTitle: "Boutons sonores : Tendances",
       newTitle: "Boutons sonores : Nouvelle table d'harmonie",
@@ -1237,11 +1389,13 @@ const strings: Record<Locale, LocaleStrings> = {
     },
     search: {
       pageTitle: "Rechercher Sound Buttons",
+      heroTitle: "Rechercher des Boutons Sonores",
+      heroDescription: "Trouvez les effets sonores parfaits, sons de mèmes et clips audio de notre vaste collection.",
       noResults: "Aucun son trouvé. Essayez une autre recherche.",
       loadMore: "Charger plus",
       resultsTitleTemplate: "{query} - Boutons Sonores | SoundButtons.com",
-      heroTitleTemplate: "{query} Bouton Sonore : Table de Mèmes Débloquée",
-      heroDescriptionTemplate: "Trouvé {count} boutons sonores - gratuits à écouter et télécharger",
+      heroTitleTemplate: "Boutons Sonores {query}: Soundboard de Mèmes Débloqué",
+      heroDescriptionTemplate: "Jouez et téléchargez {count} boutons sonores {query} gratuitement. MP3 haute qualité pour mèmes, TikTok et Discord.",
       searchMorePlaceholder: "Rechercher plus... (ex. meme, fart, game)",
       soundListTitleTemplate: "{query} boutons sonores",
       loadingMore: "Chargement de plus de sons...",
@@ -1250,7 +1404,20 @@ const strings: Record<Locale, LocaleStrings> = {
       trendingSounds: "Sons tendance",
       tryDifferentSearch: "Essayez d'autres mots-clés ou parcourez nos catégories",
     },
+    newPage: {
+      heroTitle: "Nouveaux Boutons Sonores et Soundboard Récents",
+      heroDescription:
+        "Découvrez des boutons sonores avec des clips audio tendance mis à jour chaque jour. Jouez, téléchargez et partagez des sons inédits pour mèmes, jeux et streams.",
+    },
+    trendsPage: {
+      heroTitle: "Boutons Sonores Tendance et Mèmes Viraux",
+      heroDescription:
+        "Découvrez les boutons sonores tendance et effets sonores viraux sur SoundButtons.com. Jouez, téléchargez et partagez l'audio utilisé partout.",
+    },
     soundDetail: {
+      h1Template: "{soundName} Bouton sonore",
+      shortDescriptionTemplate:
+        "Jouez et téléchargez le bouton {soundName} gratuitement. Parfait pour les mèmes, TikTok et Discord. MP3 haute qualité sur SoundButtons.com.",
       youMightLike: "Vous aimerez aussi",
       aboutThisSound: "À propos de ce son",
       howToUse: "Comment utiliser ce son",
@@ -1268,6 +1435,24 @@ const strings: Record<Locale, LocaleStrings> = {
       downloadForFree: "Télécharger gratuitement :",
       useInContent: "Utiliser dans du contenu :",
       shareWithFriends: "Partager avec des amis :",
+      discussion: {
+        title: "Discussion",
+        postComment: "Publier un commentaire",
+        reply: "Répondre",
+        like: "J'aime",
+        loadMoreComments: "Charger plus de commentaires",
+        logInToComment: "Connectez-vous pour commenter",
+        justNow: "à l'instant",
+        minutesAgo: "{n}m",
+        hoursAgo: "{n}h",
+        daysAgo: "{n}j",
+        commentPosted: "Commentaire publié",
+        replyPosted: "Réponse publiée",
+        errorPosting: "Échec de la publication. Réessayez.",
+        placeholder: "Écrivez un commentaire...",
+        submit: "Publier",
+        cancel: "Annuler",
+      },
     },
     about: {
       aboutTitle: "À propos de SoundButtons.com",
@@ -1414,6 +1599,9 @@ const strings: Record<Locale, LocaleStrings> = {
     category: {
       categories: "Catégories",
       subcategories: "Sous-catégories",
+      detailHeroTitleTemplate: "{categoryName} Boutons Sonores",
+      detailHeroDescriptionTemplate:
+        "Découvrez les boutons sonores {categoryName} : soundboard gratuit pour vidéos et streams. Jouez, téléchargez et partagez les effets sonores!",
       exploreMore: "Explorez plus avec nos",
       newSounds: "nouveaux sons",
       trending: "sons tendance",

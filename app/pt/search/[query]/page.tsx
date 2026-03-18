@@ -29,8 +29,8 @@ export async function generateMetadata({ params }: { params: Promise<{ query: st
   const canonicalUrl = `${base}/search/${query}`
   const searchName = toTitleCase(searchQuery)
   const soundCount = totalItems
-  const title = `${searchName} Soundboard: Reproduzir efeito de som instantâneo`
-  const description = `Reproduza e baixe ${soundCount} botões de som ${searchName} de graça! Reprodução instantânea, downloads de MP3 em alta qualidade. Perfeito para memes, TikTok, Discord e criação de conteúdo.`
+  const title = `${searchName} Soundboard: Botão de Efeito Sonoro Instantâneo`
+  const description = `Reproduza e baixe ${soundCount} botões de som ${searchName} de graça. MP3 em alta qualidade para memes, TikTok e Discord.`
   const ogImageUrl = `${base}/search/${query}/opengraph-image`
   return {
     title: { absolute: title },

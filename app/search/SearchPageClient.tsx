@@ -1,9 +1,13 @@
 "use client"
 
+import { useMemo } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import PageHero from "@/components/layout/page-hero"
 import SearchBar from "@/components/search-bar"
+import { getStrings } from "@/lib/i18n/strings"
+import type { Locale } from "@/lib/i18n/strings"
+
 const popularSearches = [
   "meme sounds",
   "sound effects",
@@ -31,8 +35,15 @@ const trendingCategories = [
   { name: "Sound Effects Soundboard", slug: "sound-effects" },
 ]
 
-export default function SearchPageClient() {
+interface SearchPageClientProps {
+  locale?: Locale
+}
+
+export default function SearchPageClient({ locale = "en" }: SearchPageClientProps) {
   const router = useRouter()
+  const searchStrings = useMemo(() => getStrings(locale).search, [locale])
+  const navStrings = useMemo(() => getStrings(locale).nav, [locale])
+  const localePrefix = locale === "en" ? "" : `/${locale}`
 
   const handleSuggestionClick = (suggestion: string) => {
     const slug = suggestion
@@ -40,18 +51,18 @@ export default function SearchPageClient() {
       .replace(/[^\w\s-]/g, "")
       .replace(/[\s_-]+/g, "-")
       .replace(/^-+|-+$/g, "")
-    if (slug) router.push(`/search/${slug}`)
+    if (slug) router.push(`${localePrefix}/search/${slug}`)
   }
 
   return (
     <>
       <PageHero
-        title="Search Sound Buttons"
-        description="Find the perfect sound effects, meme sounds, and audio clips from our extensive collection"
+        title={searchStrings.heroTitle}
+        description={searchStrings.heroDescription}
       >
         <div className="flex justify-center mt-2 px-2">
           <div className="flex justify-center max-w-3xl md:max-w-4xl lg:max-w-5xl w-full shadow-lg">
-            <SearchBar placeholder="Search for sound buttons, sound effects, audio clips, meme sounds..." />
+            <SearchBar placeholder={searchStrings.searchMorePlaceholder} />
           </div>
         </div>
       </PageHero>
@@ -62,11 +73,11 @@ export default function SearchPageClient() {
             className="flex items-center gap-2 text-sm text-muted-foreground mb-6"
             aria-label="Breadcrumb"
           >
-            <Link href="/" className="hover:text-foreground transition-colors">
-              Home
+            <Link href={localePrefix || "/"} className="hover:text-foreground transition-colors">
+              {navStrings.home}
             </Link>
             <span>/</span>
-            <span className="text-foreground font-medium">Search</span>
+            <span className="text-foreground font-medium">{searchStrings.pageTitle}</span>
           </nav>
 
           {/* Popular Searches */}
@@ -93,7 +104,7 @@ export default function SearchPageClient() {
               {trendingCategories.map((category) => (
                 <Link
                   key={category.slug}
-                  href={`/categories/${category.slug}`}
+                  href={`${localePrefix}/categories/${category.slug}`}
                   className="px-4 py-3 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-lg text-center text-sm font-medium hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
                 >
                   {category.name}

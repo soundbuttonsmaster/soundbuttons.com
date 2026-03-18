@@ -2,7 +2,7 @@ import { notFound, permanentRedirect } from "next/navigation"
 import { headers } from "next/headers"
 import type { Metadata } from "next"
 import SoundDetailClient from "@/components/sound/sound-detail-client"
-import { apiClient } from "@/lib/api/client"
+import { apiClient, fetchSoundCommentsServer, type SoundComment } from "@/lib/api/client"
 import type { Sound } from "@/lib/types/sound"
 import { getCategoryById } from "@/lib/constants/categories"
 import { generateSlug } from "@/lib/utils/slug"
@@ -29,8 +29,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const canonicalSlug = generateSlug(sound.name)
   const canonicalUrl = `${base}/${canonicalSlug}/${sound.id}`
   const soundName = toTitleCase(getNameForTitle(sound.name))
-  const title = `${soundName} Téléchargement d'Effet Sonore : Bouton Soundboard Instantané`
-  const description = `Jouez et téléchargez l'effet sonore ${getDisplaySoundName(sound.name)} instantanément ! Explorez le soundboard de mèmes, les boutons sonores et les effets sonores pour le divertissement, les blagues et la création de contenu.`
+  const title = `${soundName} Téléchargement d'Effet Sonore`
+  const description = `Jouez et téléchargez l'effet ${soundName} instantanément ! Boutons sonores pour mèmes, TikTok et Discord sur SoundButtons.com.`
   const ogImageUrl = `${base}/${canonicalSlug}/${sound.id}/opengraph-image`
   return {
     title: { absolute: title },
@@ -82,6 +82,14 @@ export default async function FrSoundDetailPage({ params }: Props) {
 
   try { await apiClient.updateViews(sound.id) } catch { /* ignore */ }
 
+  let initialComments: SoundComment[] = []
+  let initialCommentsTotal = 0
+  try {
+    const commentsData = await fetchSoundCommentsServer(sound.id, 1, 5)
+    initialComments = commentsData.results
+    initialCommentsTotal = commentsData.total_count
+  } catch { /* ignore */ }
+
   const categoryId = sound.category_id ?? 13
   const category = getCategoryById(categoryId)
   const categorySlug = category?.slug ?? "memes"
@@ -124,6 +132,8 @@ export default async function FrSoundDetailPage({ params }: Props) {
         localePrefix="/fr"
         locale="fr"
         isMobileDevice={isMobile}
+        initialComments={initialComments}
+        initialCommentsTotal={initialCommentsTotal}
       />
     </>
   )

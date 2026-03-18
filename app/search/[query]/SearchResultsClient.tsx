@@ -80,7 +80,7 @@ export default function SearchResultsClient({
 
   const countStr = initialMeta.total_items.toLocaleString(locale === "en" ? "en-US" : locale === "es" ? "es-ES" : locale === "pt" ? "pt-BR" : "fr-FR")
   const heroTitle = searchStrings.heroTitleTemplate.replace("{count}", countStr).replace("{query}", searchQuery)
-  const heroDescription = searchStrings.heroDescriptionTemplate.replace("{count}", countStr)
+  const heroDescription = searchStrings.heroDescriptionTemplate.replace("{count}", countStr).replace("{query}", searchQuery)
   const listTitle = searchStrings.soundListTitleTemplate.replace("{query}", searchQuery)
 
   return (

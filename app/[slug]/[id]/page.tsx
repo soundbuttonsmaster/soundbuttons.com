@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { notFound, permanentRedirect } from "next/navigation"
 import { headers } from "next/headers"
 import SoundDetailClient from "@/components/sound/sound-detail-client"
-import { apiClient } from "@/lib/api/client"
+import { apiClient, fetchSoundCommentsServer, type SoundComment } from "@/lib/api/client"
 import type { Sound } from "@/lib/types/sound"
 import { getCategoryById } from "@/lib/constants/categories"
 import { SITE } from "@/lib/constants/site"
@@ -144,6 +144,17 @@ export default async function SoundDetailPage({ params }: SoundPageProps) {
   } catch {
     // ignore
   }
+
+  let initialComments: SoundComment[] = []
+  let initialCommentsTotal = 0
+  try {
+    const commentsData = await fetchSoundCommentsServer(sound.id, 1, 5)
+    initialComments = commentsData.results
+    initialCommentsTotal = commentsData.total_count
+  } catch {
+    // ignore
+  }
+
   const categoryId = sound.category_id ?? 13
   const category = getCategoryById(categoryId)
   const categorySlug = category?.slug ?? "memes"
@@ -179,6 +190,8 @@ export default async function SoundDetailPage({ params }: SoundPageProps) {
         isMobileDevice={isMobile}
         categorySlug={categorySlug}
         categoryName={category?.name ?? sound.category_name ?? "Sounds"}
+        initialComments={initialComments}
+        initialCommentsTotal={initialCommentsTotal}
       />
     </>
   )

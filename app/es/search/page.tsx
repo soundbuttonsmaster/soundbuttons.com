@@ -9,9 +9,9 @@ export const revalidate = 3600
 const BASE = getLocaleBase("es")
 
 export const metadata: Metadata = {
-  title: { absolute: "Buscar Botones de Sonido - Encontrar Efectos de Sonido y Sonidos de Memes" },
+  title: { absolute: "Buscar Botones de Sonido y Efectos de Memes" },
   description:
-    "Busca en nuestra vasta colección de botones de sonido, efectos de sonido, sonidos de memes y clips de audio. Encuentra el sonido perfecto para tus videos, memes, streams y más. Gratis para descargar y usar.",
+    "Busca botones de sonido, efectos de sonido, memes y clips de audio. Encuentra el sonido perfecto para videos, streams y más. Gratis para descargar.",
   authors: [{ name: "SoundButtons.com" }],
   creator: "SoundButtons.com",
   publisher: "SoundButtons.com",
@@ -27,9 +27,9 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    title: "Buscar Botones de Sonido - Encontrar Efectos de Sonido y Sonidos de Memes",
+    title: "Buscar Botones de Sonido y Efectos de Memes",
     description:
-      "Busca en nuestra vasta colección de botones de sonido, efectos de sonido, sonidos de memes y clips de audio. Encuentra el sonido perfecto para tus videos, memes, streams y más. Gratis para descargar y usar.",
+      "Busca botones de sonido, efectos de sonido, memes y clips de audio. Encuentra el sonido perfecto para videos, streams y más. Gratis para descargar.",
     url: `${BASE}/search`,
     siteName: "Sound Buttons",
     images: [{ url: `${BASE}/search/opengraph-image`, width: 1200, height: 630, type: "image/png" as const, alt: "Buscar Botones de Sonido", secureUrl: `${BASE}/search/opengraph-image` }],
@@ -39,9 +39,9 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "@soundbuttons",
     creator: "@soundbuttons",
-    title: "Buscar Botones de Sonido - Encontrar Efectos de Sonido y Sonidos de Memes",
+    title: "Buscar Botones de Sonido y Efectos de Memes",
     description:
-      "Busca en nuestra vasta colección de botones de sonido, efectos de sonido, sonidos de memes y clips de audio. Encuentra el sonido perfecto para tus videos, memes, streams y más. Gratis para descargar y usar.",
+      "Busca botones de sonido, efectos de sonido, memes y clips de audio. Encuentra el sonido perfecto para videos, streams y más. Gratis para descargar.",
     images: [`${BASE}/search/opengraph-image`],
   },
   robots: { index: true, follow: true },
@@ -78,7 +78,7 @@ export default async function EsSearchPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      <SearchPageClient />
+      <SearchPageClient locale="es" />
     </>
   )
 }

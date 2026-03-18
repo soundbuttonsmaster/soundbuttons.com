@@ -8,9 +8,9 @@ export const revalidate = 3600
 const BASE = getLocaleBase("pt")
 
 export const metadata: Metadata = {
-  title: { absolute: "Pesquisar Botões de Som - Encontrar Efeitos Sonoros e Sons de Memes | SoundButtons.com" },
+  title: { absolute: "Pesquisar Botões de Som e Efeitos de Memes" },
   description:
-    "Pesquise em nossa vasta coleção de botões de som, efeitos sonoros, sons de memes e clipes de áudio. Encontre o som perfeito para seus vídeos, memes, streams e muito mais. Grátis para baixar e usar.",
+    "Pesquise botões de som, efeitos sonoros, memes e clipes de áudio. Encontre o som perfeito para vídeos, streams e mais. Grátis para baixar.",
   authors: [{ name: "SoundButtons.com" }],
   creator: "SoundButtons.com",
   publisher: "SoundButtons.com",
@@ -26,9 +26,9 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    title: "Pesquisar Botões de Som - Encontrar Efeitos Sonoros e Sons de Memes | SoundButtons.com",
+    title: "Pesquisar Botões de Som e Efeitos de Memes",
     description:
-      "Pesquise em nossa vasta coleção de botões de som, efeitos sonoros, sons de memes e clipes de áudio. Encontre o som perfeito para seus vídeos, memes, streams e muito mais. Grátis para baixar e usar.",
+      "Pesquise botões de som, efeitos sonoros, memes e clipes de áudio. Encontre o som perfeito para vídeos, streams e mais. Grátis para baixar.",
     url: `${BASE}/search`,
     siteName: "Sound Buttons",
     images: [{ url: `${BASE}/search/opengraph-image`, width: 1200, height: 630, type: "image/png" as const, alt: "Pesquisar Botões de Som", secureUrl: `${BASE}/search/opengraph-image` }],
@@ -38,9 +38,9 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "@soundbuttons",
     creator: "@soundbuttons",
-    title: "Pesquisar Botões de Som - Encontrar Efeitos Sonoros e Sons de Memes | SoundButtons.com",
+    title: "Pesquisar Botões de Som e Efeitos de Memes",
     description:
-      "Pesquise em nossa vasta coleção de botões de som, efeitos sonoros, sons de memes e clipes de áudio. Encontre o som perfeito para seus vídeos, memes, streams e muito mais. Grátis para baixar e usar.",
+      "Pesquise botões de som, efeitos sonoros, memes e clipes de áudio. Encontre o som perfeito para vídeos, streams e mais. Grátis para baixar.",
     images: [`${BASE}/search/opengraph-image`],
   },
   robots: { index: true, follow: true },
@@ -73,7 +73,7 @@ export default async function PtSearchPage({ searchParams }: { searchParams: Pro
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      <SearchPageClient />
+      <SearchPageClient locale="pt" />
     </>
   )
 }

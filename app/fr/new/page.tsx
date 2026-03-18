@@ -10,9 +10,9 @@ const PAGE_SIZE = 35
 const BASE = getLocaleBase("fr")
 
 export const metadata: Metadata = {
-  title: { absolute: "Myinstants Nouveaux boutons sonores : Table d'harmonie de mèmes originaux, mise à jour quotidiennement" },
+  title: { absolute: "Nouveaux Boutons Sonores: Soundboard Mis à Jour" },
   description:
-    "Découvrez les tout derniers boutons sonores et la table d'harmonie avec des clips audio tendance mis à jour quotidiennement, à écouter, télécharger et partager pour les mèmes, les jeux et le divertissement !",
+    "Découvrez les derniers boutons sonores et soundboard avec des clips audio tendance, mis à jour quotidiennement pour mèmes, jeux et divertissement.",
   authors: [{ name: "SoundButtons.com" }],
   creator: "SoundButtons.com",
   publisher: "SoundButtons.com",
@@ -28,9 +28,9 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    title: "Myinstants Nouveaux boutons sonores : Table d'harmonie de mèmes originaux, mise à jour quotidiennement",
+    title: "Nouveaux Boutons Sonores: Soundboard Mis à Jour",
     description:
-      "Découvrez les tout derniers boutons sonores et la table d'harmonie avec des clips audio tendance mis à jour quotidiennement, à écouter, télécharger et partager pour les mèmes, les jeux et le divertissement !",
+      "Découvrez les derniers boutons sonores et soundboard avec des clips audio tendance, mis à jour quotidiennement pour mèmes, jeux et divertissement.",
     url: `${BASE}/new`,
     siteName: "Sound Buttons",
     images: [{ url: `${BASE}/new/opengraph-image`, width: 1200, height: 630, type: "image/png" as const, alt: "Nouveaux boutons sonores", secureUrl: `${BASE}/new/opengraph-image` }],
@@ -40,9 +40,9 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "@soundbuttons",
     creator: "@soundbuttons",
-    title: "Myinstants Nouveaux boutons sonores : Table d'harmonie de mèmes originaux, mise à jour quotidiennement",
+    title: "Nouveaux Boutons Sonores: Soundboard Mis à Jour",
     description:
-      "Découvrez les tout derniers boutons sonores et la table d'harmonie avec des clips audio tendance mis à jour quotidiennement, à écouter, télécharger et partager pour les mèmes, les jeux et le divertissement !",
+      "Découvrez les derniers boutons sonores et soundboard avec des clips audio tendance, mis à jour quotidiennement pour mèmes, jeux et divertissement.",
     images: [`${BASE}/new/opengraph-image`],
   },
   robots: { index: true, follow: true },
@@ -81,7 +81,7 @@ export default async function FrNewPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      <NewPageClient initialSounds={initialSounds} initialMeta={meta} isMobileDevice={isMobile} />
+      <NewPageClient initialSounds={initialSounds} initialMeta={meta} isMobileDevice={isMobile} locale="fr" />
     </>
   )
 }

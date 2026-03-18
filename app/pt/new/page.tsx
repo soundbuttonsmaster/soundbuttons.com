@@ -10,9 +10,9 @@ const PAGE_SIZE = 35
 const BASE = getLocaleBase("pt")
 
 export const metadata: Metadata = {
-  title: { absolute: "Novos Botões de Som: Áudio Fresco de Meme Soundboard Atualizado Diariamente" },
+  title: { absolute: "Novos Botões de Som: Soundboard Atualizado Diário" },
   description:
-    "Descubra os mais recentes botões de som e soundboard com clipes de áudio novos e em alta, atualizados diariamente para tocar, baixar e compartilhar para memes, jogos e entretenimento!",
+    "Descubra os mais recentes botões de som e soundboard com áudio em alta, atualizados diariamente para memes, jogos e entretenimento.",
   authors: [{ name: "SoundButtons.com" }],
   creator: "SoundButtons.com",
   publisher: "SoundButtons.com",
@@ -28,9 +28,9 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    title: "Novos Botões de Som: Áudio Fresco de Meme Soundboard Atualizado Diariamente",
+    title: "Novos Botões de Som: Soundboard Atualizado Diário",
     description:
-      "Descubra os mais recentes botões de som e soundboard com clipes de áudio novos e em alta, atualizados diariamente para tocar, baixar e compartilhar para memes, jogos e entretenimento!",
+      "Descubra os mais recentes botões de som e soundboard com áudio em alta, atualizados diariamente para memes, jogos e entretenimento.",
     url: `${BASE}/new`,
     siteName: "Sound Buttons",
     images: [{ url: `${BASE}/new/opengraph-image`, width: 1200, height: 630, type: "image/png" as const, alt: "Novos Botões de Som", secureUrl: `${BASE}/new/opengraph-image` }],
@@ -40,9 +40,9 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "@soundbuttons",
     creator: "@soundbuttons",
-    title: "Novos Botões de Som: Áudio Fresco de Meme Soundboard Atualizado Diariamente",
+    title: "Novos Botões de Som: Soundboard Atualizado Diário",
     description:
-      "Descubra os mais recentes botões de som e soundboard com clipes de áudio novos e em alta, atualizados diariamente para tocar, baixar e compartilhar para memes, jogos e entretenimento!",
+      "Descubra os mais recentes botões de som e soundboard com áudio em alta, atualizados diariamente para memes, jogos e entretenimento.",
     images: [`${BASE}/new/opengraph-image`],
   },
   robots: { index: true, follow: true },
@@ -81,7 +81,7 @@ export default async function PtNewPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      <NewPageClient initialSounds={initialSounds} initialMeta={meta} isMobileDevice={isMobile} />
+      <NewPageClient initialSounds={initialSounds} initialMeta={meta} isMobileDevice={isMobile} locale="pt" />
     </>
   )
 }

@@ -7,6 +7,8 @@ import { Heart as HeartFilled } from "lucide-react"
 import ShareModal from "@/components/share/share-modal"
 import SoundButton from "@/components/sound/sound-button"
 import SoundList from "@/components/home/SoundList"
+import { SoundDiscussion } from "@/components/sound/SoundDiscussion"
+import type { SoundComment } from "@/lib/api/client"
 import { Button } from "@/components/ui/button"
 import type { Sound } from "@/lib/types/sound"
 import { SITE } from "@/lib/constants/site"
@@ -31,6 +33,9 @@ interface SoundDetailClientProps {
   /** Locale path prefix for related sound links (e.g. "" for en, "/es" for Spanish). Do not pass functions from Server Components. */
   localePrefix?: string
   locale?: Locale
+  /** SSR: first page of comments and total count for discussion section */
+  initialComments?: SoundComment[]
+  initialCommentsTotal?: number
 }
 
 function parseViews(value: unknown): number {
@@ -57,8 +62,10 @@ export default function SoundDetailClient({
   shareUrl: shareUrlProp,
   localePrefix = "",
   locale: localeProp = "en",
+  initialComments = [],
+  initialCommentsTotal = 0,
 }: SoundDetailClientProps) {
-  const { token } = useAuth()
+  const { token, user, isReady: authReady } = useAuth()
   const [isFavorited, setIsFavorited] = useState(false)
   const [viewCount, setViewCount] = useState(() => getSoundViews(sound))
   const [showShareModal, setShowShareModal] = useState(false)
@@ -159,10 +166,10 @@ export default function SoundDetailClient({
             <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800/90">
               <div className="px-4 pb-2 pt-4 sm:px-5 sm:pt-5">
                 <h1 className="mb-2 text-center text-xl font-bold text-slate-900 dark:text-white sm:text-2xl">
-                  {getDisplaySoundName(sound.name)} Sound Button - Free Download & Play
+                  {sd.h1Template.replace("{soundName}", getDisplaySoundName(sound.name))}
                 </h1>
                 <p className="mb-2 text-center text-sm text-slate-600 dark:text-slate-400">
-                  Play and download {getDisplaySoundName(sound.name).toLowerCase()} sound button for free! Perfect for memes, TikTok, Discord, and content creation. High-quality MP3 download available instantly on SoundButtons.com.
+                  {sd.shortDescriptionTemplate.replace(/{soundName}/g, getDisplaySoundName(sound.name))}
                 </p>
                 <div className="flex flex-wrap items-center justify-center gap-2 text-xs">
                   <Link
@@ -230,6 +237,19 @@ export default function SoundDetailClient({
                 </div>
               </div>
             </div>
+
+            {/* Discussion */}
+            <SoundDiscussion
+              soundId={sound.id}
+              initialComments={initialComments}
+              initialTotal={initialCommentsTotal}
+              locale={localeProp}
+              token={token}
+              loginHref={getLocalizedHref("/login", localeProp) + (soundDetailPath ? `?redirect=${encodeURIComponent(soundDetailPath)}` : "")}
+              t={sd.discussion}
+              currentUsername={user?.username}
+              authReady={authReady}
+            />
 
             {/* You Might Like */}
             {relatedSounds.length > 0 && (

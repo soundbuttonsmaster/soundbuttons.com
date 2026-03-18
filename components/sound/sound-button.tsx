@@ -399,6 +399,7 @@ const CompactSoundButton: React.FC<CompactSoundButtonProps> = ({ sound, isAboveT
           setIsLoading(false);
           setIsPressed(false);
           if (loadingTimeoutRef.current) clearTimeout(loadingTimeoutRef.current);
+          if (token) apiClient.recordPlay(sound.id, token).catch(() => {});
           const monitorStartTime = Date.now();
           const MONITOR_RESUME_MS = 800;
           const monitorInterval = setInterval(() => {

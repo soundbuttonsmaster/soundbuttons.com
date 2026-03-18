@@ -1,13 +1,14 @@
 "use client"
 
 import Link from "next/link"
-import { Menu, X, ChevronDown, ChevronRight, Search, User, LayoutGrid, Heart, Upload, LogOut, Moon, Sun } from "lucide-react"
+import { Menu, X, ChevronDown, ChevronRight, Search, User, LayoutGrid, Heart, Upload, LogOut, Moon, Sun, Flame } from "lucide-react"
 import { useState, useEffect, useRef, FormEvent, useMemo } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import { useTheme } from "next-themes"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
 import { LanguageChanger } from "@/components/ui/language-changer"
 import { useAuth } from "@/lib/auth/auth-context"
+import { apiClient } from "@/lib/api/client"
 import { getTopLevelCategories } from "@/lib/constants/categories"
 import { getStrings, getLocaleFromPathname } from "@/lib/i18n/strings"
 import { getLocalizedHref } from "@/lib/i18n/paths"
@@ -27,10 +28,14 @@ function getDisplayName(user: { full_name?: string; username: string; email: str
   return user.email || "User"
 }
 
+const isHomePath = (path: string | null) =>
+  path === "/" || path === "/fr" || path === "/es" || path === "/pt"
+
 export default function Header() {
   const pathname = usePathname()
   const router = useRouter()
-  const { user, logout } = useAuth()
+  const { user, token, logout } = useAuth()
+  const [headerStreak, setHeaderStreak] = useState<number | null>(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false)
   const [addMoreFunDropdownOpen, setAddMoreFunDropdownOpen] = useState(false)
@@ -71,6 +76,14 @@ export default function Header() {
     ],
     [nav, locale]
   )
+
+  const isHome = isHomePath(pathname ?? null)
+
+  useEffect(() => {
+    if (token)
+      apiClient.getMyStreak(token).then((d) => setHeaderStreak(d.current_streak)).catch(() => setHeaderStreak(null))
+    else setHeaderStreak(null)
+  }, [token])
 
   useEffect(() => {
     setMobileMenuOpen(false)
@@ -233,8 +246,17 @@ export default function Header() {
             </div>
           </nav>
 
-          {/* Right: Search, user/Join Free, language, theme, mobile menu */}
+          {/* Right: Streak (home only), Search, user/Join Free, language, theme, mobile menu */}
           <div className="relative z-10 flex shrink-0 items-center gap-2 sm:gap-3">
+            {isHome && (
+              <Link
+                href={getLocalizedHref("/streak", locale)}
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-orange-500 hover:bg-orange-50 dark:text-orange-400 dark:hover:bg-orange-950/50"
+                aria-label="Streak"
+              >
+                <Flame className="h-5 w-5" />
+              </Link>
+            )}
             {/* Search icon - when inline search is hidden (< xl) to avoid overlapping centered nav */}
             <button
               type="button"
@@ -269,6 +291,12 @@ export default function Header() {
                 >
                   <User className="h-4 w-4 shrink-0 text-slate-500 dark:text-slate-400" />
                   <span className="max-w-[120px] truncate">Hi, {displayName}</span>
+                  {headerStreak != null && headerStreak > 0 && (
+                    <span className="flex items-center gap-0.5 text-orange-500 dark:text-orange-400" title="Streak">
+                      <Flame className="h-4 w-4 shrink-0" />
+                      <span className="tabular-nums">{headerStreak}</span>
+                    </span>
+                  )}
                   <ChevronDown
                     className={`h-4 w-4 shrink-0 transition-transform ${userDropdownOpen ? "rotate-180" : ""}`}
                   />
@@ -280,11 +308,26 @@ export default function Header() {
                   >
                     <div className="border-b border-slate-100 px-3 py-2 dark:border-slate-800">
                       <p className="text-xs text-slate-500 dark:text-slate-400">{nav.signedInAs}</p>
-                      <p className="truncate text-sm font-semibold text-slate-900 dark:text-white">
+                      <p className="truncate text-sm font-semibold text-slate-900 dark:text-white flex items-center gap-1.5">
                         {user.username || displayName}
+                        {headerStreak != null && headerStreak > 0 && (
+                          <span className="flex items-center gap-0.5 text-orange-500 dark:text-orange-400 shrink-0">
+                            <Flame className="h-3.5 w-3.5" />
+                            <span className="tabular-nums text-xs">{headerStreak}</span>
+                          </span>
+                        )}
                       </p>
                     </div>
                     <div className="py-1">
+                      <Link
+                        href={getLocalizedHref("/streak", locale)}
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                        role="menuitem"
+                      >
+                        <Flame className="h-4 w-4 text-orange-500 dark:text-orange-400" />
+                        Streak
+                      </Link>
                       <Link
                         href={getLocalizedHref("/profile", locale)}
                         onClick={() => setUserDropdownOpen(false)}
@@ -494,9 +537,23 @@ export default function Header() {
               <div className="border-t border-slate-200 pt-4 dark:border-slate-800">
                 {user ? (
                   <div className="space-y-1">
-                    <p className="px-4 py-2 text-xs text-slate-500 dark:text-slate-400">
+                    <p className="px-4 py-2 text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
                       {nav.signedInAs} {displayName}
+                      {headerStreak != null && headerStreak > 0 && (
+                        <span className="flex items-center gap-0.5 text-orange-500 dark:text-orange-400">
+                          <Flame className="h-3.5 w-3.5" />
+                          <span className="tabular-nums">{headerStreak}</span>
+                        </span>
+                      )}
                     </p>
+                    <Link
+                      href={getLocalizedHref("/streak", locale)}
+                      className="flex items-center gap-2.5 rounded-lg px-4 py-3 text-base font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <Flame className="h-5 w-5 text-orange-500 dark:text-orange-400" />
+                      Streak
+                    </Link>
                     <Link
                       href={getLocalizedHref("/profile", locale)}
                       className="flex items-center gap-2.5 rounded-lg px-4 py-3 text-base font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
