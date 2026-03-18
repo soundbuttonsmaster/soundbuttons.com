@@ -56,15 +56,15 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Theme is applied by next-themes ThemeProvider (avoids hydration mismatch from inline script) */}
-        {/* PubNation (Mediavine) header script - lazy load */}
+        {/* Mediavine ads - load first on every page */}
         <script
           type="text/javascript"
           async
           data-noptimize="1"
           data-cfasync="false"
-          src="https://scripts.pubnation.com/tags/50f5fedc-1695-4aba-855d-c4d7ec7f5fd6.js"
+          src="//scripts.mediavine.com/tags/sound-buttons.js"
         />
+        {/* Theme is applied by next-themes ThemeProvider (avoids hydration mismatch from inline script) */}
         {/* Google tag (gtag.js) - standard snippet */}
         <script
           async
