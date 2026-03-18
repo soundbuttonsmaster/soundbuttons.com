@@ -132,9 +132,11 @@ export interface StringsSoundDetailDiscussion {
   commentPosted: string
   replyPosted: string
   errorPosting: string
+  noLinksAllowed: string
   placeholder: string
   submit: string
   cancel: string
+  charactersCount: string
 }
 
 export interface StringsSoundDetail {
@@ -478,9 +480,11 @@ const strings: Record<Locale, LocaleStrings> = {
         commentPosted: "Comment posted",
         replyPosted: "Reply posted",
         errorPosting: "Failed to post. Try again.",
+        noLinksAllowed: "Links and URLs are not allowed.",
         placeholder: "Write a comment...",
         submit: "Post",
         cancel: "Cancel",
+        charactersCount: "{current} / {max}",
       },
     },
     about: {
@@ -801,9 +805,11 @@ const strings: Record<Locale, LocaleStrings> = {
         commentPosted: "Comentario publicado",
         replyPosted: "Respuesta publicada",
         errorPosting: "Error al publicar. Inténtalo de nuevo.",
+        noLinksAllowed: "No se permiten enlaces ni URLs.",
         placeholder: "Escribe un comentario...",
         submit: "Publicar",
         cancel: "Cancelar",
+        charactersCount: "{current} / {max}",
       },
     },
     about: {
@@ -1125,9 +1131,11 @@ const strings: Record<Locale, LocaleStrings> = {
         commentPosted: "Comentário publicado",
         replyPosted: "Resposta publicada",
         errorPosting: "Falha ao publicar. Tente novamente.",
+        noLinksAllowed: "Links e URLs não são permitidos.",
         placeholder: "Escreva um comentário...",
         submit: "Publicar",
         cancel: "Cancelar",
+        charactersCount: "{current} / {max}",
       },
     },
     about: {
@@ -1449,9 +1457,11 @@ const strings: Record<Locale, LocaleStrings> = {
         commentPosted: "Commentaire publié",
         replyPosted: "Réponse publiée",
         errorPosting: "Échec de la publication. Réessayez.",
+        noLinksAllowed: "Les liens et URL ne sont pas autorisés.",
         placeholder: "Écrivez un commentaire...",
         submit: "Publier",
         cancel: "Annuler",
+        charactersCount: "{current} / {max}",
       },
     },
     about: {

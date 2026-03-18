@@ -8,6 +8,7 @@ import { apiClient, type SoundComment as SoundCommentType } from "@/lib/api/clie
 import type { StringsSoundDetailDiscussion } from "@/lib/i18n/strings"
 
 const PAGE_SIZE = 5
+const COMMENT_MAX_LENGTH = 100
 
 const AVATAR_COLORS = [
   "bg-fuchsia-500",
@@ -157,6 +158,7 @@ function CommentItem({
               placeholder={t.placeholder}
               className="flex-1 min-w-0 resize-none rounded-2xl border border-slate-200 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 px-4 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-300 dark:focus:ring-slate-600"
               rows={2}
+              maxLength={COMMENT_MAX_LENGTH}
               disabled={replyLoading}
             />
             <Button
@@ -356,14 +358,15 @@ export function SoundDiscussion({
         setTotalCount((n) => n + 1)
         setNewCommentText("")
       } else {
-        setError(res.message ?? t.errorPosting)
+        const msg = res.message ?? t.errorPosting
+        setError(msg.toLowerCase().includes("link") || msg.toLowerCase().includes("url") ? t.noLinksAllowed : msg)
       }
     } catch {
       setError(t.errorPosting)
     } finally {
       setPosting(false)
     }
-  }, [newCommentText, token, soundId, t.errorPosting])
+  }, [newCommentText, token, soundId, t.errorPosting, t.noLinksAllowed])
 
   const handlePostReply = useCallback(
     async (parentId: number, body: string) => {
@@ -381,7 +384,8 @@ export function SoundDiscussion({
           )
           setTotalCount((n) => n + 1)
         } else {
-          setError(res.message ?? t.errorPosting)
+          const msg = res.message ?? t.errorPosting
+          setError(msg.toLowerCase().includes("link") || msg.toLowerCase().includes("url") ? t.noLinksAllowed : msg)
         }
       } catch {
         setError(t.errorPosting)
@@ -389,7 +393,7 @@ export function SoundDiscussion({
         setReplyLoading(false)
       }
     },
-    [token, soundId, t.errorPosting]
+    [token, soundId, t.errorPosting, t.noLinksAllowed]
   )
 
   return (
@@ -446,18 +450,22 @@ export function SoundDiscussion({
                   placeholder={t.placeholder}
                   className="flex-1 min-w-0 resize-none bg-transparent py-2 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:outline-none border-0 min-h-[40px]"
                   rows={2}
+                  maxLength={COMMENT_MAX_LENGTH}
                   disabled={posting}
                 />
                 <Button
                   type="button"
                   onClick={handlePostComment}
-                  disabled={posting || !newCommentText.trim()}
+                  disabled={posting || !newCommentText.trim() || newCommentText.length > COMMENT_MAX_LENGTH}
                   className="shrink-0 h-8 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 text-sm font-semibold hover:bg-slate-800 dark:hover:bg-slate-200"
                 >
                   {posting ? <Loader2 className="h-4 w-4 animate-spin" /> : t.postComment}
                 </Button>
               </div>
             </div>
+            <p className="mt-1.5 text-xs text-slate-500 dark:text-slate-400" aria-live="polite">
+              {t.charactersCount.replace("{current}", String(newCommentText.length)).replace("{max}", String(COMMENT_MAX_LENGTH))}
+            </p>
           </div>
         )}
       </div>
