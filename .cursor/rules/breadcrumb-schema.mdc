@@ -1,5 +1,5 @@
 ---
-description: Breadcrumb schema for SERP - plain URL path segments only, NEVER Home
+description: Breadcrumb schema for SERP - Home (or locale equivalent) as first item on all subpages
 globs: app/**/page.tsx, app/**/layout.tsx
 alwaysApply: false
 ---
@@ -8,32 +8,30 @@ alwaysApply: false
 
 Use **BreadcrumbList** JSON-LD for SERP breadcrumbs. Plain URL path segments only.
 
-## Critical: NO HOME
+## Critical: Home First
 
-**DO NOT add "Home" or root (`/`) to breadcrumb schema.** Never include `{ name: "Home", item: "/" }` in `itemListElement`. This breaks SEO and the user explicitly forbids it. Start breadcrumbs from the first meaningful path segment (e.g. categories, search, slug).
+**Home (or locale equivalent) must be the first ListItem** in breadcrumb schema on every subpage. Use position 1, name "Home" (or "Accueil" / "Início" / "Inicio" for locale pages), and item = site root or locale root (e.g. `${BASE}/` or `${base}` for /fr, /pt, /es).
 
 ## Rules
 
-- **Plain URL path segments** as `name` (e.g. `"about-us"`, `"blog"`, `"categories"`, `"reactions"`)
-- **NEVER include "Home"** or root in `itemListElement` - no exceptions
-- **Each page defines its own schema** - no shared schema files, no exports/imports
+- **First item:** Home / Accueil / Início / Inicio at position 1 linking to site or locale root.
+- **Plain URL path segments** as `name` for subsequent items (e.g. `"about-us"`, `"blog"`, `"categories"`).
+- **Each page defines its own schema** - no shared schema files, no exports/imports.
 - Add inline via `<script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />`
 
 ## Pattern
 
 ```tsx
-// ✅ Correct - no Home
+// ✅ Correct - Home first on subpages
 const breadcrumbSchema = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   itemListElement: [
-    { "@type": "ListItem", position: 1, name: "categories", item: `${BASE}/categories` },
-    { "@type": "ListItem", position: 2, name: category.name, item: `${BASE}/categories/${slug}` },
+    { "@type": "ListItem", position: 1, name: "Home", item: `${BASE}/` },
+    { "@type": "ListItem", position: 2, name: "categories", item: `${BASE}/categories` },
+    { "@type": "ListItem", position: 3, name: category.name, item: `${BASE}/categories/${slug}` },
   ],
 }
-
-// ❌ WRONG - never do this
-// { "@type": "ListItem", position: 1, name: "Home", item: `${BASE}/` },
 ```
 
-Do not touch home page (`app/page.tsx`).
+Do not touch home page (`app/page.tsx`) or locale home pages (`app/fr/page.tsx`, `app/pt/page.tsx`, `app/es/page.tsx`).

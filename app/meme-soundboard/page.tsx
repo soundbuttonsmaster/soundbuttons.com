@@ -1,6 +1,9 @@
 import { headers } from "next/headers"
 import { apiClient } from "@/lib/api/client"
+import { SITE } from "@/lib/constants/site"
 import MemeSoundboardClient from "./MemeSoundboardClient"
+
+const BASE = SITE.baseUrl
 
 export const revalidate = 300
 
@@ -40,12 +43,8 @@ export default async function MemeSoundboardPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "meme-soundboard",
-        item: "https://soundbuttons.com/meme-soundboard",
-      },
+      { "@type": "ListItem", position: 1, name: "Home", item: `${BASE}/` },
+      { "@type": "ListItem", position: 2, name: "meme-soundboard", item: `${BASE}/meme-soundboard` },
     ],
   }
 

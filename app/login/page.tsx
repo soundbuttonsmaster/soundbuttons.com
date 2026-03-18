@@ -1,17 +1,16 @@
+import { SITE } from "@/lib/constants/site"
 import { Suspense } from "react"
 import LoginClient from "./LoginClient"
+
+const BASE = SITE.baseUrl
 
 export default function LoginPage() {
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "login",
-        item: "https://soundbuttons.com/login",
-      },
+      { "@type": "ListItem", position: 1, name: "Home", item: `${BASE}/` },
+      { "@type": "ListItem", position: 2, name: "login", item: `${BASE}/login` },
     ],
   }
 

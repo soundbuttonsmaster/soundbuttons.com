@@ -1,4 +1,7 @@
 import type { Metadata, Viewport } from "next"
+import { SITE } from "@/lib/constants/site"
+
+const BASE = SITE.baseUrl
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -83,12 +86,8 @@ export default function ContactUsLayout({
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "contact-us",
-        item: "https://soundbuttons.com/contact-us",
-      },
+      { "@type": "ListItem", position: 1, name: "Home", item: `${BASE}/` },
+      { "@type": "ListItem", position: 2, name: "contact-us", item: `${BASE}/contact-us` },
     ],
   }
   return (

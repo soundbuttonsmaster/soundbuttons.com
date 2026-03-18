@@ -9,7 +9,7 @@ export const revalidate = 60
 
 const HOME_TITLE = "Sound Buttons - 9,99,999+ Meme Soundboard Unblocked"
 const HOME_DESCRIPTION =
-  "Play thousands of sound buttons with the best sound, buttons, meme, prank, sound effect, and high-quality audio in one powerful soundboard unblocked"
+  "Play thousands of sound buttons with the best meme soundboard, buttons, prank, funny sound effect, and high-quality audio in unblocked soundboards."
 
 export const metadata: Metadata = {
   title: { absolute: HOME_TITLE },
@@ -176,6 +176,21 @@ export default async function HomePage() {
     })),
   }
 
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "SoundButtons.com",
+    url: SITE.baseUrl,
+    sameAs: [
+      "https://www.facebook.com/soundbuttons/",
+      "https://x.com/sound_buttons",
+      "https://www.instagram.com/soundbuttons_com",
+      "https://www.youtube.com/@SoundButtons-07",
+      "https://www.threads.com/@soundbuttons_com",
+      "https://open.spotify.com/show/3KHK8lf8sr6Y0TQ0kGnGwW",
+    ],
+  }
+
   const siteNavSchema = {
     "@context": "https://schema.org",
     "@graph": [
@@ -219,7 +234,7 @@ export default async function HomePage() {
     ],
   }
 
-  const jsonLd = [breadcrumbSchema, itemListSchema, siteNavSchema]
+  const jsonLd = [breadcrumbSchema, itemListSchema, organizationSchema, siteNavSchema]
 
   return (
     <>

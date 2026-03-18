@@ -69,7 +69,10 @@ export default async function PtNewPage() {
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement: [{ "@type": "ListItem", position: 1, name: "new", item: `${BASE}/new` }],
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Início", item: BASE },
+      { "@type": "ListItem", position: 2, name: "new", item: `${BASE}/new` },
+    ],
   }
 
   return (

@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: { params: Promise<{ query: st
   const canonicalUrl = `${base}/search/${query}`
   const searchName = toTitleCase(searchQuery)
   const soundCount = totalItems
-  const title = `${searchName} Soundboard: ${soundCount} Bouton d'Effet Sonore Instantané`
+  const title = `${searchName} Soundboard : Jouer effet sonore instantané`
   const description = `Jouez et téléchargez ${soundCount} boutons sonores ${searchName} gratuitement ! Lecture instantanée, téléchargements MP3 haute qualité. Parfait pour les mèmes, TikTok, Discord et la création de contenu.`
   const ogImageUrl = `${base}/search/${query}/opengraph-image`
   return {
@@ -85,8 +85,9 @@ export default async function FrSearchResultsPage({ params }: { params: Promise<
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "search", item: `${base}/search` },
-      { "@type": "ListItem", position: 2, name: searchQuery, item: `${base}/search/${querySlug}` },
+      { "@type": "ListItem", position: 1, name: "Accueil", item: base },
+      { "@type": "ListItem", position: 2, name: "search", item: `${base}/search` },
+      { "@type": "ListItem", position: 3, name: searchQuery, item: `${base}/search/${querySlug}` },
     ],
   }
 

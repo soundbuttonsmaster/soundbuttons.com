@@ -81,8 +81,9 @@ export default async function PtCategoryDetailPage({ params }: Props) {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "categories", item: `${base}/categories` },
-      { "@type": "ListItem", position: 2, name: category.name, item: `${base}/categories/${slug}` },
+      { "@type": "ListItem", position: 1, name: "Início", item: base },
+      { "@type": "ListItem", position: 2, name: "categories", item: `${base}/categories` },
+      { "@type": "ListItem", position: 3, name: category.name, item: `${base}/categories/${slug}` },
     ],
   }
 

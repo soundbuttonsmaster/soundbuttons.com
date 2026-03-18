@@ -8,16 +8,13 @@ import { SITE } from "@/lib/constants/site"
 export const revalidate = 86400
 
 export default function CategoriesPage() {
+  const BASE = SITE.baseUrl
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "categories",
-        item: `${SITE.baseUrl}/categories`,
-      },
+      { "@type": "ListItem", position: 1, name: "Home", item: `${BASE}/` },
+      { "@type": "ListItem", position: 2, name: "categories", item: `${BASE}/categories` },
     ],
   }
 

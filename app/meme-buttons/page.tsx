@@ -1,6 +1,9 @@
 import { headers } from "next/headers"
 import { apiClient } from "@/lib/api/client"
+import { SITE } from "@/lib/constants/site"
 import MemeButtonsClient from "./MemeButtonsClient"
+
+const BASE = SITE.baseUrl
 
 export const revalidate = 300
 
@@ -32,12 +35,8 @@ export default async function MemeButtonsPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "meme-buttons",
-        item: "https://soundbuttons.com/meme-buttons",
-      },
+      { "@type": "ListItem", position: 1, name: "Home", item: `${BASE}/` },
+      { "@type": "ListItem", position: 2, name: "meme-buttons", item: `${BASE}/meme-buttons` },
     ],
   }
 

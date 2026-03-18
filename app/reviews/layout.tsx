@@ -69,7 +69,8 @@ const breadcrumbSchema = {
   "@context": "https://schema.org" as const,
   "@type": "BreadcrumbList" as const,
   itemListElement: [
-    { "@type": "ListItem" as const, position: 1, name: "reviews", item: `${BASE}/reviews` },
+    { "@type": "ListItem" as const, position: 1, name: "Home", item: `${BASE}/` },
+    { "@type": "ListItem" as const, position: 2, name: "reviews", item: `${BASE}/reviews` },
   ],
 }
 

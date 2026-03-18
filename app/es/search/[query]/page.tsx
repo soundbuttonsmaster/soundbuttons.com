@@ -38,7 +38,7 @@ export async function generateMetadata({
   const canonicalUrl = `${base}/search/${query}`
   const searchName = toTitleCase(searchQuery)
   const soundCount = totalItems
-  const title = `${searchName} Soundboard: ${soundCount} Botón de Efecto de Sonido Instantáneo`
+  const title = `${searchName} Soundboard: Reproducir efecto de sonido instantáneo`
   const description = `¡Reproduce y descarga ${soundCount} botones de sonido ${searchName} gratis! Reproducción instantánea, descargas MP3 de alta calidad. Perfecto para memes, TikTok, Discord y creación de contenido.`
   const ogImageUrl = `${base}/search/${query}/opengraph-image`
 
@@ -105,8 +105,9 @@ export default async function EsSearchResultsPage({
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "search", item: `${base}/search` },
-      { "@type": "ListItem", position: 2, name: searchQuery, item: `${base}/search/${querySlug}` },
+      { "@type": "ListItem", position: 1, name: "Inicio", item: base },
+      { "@type": "ListItem", position: 2, name: "search", item: `${base}/search` },
+      { "@type": "ListItem", position: 3, name: searchQuery, item: `${base}/search/${querySlug}` },
     ],
   }
 

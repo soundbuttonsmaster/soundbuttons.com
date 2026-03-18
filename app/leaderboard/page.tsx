@@ -1,6 +1,8 @@
 import { apiClient } from "@/lib/api/client"
+import { SITE } from "@/lib/constants/site"
 import LeaderboardClient from "./LeaderboardClient"
 
+const BASE = SITE.baseUrl
 export const revalidate = 60
 
 export default async function LeaderboardPage() {
@@ -19,12 +21,8 @@ export default async function LeaderboardPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "leaderboard",
-        item: "https://soundbuttons.com/leaderboard",
-      },
+      { "@type": "ListItem", position: 1, name: "Home", item: `${BASE}/` },
+      { "@type": "ListItem", position: 2, name: "leaderboard", item: `${BASE}/leaderboard` },
     ],
   }
 

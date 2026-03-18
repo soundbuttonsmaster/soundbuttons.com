@@ -90,9 +90,10 @@ const breadcrumbSchema = {
   "@context": "https://schema.org" as const,
   "@type": "BreadcrumbList" as const,
   itemListElement: [
+    { "@type": "ListItem" as const, position: 1, name: "Home", item: `${BASE}/` },
     {
       "@type": "ListItem" as const,
-      position: 1,
+      position: 2,
       name: "sound-buttons-unblocked-for-school",
       item: `${BASE}/sound-buttons-unblocked-for-school`,
     },

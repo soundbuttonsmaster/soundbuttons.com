@@ -1,6 +1,9 @@
 import { headers } from "next/headers"
 import { kidsSoundboardApi } from "@/lib/api/kids-soundboard"
+import { SITE } from "@/lib/constants/site"
 import KidsSoundboardClient from "./KidsSoundboardClient"
+
+const BASE = SITE.baseUrl
 
 export const dynamic = "force-dynamic"
 
@@ -33,12 +36,8 @@ export default async function KidsSoundboardPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "kids-soundboard",
-        item: "https://soundbuttons.com/kids-soundboard",
-      },
+      { "@type": "ListItem", position: 1, name: "Home", item: `${BASE}/` },
+      { "@type": "ListItem", position: 2, name: "kids-soundboard", item: `${BASE}/kids-soundboard` },
     ],
   }
 

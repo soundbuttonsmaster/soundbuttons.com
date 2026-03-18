@@ -72,6 +72,10 @@ export const metadata: Metadata = {
   },
 }
 
+import { SITE } from "@/lib/constants/site"
+
+const BASE = SITE.baseUrl
+
 export default function CreateSoundLayout({
   children,
 }: {
@@ -81,12 +85,8 @@ export default function CreateSoundLayout({
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "create-sound",
-        item: "https://soundbuttons.com/create-sound",
-      },
+      { "@type": "ListItem", position: 1, name: "Home", item: `${BASE}/` },
+      { "@type": "ListItem", position: 2, name: "create-sound", item: `${BASE}/create-sound` },
     ],
   }
   return (

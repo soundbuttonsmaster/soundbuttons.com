@@ -112,7 +112,8 @@ export default function AboutUsPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "about-us", item: `${BASE}/about-us` },
+      { "@type": "ListItem", position: 1, name: "Home", item: `${BASE}/` },
+      { "@type": "ListItem", position: 2, name: "about-us", item: `${BASE}/about-us` },
     ],
   }
   return (

@@ -160,8 +160,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "blog", item: `${BASE}/blog` },
-      { "@type": "ListItem", position: 2, name: blog.title, item: pageUrl },
+      { "@type": "ListItem", position: 1, name: "Home", item: `${BASE}/` },
+      { "@type": "ListItem", position: 2, name: "blog", item: `${BASE}/blog` },
+      { "@type": "ListItem", position: 3, name: blog.title, item: pageUrl },
     ],
   }
 

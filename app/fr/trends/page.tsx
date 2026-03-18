@@ -68,7 +68,10 @@ export default async function FrTrendsPage() {
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement: [{ "@type": "ListItem", position: 1, name: "trends", item: `${BASE}/trends` }],
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Accueil", item: BASE },
+      { "@type": "ListItem", position: 2, name: "trends", item: `${BASE}/trends` },
+    ],
   }
 
   return (

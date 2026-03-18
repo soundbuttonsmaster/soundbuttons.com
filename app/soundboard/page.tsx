@@ -31,7 +31,8 @@ export default async function SoundboardPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "soundboard", item: `${BASE}/soundboard` },
+      { "@type": "ListItem", position: 1, name: "Home", item: `${BASE}/` },
+      { "@type": "ListItem", position: 2, name: "soundboard", item: `${BASE}/soundboard` },
     ],
   }
 

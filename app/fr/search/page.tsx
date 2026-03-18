@@ -61,7 +61,10 @@ export default async function FrSearchPage({ searchParams }: { searchParams: Pro
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement: [{ "@type": "ListItem", position: 1, name: "search", item: `${BASE}/search` }],
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Accueil", item: BASE },
+      { "@type": "ListItem", position: 2, name: "search", item: `${BASE}/search` },
+    ],
   }
 
   return (

@@ -96,6 +96,21 @@ export default async function FrHomePage() {
     })),
   }
 
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "SoundButtons.com",
+    url: SITE.baseUrl,
+    sameAs: [
+      "https://www.facebook.com/soundbuttons/",
+      "https://x.com/sound_buttons",
+      "https://www.instagram.com/soundbuttons_com",
+      "https://www.youtube.com/@SoundButtons-07",
+      "https://www.threads.com/@soundbuttons_com",
+      "https://open.spotify.com/show/3KHK8lf8sr6Y0TQ0kGnGwW",
+    ],
+  }
+
   const siteNavSchema = {
     "@context": "https://schema.org",
     "@graph": [
@@ -118,6 +133,10 @@ export default async function FrHomePage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
       />
       <script
         type="application/ld+json"

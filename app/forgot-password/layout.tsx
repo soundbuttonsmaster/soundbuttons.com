@@ -1,4 +1,7 @@
 import type { Metadata, Viewport } from "next"
+import { SITE } from "@/lib/constants/site"
+
+const BASE = SITE.baseUrl
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -64,12 +67,8 @@ export default function ForgotPasswordLayout({
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "forgot-password",
-        item: "https://soundbuttons.com/forgot-password",
-      },
+      { "@type": "ListItem", position: 1, name: "Home", item: `${BASE}/` },
+      { "@type": "ListItem", position: 2, name: "forgot-password", item: `${BASE}/forgot-password` },
     ],
   }
   return (

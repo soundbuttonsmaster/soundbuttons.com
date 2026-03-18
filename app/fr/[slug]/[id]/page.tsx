@@ -101,9 +101,10 @@ export default async function FrSoundDetailPage({ params }: Props) {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "categories", item: `${base}/categories` },
-      { "@type": "ListItem", position: 2, name: categoryName, item: breadcrumbCategoryUrl },
-      { "@type": "ListItem", position: 3, name: getDisplaySoundName(sound.name), item: shareUrl },
+      { "@type": "ListItem", position: 1, name: "Accueil", item: base },
+      { "@type": "ListItem", position: 2, name: "categories", item: `${base}/categories` },
+      { "@type": "ListItem", position: 3, name: categoryName, item: breadcrumbCategoryUrl },
+      { "@type": "ListItem", position: 4, name: getDisplaySoundName(sound.name), item: shareUrl },
     ],
   }
 

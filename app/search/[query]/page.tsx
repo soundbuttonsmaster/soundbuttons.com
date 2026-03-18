@@ -41,7 +41,7 @@ export async function generateMetadata({
   }
 
   const name = toTitleCase(searchQuery)
-  const title = `${name} Soundboard: ${totalItems} Play Instant Sound Effect Button`
+  const title = `${name} Soundboard: Play Instant Sound Effect Button`
   const description = `Play and download ${searchQuery} sound buttons for free! Instant play, high-quality MP3 downloads. Perfect for memes, TikTok, Discord, and content creation.`
   const keywords = `${searchQuery}, ${searchQuery} sound buttons, ${searchQuery} sound effects, ${searchQuery} meme, ${searchQuery} audio, ${searchQuery} download, sound buttons, sound effects, meme soundboard`
   const canonicalUrl = `${BASE}/search/${query}`
