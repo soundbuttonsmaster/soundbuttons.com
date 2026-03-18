@@ -73,6 +73,14 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
+/* Mediavine Mobile CSS - prevents side scroll on small devices (max-width 399px) */
+@media only screen and (max-width: 399px) {
+  header {
+    overflow-x: auto !important;
+  }
+}
+/* Mediavine CSS Ends */
+
 /* Hero Section - theme-aware (dark in both modes, slightly lighter in light mode) */
 .hero-section-lcp {
   width: 100%;

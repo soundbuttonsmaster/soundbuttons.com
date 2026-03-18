@@ -158,8 +158,8 @@ export default function Header() {
 
   return (
     <>
-      {/* z-[99998] so header stays above PubNation/Mediavine ad-injected elements that load after page (was blocking clicks) */}
-      <header className="sticky top-0 z-[99998] w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:bg-slate-950/95 dark:supports-[backdrop-filter]:dark:bg-slate-950/80 border-slate-200 dark:border-slate-800">
+      {/* z-[9999999] — must stay above Mediavine/PubNation ad units injected at body level (they use up to ~999999) */}
+      <header className="sticky top-0 z-[9999999] w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:bg-slate-950/95 dark:supports-[backdrop-filter]:dark:bg-slate-950/80 border-slate-200 dark:border-slate-800">
         <div className="relative flex h-14 w-full items-center justify-between gap-4 px-4 sm:px-6">
           {/* Logo - left */}
           <Link href={getLocalizedHref("/", locale)} className="relative z-10 flex shrink-0 items-center">
@@ -431,18 +431,18 @@ export default function Header() {
         </div>
       </header>
 
-      {/* Mobile overlay - z-[99999] so above header when menu open */}
+      {/* Mobile overlay - above header */}
       {mobileMenuOpen && (
         <div
-          className="fixed inset-0 z-[99999] bg-black/50 lg:hidden"
+          className="fixed inset-0 z-[99999999] bg-black/50 lg:hidden"
           onClick={() => setMobileMenuOpen(false)}
           aria-hidden
         />
       )}
 
-      {/* Mobile menu panel - z-[99999] when open; pointer-events-none when closed so header stays clickable */}
+      {/* Mobile menu panel - above header when open */}
       <div
-        className={`fixed top-0 right-0 z-[99999] h-full w-full max-w-xs transform bg-white shadow-2xl transition-transform duration-300 dark:bg-slate-950 lg:hidden ${
+        className={`fixed top-0 right-0 z-[99999999] h-full w-full max-w-xs transform bg-white shadow-2xl transition-transform duration-300 dark:bg-slate-950 lg:hidden ${
           mobileMenuOpen ? "translate-x-0 pointer-events-auto" : "translate-x-full pointer-events-none"
         }`}
       >
@@ -625,7 +625,7 @@ export default function Header() {
       {/* Search overlay - shown when search icon is visible (below xl) so tap works on small/medium screens */}
       {searchOverlayOpen && (
         <div
-          className="fixed inset-0 z-[99999] flex items-start justify-center pt-20 px-4 xl:hidden"
+          className="fixed inset-0 z-[99999999] flex items-start justify-center pt-20 px-4 xl:hidden"
           aria-modal="true"
           role="dialog"
           aria-label="Search"
