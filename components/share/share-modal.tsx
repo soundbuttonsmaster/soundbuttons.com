@@ -33,7 +33,7 @@ const ShareModal = ({ soundName, soundId, isOpen, onClose, shareUrl: shareUrlPro
     typeof window !== "undefined"
       ? `${window.location.origin}/${baseSlug || `sound`}/${soundId}`
       : `${SITE.baseUrl}/${baseSlug || `sound`}/${soundId}`
-  const soundUrl = shareUrlProp ?? defaultUrl
+  const soundUrl = (shareUrlProp && shareUrlProp.trim()) ? shareUrlProp.trim() : defaultUrl
   const encodedUrl = encodeURIComponent(soundUrl)
   const encodedText = encodeURIComponent(`Check out this sound: ${soundName}`)
 
@@ -87,10 +87,11 @@ const ShareModal = ({ soundName, soundId, isOpen, onClose, shareUrl: shareUrlPro
   ]
 
   const copyToClipboard = async () => {
+    if (!soundUrl) return
     try {
       await navigator.clipboard.writeText(soundUrl)
       setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+      setTimeout(() => setCopied(false), 2500)
     } catch {
       setCopied(false)
     }
@@ -114,7 +115,7 @@ const ShareModal = ({ soundName, soundId, isOpen, onClose, shareUrl: shareUrlPro
   if (!isOpen || !mounted) return null
 
   const modalContent = (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4">
       <div
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
@@ -125,6 +126,7 @@ const ShareModal = ({ soundName, soundId, isOpen, onClose, shareUrl: shareUrlPro
         role="dialog"
         aria-labelledby="share-modal-title"
         aria-modal="true"
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
           <div className="flex items-center gap-3">
@@ -159,7 +161,7 @@ const ShareModal = ({ soundName, soundId, isOpen, onClose, shareUrl: shareUrlPro
                 href={p.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex flex-col items-center justify-center p-3 rounded-lg border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors text-sm font-medium"
+                className="flex flex-col items-center justify-center p-3 rounded-xl border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:border-slate-300 dark:hover:border-slate-500 transition-all text-sm font-medium"
                 title={p.label}
               >
                 {p.name}

@@ -50,14 +50,9 @@ export default function Header() {
   const navBeforeLinks = useMemo(
     () => [
       { name: nav.home, href: getLocalizedHref("/", locale) },
-      { name: nav.soundEffects, href: getLocalizedHref("/categories/sound-effects", locale) },
       { name: nav.new, href: getLocalizedHref("/new", locale) },
       { name: nav.trending, href: getLocalizedHref("/trends", locale) },
     ],
-    [nav, locale]
-  )
-  const navAfterLinks = useMemo(
-    () => [{ name: nav.memeSoundboard, href: getLocalizedHref("/categories/memes", locale) }],
     [nav, locale]
   )
   const addMoreFunLinks = useMemo(
@@ -148,14 +143,14 @@ export default function Header() {
       {/* z-[99998] so header stays above PubNation/Mediavine ad-injected elements that load after page (was blocking clicks) */}
       <header className="sticky top-0 z-[99998] w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:bg-slate-950/95 dark:supports-[backdrop-filter]:dark:bg-slate-950/80 border-slate-200 dark:border-slate-800">
         <div className="relative flex h-14 w-full items-center justify-between gap-4 px-4 sm:px-6">
-          {/* Logo - left (z-10 so it stays above centered nav and is clickable) */}
+          {/* Logo - left */}
           <Link href={getLocalizedHref("/", locale)} className="relative z-10 flex shrink-0 items-center">
             <span className="text-base font-bold tracking-tight text-slate-900 dark:text-white sm:text-lg">
               SOUND BUTTONS
             </span>
           </Link>
 
-          {/* Desktop Nav - ABSOLUTE CENTER; pointer-events-none when hidden so logo/right section stay clickable */}
+          {/* Desktop Nav - centered as before */}
           <nav
             className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 pointer-events-none lg:flex lg:items-center lg:gap-0.5 lg:pointer-events-auto"
             aria-label="Main navigation"
@@ -193,7 +188,7 @@ export default function Header() {
                     className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                     onClick={() => setCategoryDropdownOpen(false)}
                   >
-                    {cat.name}
+                    {cat.apiName}
                   </Link>
                 ))}
               </div>
@@ -231,28 +226,23 @@ export default function Header() {
                 ))}
               </div>
             </div>
-            {navAfterLinks.map((link) => (
-              <Link key={link.href} href={link.href} className={navLinkClass}>
-                {link.name}
-              </Link>
-            ))}
           </nav>
 
-          {/* Right section (z-10 so it stays above centered nav and is clickable) */}
+          {/* Right: Search, user/Join Free, language, theme, mobile menu */}
           <div className="relative z-10 flex shrink-0 items-center gap-2 sm:gap-3">
-            {/* Search icon - when inline search is hidden (< lg) */}
+            {/* Search icon - when inline search is hidden (< xl) to avoid overlapping centered nav */}
             <button
               type="button"
               onClick={() => setSearchOverlayOpen(true)}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 lg:hidden"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 xl:hidden"
               aria-label={nav.searchPlaceholder}
             >
               <Search className="h-5 w-5" />
             </button>
-            {/* Search - desktop (lg only) */}
+            {/* Search - desktop (xl and up only, so no overlap with centered nav on smaller desktop) */}
             <form
               onSubmit={handleSearchSubmit}
-              className="hidden lg:flex lg:items-center lg:gap-1.5 lg:rounded-lg lg:border lg:border-slate-300 lg:bg-slate-50 lg:px-2.5 lg:py-1.5 lg:focus-within:ring-2 lg:focus-within:ring-slate-400/20 dark:border-slate-600 dark:bg-slate-800/50 dark:focus-within:ring-slate-500/20 lg:min-w-[140px] lg:max-w-[200px]"
+              className="hidden xl:flex xl:items-center xl:gap-1.5 xl:rounded-lg xl:border xl:border-slate-300 xl:bg-slate-50 xl:px-2.5 xl:py-1.5 xl:focus-within:ring-2 xl:focus-within:ring-slate-400/20 dark:border-slate-600 dark:bg-slate-800/50 dark:focus-within:ring-slate-500/20 xl:min-w-[140px] xl:max-w-[200px]"
             >
               <Search className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-500" />
               <input
@@ -435,7 +425,7 @@ export default function Header() {
                         className="block py-2 text-sm text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
                         onClick={() => setMobileMenuOpen(false)}
                       >
-                        {cat.name}
+                        {cat.apiName}
                       </Link>
                     ))}
                   </div>
@@ -469,16 +459,6 @@ export default function Header() {
                   </div>
                 )}
               </div>
-              {navAfterLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="block rounded-lg px-4 py-3 text-base font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {link.name}
-                </Link>
-              ))}
               <div className="border-t border-slate-200 pt-4 dark:border-slate-800">
                 {user ? (
                   <div className="space-y-1">
@@ -553,10 +533,10 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Search overlay - z-[99999] so above header when open */}
+      {/* Search overlay - shown when search icon is visible (below xl) so tap works on small/medium screens */}
       {searchOverlayOpen && (
         <div
-          className="fixed inset-0 z-[99999] flex items-start justify-center pt-20 px-4 lg:hidden"
+          className="fixed inset-0 z-[99999] flex items-start justify-center pt-20 px-4 xl:hidden"
           aria-modal="true"
           role="dialog"
           aria-label="Search"
@@ -567,24 +547,36 @@ export default function Header() {
             aria-hidden
           />
           <div className="relative z-10 w-full max-w-md rounded-xl border border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900">
-            <form onSubmit={handleSearchSubmit} className="flex items-center gap-2 p-2">
-              <Search className="h-5 w-5 shrink-0 text-slate-400 dark:text-slate-500" />
-              <input
-                ref={searchOverlayInputRef}
-                type="search"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={nav.searchPlaceholder}
-                className="min-w-0 flex-1 bg-transparent py-2 text-base text-slate-900 placeholder-slate-400 focus:outline-none dark:text-slate-100 dark:placeholder-slate-500"
-              />
-              <button
-                type="button"
-                onClick={() => setSearchOverlayOpen(false)}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800"
-                aria-label="Close search"
-              >
-                <X className="h-5 w-5" />
-              </button>
+            <form onSubmit={handleSearchSubmit} className="flex flex-col gap-2 p-3 sm:flex-row sm:items-center">
+              <div className="flex flex-1 items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 dark:border-slate-600 dark:bg-slate-800/50">
+                <Search className="h-5 w-5 shrink-0 text-slate-400 dark:text-slate-500" />
+                <input
+                  ref={searchOverlayInputRef}
+                  type="search"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder={nav.searchPlaceholder}
+                  className="min-w-0 flex-1 bg-transparent py-1.5 text-base text-slate-900 placeholder-slate-500 focus:outline-none dark:text-slate-100"
+                  autoComplete="off"
+                />
+              </div>
+              <div className="flex gap-2">
+                <button
+                  type="submit"
+                  className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
+                >
+                  <Search className="h-4 w-4" />
+                  Search
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSearchOverlayOpen(false)}
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800"
+                  aria-label="Close search"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
             </form>
           </div>
         </div>

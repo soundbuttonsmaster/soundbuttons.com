@@ -979,7 +979,7 @@ const CompactSoundButton: React.FC<CompactSoundButtonProps> = ({ sound, isAboveT
         soundId={sound.id}
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
-        shareUrl={detailPathProp ? (typeof window !== 'undefined' ? `${window.location.origin}${detailPathProp}` : undefined) : undefined}
+        shareUrl={typeof window !== 'undefined' ? `${window.location.origin}${detailPathProp ?? getSoundDetailPath(sound.name ?? '', sound.id)}` : undefined}
       />
     </div>
   );
