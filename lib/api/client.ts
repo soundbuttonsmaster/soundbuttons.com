@@ -3,8 +3,8 @@
  * Same API as sbmain
  */
 
-export const API_BASE_URL = "http://192.168.1.14:8002/api"
-const MEDIA_BASE_URL = "http://192.168.1.14:8002/media"
+export const API_BASE_URL = "https://api-v6.soundbuttons.com/api"
+const MEDIA_BASE_URL = "https://api-v6.soundbuttons.com/media"
 
 export interface ApiSound {
   id: number
