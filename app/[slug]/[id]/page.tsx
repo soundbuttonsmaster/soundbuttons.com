@@ -1,6 +1,5 @@
 import type { Metadata } from "next"
 import { notFound, permanentRedirect } from "next/navigation"
-import { headers } from "next/headers"
 import SoundDetailClient from "@/components/sound/sound-detail-client"
 import { apiClient, fetchSoundCommentsServer, type SoundComment } from "@/lib/api/client"
 import type { Sound } from "@/lib/types/sound"
@@ -112,9 +111,6 @@ export async function generateMetadata({ params }: SoundPageProps): Promise<Meta
 
 export default async function SoundDetailPage({ params }: SoundPageProps) {
   const { slug, id } = await params
-  const headersList = await headers()
-  const userAgent = headersList.get("user-agent")
-  const isMobile = isMobileDevice(userAgent)
 
   const idNum = parseInt(id, 10)
   if (isNaN(idNum) || idNum <= 0) {
@@ -187,7 +183,6 @@ export default async function SoundDetailPage({ params }: SoundPageProps) {
       <SoundDetailClient
         sound={sound}
         relatedSounds={youMightLikeSounds}
-        isMobileDevice={isMobile}
         categorySlug={categorySlug}
         categoryName={category?.name ?? sound.category_name ?? "Sounds"}
         initialComments={initialComments}

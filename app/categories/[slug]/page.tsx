@@ -1,4 +1,3 @@
-import { headers } from "next/headers"
 import { notFound } from "next/navigation"
 import type { Metadata } from "next"
 import { apiClient } from "@/lib/api/client"
@@ -87,13 +86,6 @@ export default async function CategoryDetailPage({ params }: Props) {
   const subcategories = getSubcategories(slug)
   const parentCategory = getParentCategory(category)
 
-  const headersList = await headers()
-  const userAgent = headersList.get("user-agent") ?? ""
-  const mobileHint = headersList.get("sec-ch-ua-mobile")
-  const isMobile =
-    mobileHint === "?1" ||
-    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(userAgent)
-
   let initialSounds: Awaited<ReturnType<typeof apiClient.getSoundsByCategory>>["data"] = []
   let meta = { current_page: 1, last_page: 1, total_items: 0 }
 
@@ -150,7 +142,7 @@ export default async function CategoryDetailPage({ params }: Props) {
         parentCategory={parentCategory ?? null}
         initialSounds={initialSounds}
         initialMeta={meta}
-        isMobileDevice={isMobile}
+        isMobileDevice={false}
         faqs={faqs}
       />
     </>

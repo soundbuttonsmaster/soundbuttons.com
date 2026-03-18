@@ -1,4 +1,3 @@
-import { headers } from "next/headers"
 import { apiClient } from "@/lib/api/client"
 import TrendsPageClient from "./TrendsPageClient"
 
@@ -16,13 +15,6 @@ function slugify(str: string): string {
 }
 
 export default async function TrendsPage() {
-  const headersList = await headers()
-  const userAgent = headersList.get("user-agent") ?? ""
-  const mobileHint = headersList.get("sec-ch-ua-mobile")
-  const isMobile =
-    mobileHint === "?1" ||
-    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(userAgent)
-
   let initialSounds: Awaited<ReturnType<typeof apiClient.getTrendingSounds>>["data"] = []
   let meta = { current_page: 1, last_page: 1, total_items: 0 }
 
@@ -39,7 +31,7 @@ export default async function TrendsPage() {
       <TrendsPageClient
         initialSounds={initialSounds}
         initialMeta={meta}
-        isMobileDevice={isMobile}
+        isMobileDevice={false}
       />
     </>
   )

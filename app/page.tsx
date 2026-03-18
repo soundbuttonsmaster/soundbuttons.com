@@ -1,4 +1,3 @@
-import { headers } from "next/headers"
 import type { Metadata } from "next"
 import { apiClient } from "@/lib/api/client"
 import { SITE } from "@/lib/constants/site"
@@ -101,16 +100,7 @@ export const metadata: Metadata = {
 }
 
 export default async function HomePage() {
-  const headersList = await headers()
-  const userAgent = headersList.get("user-agent") ?? ""
-  const mobileHint = headersList.get("sec-ch-ua-mobile")
-  const isMobile =
-    mobileHint === "?1" ||
-    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(
-      userAgent
-    )
-
-  const trendingCount = isMobile ? 16 : 44
+  const trendingCount = 44
   const newCount = 22
 
   let trendingSounds: Awaited<
@@ -246,7 +236,7 @@ export default async function HomePage() {
         initialTrendingSounds={trendingSounds}
         initialNewSounds={newSounds}
         initialTrendingMeta={trendingMeta}
-        isMobileDevice={isMobile}
+        isMobileDevice={false}
       />
     </>
   )
