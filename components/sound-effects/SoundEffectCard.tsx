@@ -16,8 +16,14 @@ export default function SoundEffectCard({ effect }: SoundEffectCardProps) {
   const router = useRouter()
   const [isPlaying, setIsPlaying] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const isPlayingRef = useRef(false)
   const audioUrl = soundEffectsApi.getSoundFileUrl(effect)
   const detailPath = `/sound-effects/${generateSlug(effect.soundName) || `sound-effect-${effect.id}`}/${effect.id}`
+
+  const syncIsPlaying = (value: boolean) => {
+    isPlayingRef.current = value
+    setIsPlaying(value)
+  }
 
   const handleDownload = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -36,32 +42,47 @@ export default function SoundEffectCard({ effect }: SoundEffectCardProps) {
     e.preventDefault()
     e.stopPropagation()
     if (!audioUrl) return
-    window.dispatchEvent(new CustomEvent("pause-all-sounds", { detail: { exceptId: effect.id } }))
-    if (!audioRef.current || audioRef.current.src !== audioUrl) {
-      audioRef.current = new Audio(audioUrl)
-      audioRef.current.onended = () => setIsPlaying(false)
-      audioRef.current.onpause = () => setIsPlaying(false)
+
+    if (isPlayingRef.current) {
+      if (audioRef.current) {
+        try { audioRef.current.pause(); audioRef.current.currentTime = 0 } catch { /* ignore */ }
+      }
+      syncIsPlaying(false)
+      return
     }
-    if (isPlaying) {
-      audioRef.current?.pause()
-      setIsPlaying(false)
+
+    window.dispatchEvent(new CustomEvent("pause-all-sounds", { detail: { exceptId: effect.id } }))
+
+    const audio = new Audio(audioUrl)
+    audio.setAttribute("playsinline", "true")
+    audio.onended = () => syncIsPlaying(false)
+    audioRef.current = audio
+
+    const p = audio.play()
+    if (p && typeof p.then === "function") {
+      p.then(() => syncIsPlaying(true)).catch(() => syncIsPlaying(false))
     } else {
-      audioRef.current!.currentTime = 0
-      audioRef.current?.play()
-      setIsPlaying(true)
+      syncIsPlaying(true)
     }
   }
 
   useEffect(() => {
     const pauseAll = (e: Event) => {
       const ev = e as CustomEvent<{ exceptId: number }>
-      if (ev.detail?.exceptId !== effect.id && audioRef.current) {
-        audioRef.current.pause()
-        setIsPlaying(false)
+      if (ev.detail?.exceptId !== effect.id) {
+        if (audioRef.current) {
+          try { audioRef.current.pause(); audioRef.current.currentTime = 0 } catch { /* ignore */ }
+        }
+        syncIsPlaying(false)
       }
     }
     window.addEventListener("pause-all-sounds", pauseAll as EventListener)
-    return () => window.removeEventListener("pause-all-sounds", pauseAll as EventListener)
+    return () => {
+      window.removeEventListener("pause-all-sounds", pauseAll as EventListener)
+      if (audioRef.current) {
+        try { audioRef.current.pause(); audioRef.current.currentTime = 0 } catch { /* ignore */ }
+      }
+    }
   }, [effect.id])
 
   const firstTag = effect.tags ? effect.tags.split(",")[0]?.trim() : ""

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { SITE } from "@/lib/constants/site";
 import { ThemeProvider } from "@/components/ui/theme-provider";
@@ -64,27 +65,27 @@ export default function RootLayout({
           data-cfasync="false"
           src="//scripts.mediavine.com/tags/sound-buttons.js"
         />
-        {/* Theme is applied by next-themes ThemeProvider (avoids hydration mismatch from inline script) */}
-        {/* Google tag (gtag.js) - standard snippet */}
-        <script
-          async
-          src="https://www.googletagmanager.com/gtag/js?id=G-7JTM90LHN4"
-        />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', 'G-7JTM90LHN4');
-            `,
-          }}
-        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
+        {/* Google tag (gtag.js) - loaded client-side to avoid hydration mismatches */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-7JTM90LHN4"
+          strategy="afterInteractive"
+        />
+        <Script
+          id="gtag-init"
+          strategy="afterInteractive"
+        >
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){window.dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-7JTM90LHN4');
+          `}
+        </Script>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

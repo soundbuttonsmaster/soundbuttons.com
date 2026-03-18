@@ -7,14 +7,6 @@ import { apiClient } from "@/lib/api/client"
 import { getSoundDetailPath } from "@/lib/utils/slug"
 import type { ProcessedSound } from "@/lib/api/client"
 
-const MEDIA_BASE = "https://api-v6.soundbuttons.com/media"
-
-function getAudioUrl(sound: ProcessedSound): string {
-  if (sound.sound_file?.startsWith("http")) return sound.sound_file
-  const path = (sound.sound_file || "").replace(/^\/+/, "").replace(/^media\//, "")
-  return path ? `${MEDIA_BASE}/${path}` : apiClient.getSoundAudioUrl(sound.id)
-}
-
 interface CompactSoundButtonProps {
   sound: ProcessedSound
 }
@@ -22,46 +14,60 @@ interface CompactSoundButtonProps {
 export default function CompactSoundButton({ sound }: CompactSoundButtonProps) {
   const [isPlaying, setIsPlaying] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const isPlayingRef = useRef(false)
+
+  const syncIsPlaying = (value: boolean) => {
+    isPlayingRef.current = value
+    setIsPlaying(value)
+  }
 
   useEffect(() => {
     const handler = (e: CustomEvent<{ exceptId?: number }>) => {
       if (e.detail?.exceptId === sound.id) return
       if (audioRef.current) {
-        audioRef.current.pause()
-        audioRef.current.currentTime = 0
+        try { audioRef.current.pause(); audioRef.current.currentTime = 0 } catch { /* ignore */ }
       }
-      setIsPlaying(false)
+      syncIsPlaying(false)
     }
     window.addEventListener("pause-all-sounds", handler as EventListener)
-    return () => window.removeEventListener("pause-all-sounds", handler as EventListener)
+    return () => {
+      window.removeEventListener("pause-all-sounds", handler as EventListener)
+      if (audioRef.current) {
+        try { audioRef.current.pause(); audioRef.current.currentTime = 0 } catch { /* ignore */ }
+      }
+    }
   }, [sound.id])
 
   const handlePlay = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault()
       e.stopPropagation()
-      const url = getAudioUrl(sound)
+      const url = apiClient.getSoundAudioUrl(sound.id)
       if (!url) return
-      if (isPlaying && audioRef.current) {
-        audioRef.current.pause()
-        audioRef.current.currentTime = 0
-        setIsPlaying(false)
+
+      if (isPlayingRef.current) {
+        if (audioRef.current) {
+          try { audioRef.current.pause(); audioRef.current.currentTime = 0 } catch { /* ignore */ }
+        }
+        syncIsPlaying(false)
         return
       }
+
       window.dispatchEvent(new CustomEvent("pause-all-sounds", { detail: { exceptId: sound.id } }))
-      let audio = audioRef.current
-      if (!audio || audio.src !== url) {
-        audio = new Audio(url)
-        audio.crossOrigin = "anonymous"
-        audio.setAttribute("playsinline", "true")
-        audio.onended = () => {
-          setIsPlaying(false)
-        }
-        audioRef.current = audio
+
+      const audio = new Audio(url)
+      audio.setAttribute("playsinline", "true")
+      audio.onended = () => syncIsPlaying(false)
+      audioRef.current = audio
+
+      const p = audio.play()
+      if (p && typeof p.then === "function") {
+        p.then(() => syncIsPlaying(true)).catch(() => syncIsPlaying(false))
+      } else {
+        syncIsPlaying(true)
       }
-      audio.play().then(() => setIsPlaying(true)).catch(() => {})
     },
-    [sound, isPlaying]
+    [sound.id]
   )
 
   const detailPath = getSoundDetailPath(sound.name, sound.id)

@@ -12,6 +12,8 @@ import { apiClient } from '@/lib/api/client';
 import ShareModal from '@/components/share/share-modal';
 import { getSoundDetailPath } from '@/lib/utils/slug';
 import { getDisplaySoundName } from '@/lib/utils';
+// NOTE: We currently use a local HTMLAudioElement per button for reliability.
+// Global \"pause-all-sounds\" events still ensure only one sound plays at a time.
 
 interface CompactSoundButtonProps {
   sound: Sound;
@@ -52,12 +54,6 @@ const getIsMobile = (): boolean => {
     (typeof window !== 'undefined' && 'ontouchstart' in window && window.innerWidth < 1024);
 };
 
-// Global audio cache for instant playback - keyed by audio URL
-const audioCache = new Map<string, HTMLAudioElement>();
-const CACHE_ACCESS_TIMES = new Map<string, number>(); // Track last access for LRU
-const MAX_CACHE_SIZE_DESKTOP = 50;
-const MAX_CACHE_SIZE_MOBILE = 5;
-
 // Resolved S3 playback URLs (avoid 302 round-trip). Key: sound id, value: { url, expires }
 const RESOLVED_URL_TTL_MS = 10 * 60 * 1000; // 10 min (presigned is 1h)
 const resolvedUrlCache = new Map<number, { url: string; expires: number }>();
@@ -70,30 +66,6 @@ const getResolvedPlaybackUrl = (soundId: number): string | null => {
 
 const setResolvedPlaybackUrl = (soundId: number, url: string) => {
   resolvedUrlCache.set(soundId, { url, expires: Date.now() + RESOLVED_URL_TTL_MS });
-};
-
-const getMaxCacheSize = () => (getIsMobile() ? MAX_CACHE_SIZE_MOBILE : MAX_CACHE_SIZE_DESKTOP);
-
-const cleanupAudioCache = (maxSize?: number) => {
-  const limit = maxSize ?? getMaxCacheSize();
-  if (audioCache.size <= limit) return;
-  const entries = Array.from(CACHE_ACCESS_TIMES.entries()).sort((a, b) => a[1] - b[1]);
-  const toRemove = Math.max(1, Math.floor(limit * 0.4));
-  for (let i = 0; i < toRemove && i < entries.length; i++) {
-    const [url] = entries[i];
-    const audio = audioCache.get(url);
-    if (audio) {
-      try {
-        audio.pause();
-        audio.src = '';
-        audio.onended = null;
-        audio.onpause = null;
-        audio.onerror = null;
-      } catch (e) { }
-    }
-    audioCache.delete(url);
-    CACHE_ACCESS_TIMES.delete(url);
-  }
 };
 
 const normalizeAudioUrl = (sound: Sound): string | null => {
@@ -110,74 +82,6 @@ const normalizeAudioUrl = (sound: Sound): string | null => {
   return null;
 };
 
-const createAudio = (audioUrl: string): HTMLAudioElement => {
-  const isMobile = getIsMobile();
-  const maxCache = getMaxCacheSize();
-
-  if (audioCache.has(audioUrl)) {
-    const cached = audioCache.get(audioUrl)!;
-    // On mobile: don't reuse element that's still loading or in use (avoids iOS "some sounds don't play")
-    if (isMobile && (cached.readyState < 2 || !cached.paused)) {
-      try {
-        cached.pause();
-        cached.src = '';
-        cached.onended = null;
-        cached.onpause = null;
-        cached.onerror = null;
-      } catch (e) { }
-      audioCache.delete(audioUrl);
-      CACHE_ACCESS_TIMES.delete(audioUrl);
-    } else {
-      CACHE_ACCESS_TIMES.set(audioUrl, Date.now());
-      cached.loop = false;
-      if (cached.currentTime > 0) cached.currentTime = 0;
-      if (!cached.paused) {
-        cached.pause();
-        cached.currentTime = 0;
-      }
-      return cached;
-    }
-  }
-
-  cleanupAudioCache(maxCache);
-  const audio = new Audio(audioUrl);
-  audio.loop = false;
-  audio.preload = 'auto';
-  audio.crossOrigin = 'anonymous';
-  audio.setAttribute('playsinline', 'true');
-  audio.setAttribute('webkit-playsinline', 'true');
-
-  audio.onerror = (e) => {
-    console.error('Audio playback error:', {
-      url: audioUrl,
-      error: e,
-      code: (audio as any).error?.code,
-      message: (audio as any).error?.message
-    });
-    const cachedAudio = audioCache.get(audioUrl);
-    if (cachedAudio) {
-      try {
-        cachedAudio.pause();
-        cachedAudio.src = '';
-      } catch (err) { }
-    }
-    audioCache.delete(audioUrl);
-    CACHE_ACCESS_TIMES.delete(audioUrl);
-  };
-
-  audio.addEventListener('error', (e) => {
-    console.error('Audio load error:', {
-      url: audioUrl,
-      error: e,
-      code: (audio as any).error?.code,
-      message: (audio as any).error?.message
-    });
-  }, { once: true });
-
-  audio.load();
-  return audio;
-};
-
 const CompactSoundButton: React.FC<CompactSoundButtonProps> = ({ sound, isAboveTheFold = false, customSize, hideLabel = false, hideActions = false, isMobileDevice = false, detailPath: detailPathProp }) => {
   const router = useRouter();
   const { token } = useAuth();
@@ -189,11 +93,21 @@ const CompactSoundButton: React.FC<CompactSoundButtonProps> = ({ sound, isAboveT
   const [isLoading, setIsLoading] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  // Ref mirrors isPlaying so handlePlay can read current value without being
+  // recreated on every state change (avoids useEffect cleanup killing audio).
+  const isPlayingRef = useRef(false);
+  const tokenRef = useRef(token);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const loadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const audioUrlRef = useRef<string | null>(null);
   const lastTouchAtRef = useRef<number>(0);
   const containerRef = useRef<HTMLDivElement | null>(null);
+
+  // Keep refs in sync with latest values without triggering re-renders
+  useEffect(() => { tokenRef.current = token; }, [token]);
+  const syncIsPlaying = (value: boolean) => {
+    isPlayingRef.current = value;
+    setIsPlaying(value);
+  };
 
   // Prefetch direct S3 URL when button is visible so first tap skips 302 round-trip
   useEffect(() => {
@@ -241,259 +155,87 @@ const CompactSoundButton: React.FC<CompactSoundButtonProps> = ({ sound, isAboveT
     [detailPathProp, sound.name, sound.id]
   );
 
-  const handlePlay = useCallback(async () => {
+  // Stable callback - never changes between renders so the useEffect below
+  // only mounts/unmounts once per sound.id, not on every isPlaying flip.
+  const handlePlay = useCallback(() => {
     if (typeof window !== 'undefined') {
       if (!audioContext) {
         try { audioContext = new (window.AudioContext || (window as any).webkitAudioContext)(); } catch (e) { }
       }
-      // Desktop: await resume so Auto Play is not blocked by suspended AudioContext
       if (audioContext && audioContext.state === 'suspended') {
-        await audioContext.resume().catch(() => { });
+        audioContext.resume().catch(() => { });
       }
     }
 
-    if (isPlaying && audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-      setIsPlaying(false);
-      setIsLoading(false);
-      return;
-    }
-
-    window.dispatchEvent(new CustomEvent('pause-all-sounds', { detail: { exceptId: sound.id } }));
-
-    // Prefer cached S3 URL (from prefetch) so audio loads directly from S3; else API URL (302 redirect)
-    let audioUrl = normalizeAudioUrl(sound);
+    const audioUrl = normalizeAudioUrl(sound);
     if (!audioUrl) {
       console.error('Failed to generate audio URL for sound:', sound);
+      return;
+    }
+
+    // If currently playing → stop
+    if (isPlayingRef.current) {
+      const existing = audioRef.current;
+      if (existing) {
+        try { existing.pause(); existing.currentTime = 0; } catch { /* ignore */ }
+      }
+      syncIsPlaying(false);
       setIsLoading(false);
       return;
     }
-    // If we used API URL (redirect), cache S3 URL in background so next tap is instant
-    if (audioUrl.includes('/audio') && !audioUrl.includes('amazonaws')) {
-      apiClient.getSoundAudioPlaybackUrl(sound.id).then((url) => setResolvedPlaybackUrl(sound.id, url)).catch(() => {});
-    }
 
-    // Clear old audio if URL changed (especially if switching from S3 to API)
-    if (audioUrlRef.current && audioUrlRef.current !== audioUrl) {
-      // URL changed - clear old audio reference
-      if (audioRef.current) {
-        try {
-          audioRef.current.pause();
-          audioRef.current.src = '';
-          audioRef.current.load();
-        } catch (e) {}
-        audioRef.current = null;
-      }
-      // Remove old S3 URLs from cache if they exist
-      if (audioUrlRef.current.includes('s3.us-east-2.amazonaws.com')) {
-        audioCache.delete(audioUrlRef.current);
-        CACHE_ACCESS_TIMES.delete(audioUrlRef.current);
-      }
-    }
+    // Stop any other sounds globally
+    window.dispatchEvent(new CustomEvent('pause-all-sounds', { detail: { exceptId: sound.id } }));
 
-    audioUrlRef.current = audioUrl;
-
-    let audio = audioRef.current;
-
-    // Normalize URL
-    const normalizeUrl = (url: string) => {
-      try { return new URL(url, window.location.href).href; } catch { return url; }
+    // Create a fresh audio element every play so there are no stale src/state issues
+    const audio = new Audio(audioUrl);
+    audio.preload = 'auto';
+    // No crossOrigin - would trigger CORS preflight and block playback if server
+    // doesn't return Access-Control-Allow-Origin headers.
+    audio.setAttribute('playsinline', 'true');
+    audio.setAttribute('webkit-playsinline', 'true');
+    audio.onended = () => {
+      syncIsPlaying(false);
+      setIsLoading(false);
+      setIsPressed(false);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      if (loadingTimeoutRef.current) clearTimeout(loadingTimeoutRef.current);
+      window.dispatchEvent(new CustomEvent('sound-ended', { detail: { soundId: sound.id } }));
     };
-    const normalizedAudioUrl = normalizeUrl(audioUrl);
-    const isNewAudio = !audio || !audio.src || normalizeUrl(audio.src) !== normalizedAudioUrl;
-
-    if (isNewAudio) {
-      audio = createAudio(audioUrl);
-      audioRef.current = audio;
-      if (!audioCache.has(audioUrl)) audioCache.set(audioUrl, audio);
-
-      const audioElement = audio;
-      if (!audioElement.onended) {
-        audioElement.onended = () => {
-          setIsPlaying(false);
-          setIsLoading(false);
-          setIsPressed(false);
-          (audioElement as any)._isPlayingAttempt = false;
-          audioElement.currentTime = 0;
-          if (timeoutRef.current) clearTimeout(timeoutRef.current);
-          if (loadingTimeoutRef.current) clearTimeout(loadingTimeoutRef.current);
-          window.dispatchEvent(new CustomEvent('sound-ended', { detail: { soundId: sound.id } }));
-        };
-        audioElement.onpause = () => {
-          const isPlayingAttempt = (audioElement as any)._isPlayingAttempt || false;
-          if (audioElement.ended) {
-            setIsPressed(false);
-            setIsPlaying(false);
-            setIsLoading(false);
-            (audioElement as any)._isPlayingAttempt = false;
-            return;
-          }
-          if (isPlayingAttempt && !audioElement.ended) {
-            setTimeout(() => {
-              if (audioElement.paused && !audioElement.ended && (audioElement as any)._isPlayingAttempt) {
-                audioElement.play().catch(() => { });
-              }
-            }, 50);
-            return;
-          }
-          if (audioElement.paused && audioElement.currentTime === 0 && !audioElement.ended && !isPlayingAttempt) {
-            setIsPlaying(false);
-            setIsLoading(false);
-            setIsPressed(false);
-            if (loadingTimeoutRef.current) clearTimeout(loadingTimeoutRef.current);
-          }
-        };
-        audioElement.oncanplay = () => setIsLoading(false);
-        audioElement.oncanplaythrough = () => setIsLoading(false);
-        audioElement.onerror = () => {
-          setIsPlaying(false);
-          setIsLoading(false);
-          const cachedAudio = audioCache.get(audioUrl!);
-          if (cachedAudio) {
-            try { cachedAudio.pause(); cachedAudio.src = ''; } catch (err) { }
-          }
-          audioCache.delete(audioUrl!);
-          CACHE_ACCESS_TIMES.delete(audioUrl!);
-        };
-      }
-    }
-
-    if (!audio) { setIsLoading(false); return; }
-
-    audio.currentTime = 0;
-    if (!audio.paused) {
-      audio.pause();
-      audio.currentTime = 0;
-    }
+    audioRef.current = audio;
 
     setIsPressed(true);
     setIsLoading(true);
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     if (loadingTimeoutRef.current) clearTimeout(loadingTimeoutRef.current);
-
     loadingTimeoutRef.current = setTimeout(() => setIsLoading(false), 3000);
 
-    // CRITICAL for mobile: play() must be called synchronously within the user gesture
-    // (no await before play). Do not wait for canplay/ready first.
-    let playPromise: Promise<void>;
-    try {
-      if (audio.readyState < 2) audio.load();
-      (audio as any)._isPlayingAttempt = true;
-      playPromise = audio.play();
-    } catch (syncErr) {
-      (audio as any)._isPlayingAttempt = false;
-      setIsLoading(false);
-      setIsPlaying(false);
-      if (loadingTimeoutRef.current) clearTimeout(loadingTimeoutRef.current);
-      return;
-    }
-
-    const audioElement = audio as any;
-    const finishPlay = async () => {
-      try {
-        await playPromise;
-        const isActuallyPlaying = !audio.paused && !audio.ended;
-        if (isActuallyPlaying) {
-          setIsPlaying(true);
+    const playPromise = audio.play();
+    if (playPromise && typeof playPromise.then === 'function') {
+      playPromise
+        .then(() => {
+          syncIsPlaying(true);
           setIsLoading(false);
           setIsPressed(false);
           if (loadingTimeoutRef.current) clearTimeout(loadingTimeoutRef.current);
-          if (token) apiClient.recordPlay(sound.id, token).catch(() => {});
-          const monitorStartTime = Date.now();
-          const MONITOR_RESUME_MS = 800;
-          const monitorInterval = setInterval(() => {
-            if (audio.ended) {
-              setIsPressed(false);
-              setIsPlaying(false);
-              setIsLoading(false);
-              audioElement._isPlayingAttempt = false;
-              clearInterval(monitorInterval);
-              return;
-            }
-            const elapsed = Date.now() - monitorStartTime;
-            if (elapsed > MONITOR_RESUME_MS) return;
-            if (audioElement._isPlayingAttempt && audio.paused && !audio.ended) {
-              audio.play().catch(() => { });
-            }
-          }, 100);
-          setTimeout(() => {
-            clearInterval(monitorInterval);
-            audioElement._isPlayingAttempt = false;
-            if (audio.ended || (audio.paused && audio.currentTime === 0)) setIsPressed(false);
-          }, 1000);
-        } else {
-          audioElement._isPlayingAttempt = false;
-          setIsPlaying(false);
+          if (tokenRef.current) apiClient.recordPlay(sound.id, tokenRef.current).catch(() => {});
+        })
+        .catch(() => {
+          syncIsPlaying(false);
           setIsLoading(false);
+          setIsPressed(false);
           if (loadingTimeoutRef.current) clearTimeout(loadingTimeoutRef.current);
-        }
-      } catch (playError: unknown) {
-        const err = playError as { name?: string };
-        console.error('Audio play error:', {
-          error: playError,
-          name: err?.name,
-          url: audioUrl,
-          code: (audio as any).error?.code,
-          message: (audio as any).error?.message,
-          readyState: audio.readyState,
-          networkState: audio.networkState
         });
-        audioElement._isPlayingAttempt = false;
-        if (err?.name !== 'AbortError' && err?.name !== 'NotAllowedError') {
-          if (audioContext && audioContext.state === 'suspended') {
-            try {
-              await audioContext.resume();
-            } catch (ctxError) {
-              console.error('AudioContext resume error:', ctxError);
-            }
-          }
-          const waitForReady = (): Promise<void> => {
-            return new Promise((resolve) => {
-              if (audio.readyState >= 3) {
-                resolve();
-                return;
-              }
-              const timeout = setTimeout(resolve, 2000);
-              const onReady = () => {
-                clearTimeout(timeout);
-                audio.removeEventListener('canplay', onReady);
-                audio.removeEventListener('canplaythrough', onReady);
-                audio.removeEventListener('loadeddata', onReady);
-                resolve();
-              };
-              audio.addEventListener('canplay', onReady, { once: true });
-              audio.addEventListener('canplaythrough', onReady, { once: true });
-              audio.addEventListener('loadeddata', onReady, { once: true });
-            });
-          };
-          audio.load();
-          await new Promise((r) => setTimeout(r, 500));
-          await waitForReady();
-          try {
-            await audio.play();
-            setIsPlaying(true);
-            setIsLoading(false);
-            if (loadingTimeoutRef.current) clearTimeout(loadingTimeoutRef.current);
-          } catch (retryError) {
-            console.error('Retry play error:', retryError);
-            setIsPlaying(false);
-            setIsLoading(false);
-          }
-        } else {
-          setIsPlaying(false);
-          setIsLoading(false);
-        }
-        if (loadingTimeoutRef.current) clearTimeout(loadingTimeoutRef.current);
-      }
-    };
-
-    finishPlay().catch(() => {
-      setIsPlaying(false);
+    } else {
+      syncIsPlaying(true);
       setIsLoading(false);
+      setIsPressed(false);
       if (loadingTimeoutRef.current) clearTimeout(loadingTimeoutRef.current);
-    });
-  }, [isPlaying, sound.id]);
+      if (tokenRef.current) apiClient.recordPlay(sound.id, tokenRef.current).catch(() => {});
+    }
+  // Only depends on sound.id — NOT isPlaying/token, so this never gets recreated
+  // on state changes (which was causing the useEffect cleanup to kill active audio).
+  }, [sound.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleDownload = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -543,31 +285,40 @@ const CompactSoundButton: React.FC<CompactSoundButtonProps> = ({ sound, isAboveT
   useEffect(() => {
     const handlePauseAll = (e: Event) => {
       const customEvent = e as CustomEvent<{ exceptId: number | null }>;
-      if (customEvent.detail?.exceptId !== sound.id && audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
-        setIsPlaying(false);
+      if (customEvent.detail?.exceptId !== sound.id) {
+        if (audioRef.current) {
+          try {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+          } catch { /* ignore */ }
+        }
+        syncIsPlaying(false);
         setIsLoading(false);
+        setIsPressed(false);
       }
     };
     const handleAutoPlay = (e: Event) => {
       const customEvent = e as CustomEvent<{ soundId: number }>;
       if (customEvent.detail?.soundId === sound.id) {
-        setIsPressed(true); // Visual feedback
-        setTimeout(() => setIsPressed(false), 150);
         handlePlay();
       }
     };
     window.addEventListener('pause-all-sounds', handlePauseAll as EventListener);
     window.addEventListener('play-sound-auto', handleAutoPlay as EventListener);
+
+    // Cleanup only runs when the component actually unmounts (sound.id changed or
+    // component removed). handlePlay is NOT a dep so this doesn't re-run on every
+    // isPlaying flip and therefore never accidentally kills active audio.
     return () => {
       window.removeEventListener('pause-all-sounds', handlePauseAll as EventListener);
       window.removeEventListener('play-sound-auto', handleAutoPlay as EventListener);
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
       if (loadingTimeoutRef.current) clearTimeout(loadingTimeoutRef.current);
       if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
+        try {
+          audioRef.current.pause();
+          audioRef.current.currentTime = 0;
+        } catch { /* ignore */ }
       }
     };
   }, [sound.id, handlePlay]);
@@ -985,13 +736,5 @@ const CompactSoundButton: React.FC<CompactSoundButtonProps> = ({ sound, isAboveT
     </div>
   );
 };
-
-// Global cleanup
-if (typeof window !== 'undefined') {
-  (window as any).cleanupAudioCache = cleanupAudioCache;
-  if (!(window as any).__audioCacheCleanupInterval) {
-    (window as any).__audioCacheCleanupInterval = setInterval(cleanupAudioCache, 5 * 60 * 1000);
-  }
-}
 
 export default memo(CompactSoundButton);

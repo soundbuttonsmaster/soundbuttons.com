@@ -24,26 +24,41 @@ export default function SoundEffectDetailClient({
   const [isPressed, setIsPressed] = useState(false)
   const [showShare, setShowShare] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const isPlayingRef = useRef(false)
   const audioUrl = soundEffectsApi.getSoundFileUrl(soundEffect)
   const path = getSoundEffectDetailPath(soundEffect.soundName, soundEffect.id)
   const shareUrl = typeof window !== "undefined" ? `${window.location.origin}${path}` : ""
 
+  const syncIsPlaying = (value: boolean) => {
+    isPlayingRef.current = value
+    setIsPlaying(value)
+  }
+
   const handlePlay = () => {
     if (!audioUrl) return
+
+    if (isPlayingRef.current) {
+      if (audioRef.current) {
+        try { audioRef.current.pause(); audioRef.current.currentTime = 0 } catch { /* ignore */ }
+      }
+      syncIsPlaying(false)
+      return
+    }
+
     window.dispatchEvent(new CustomEvent("pause-all-sounds", { detail: { exceptId: soundEffect.id } }))
-    if (!audioRef.current || audioRef.current.src !== audioUrl) {
-      audioRef.current = new Audio(audioUrl)
-      audioRef.current.onended = () => setIsPlaying(false)
-      audioRef.current.onpause = () => setIsPlaying(false)
-    }
-    if (isPlaying) {
-      audioRef.current?.pause()
-      setIsPlaying(false)
+
+    const audio = new Audio(audioUrl)
+    audio.setAttribute("playsinline", "true")
+    audio.onended = () => syncIsPlaying(false)
+    audioRef.current = audio
+
+    const p = audio.play()
+    if (p && typeof p.then === "function") {
+      p.then(() => syncIsPlaying(true)).catch(() => syncIsPlaying(false))
     } else {
-      audioRef.current!.currentTime = 0
-      audioRef.current?.play()
-      setIsPlaying(true)
+      syncIsPlaying(true)
     }
+
     setIsPressed(true)
     setTimeout(() => setIsPressed(false), 200)
   }
@@ -63,13 +78,20 @@ export default function SoundEffectDetailClient({
   useEffect(() => {
     const pauseAll = (e: Event) => {
       const ev = e as CustomEvent<{ exceptId: number }>
-      if (ev.detail?.exceptId !== soundEffect.id && audioRef.current) {
-        audioRef.current.pause()
-        setIsPlaying(false)
+      if (ev.detail?.exceptId !== soundEffect.id) {
+        if (audioRef.current) {
+          try { audioRef.current.pause(); audioRef.current.currentTime = 0 } catch { /* ignore */ }
+        }
+        syncIsPlaying(false)
       }
     }
     window.addEventListener("pause-all-sounds", pauseAll as EventListener)
-    return () => window.removeEventListener("pause-all-sounds", pauseAll as EventListener)
+    return () => {
+      window.removeEventListener("pause-all-sounds", pauseAll as EventListener)
+      if (audioRef.current) {
+        try { audioRef.current.pause(); audioRef.current.currentTime = 0 } catch { /* ignore */ }
+      }
+    }
   }, [soundEffect.id])
 
   const tags = soundEffect.tags

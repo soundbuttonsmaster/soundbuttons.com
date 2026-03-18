@@ -6,7 +6,6 @@ import ShareModal from "@/components/share/share-modal"
 import { kidsSoundboardApi } from "@/lib/api/kids-soundboard"
 import type { KidsSoundboard } from "@/lib/api/kids-soundboard"
 
-/** KidsCardSound works with KidsSoundboard from the kids API. */
 type KidsCardSoundInput = KidsSoundboard
 
 interface KidsCardSoundProps {
@@ -23,28 +22,46 @@ export default function KidsCardSound({
   const [isPressed, setIsPressed] = useState(false)
   const [showShare, setShowShare] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const isPlayingRef = useRef(false)
 
   const audioUrl = kidsSoundboardApi.getSoundFileUrl(sound)
   const imageUrl = kidsSoundboardApi.getImageUrl(sound)
 
+  const syncIsPlaying = (value: boolean) => {
+    isPlayingRef.current = value
+    setIsPlaying(value)
+  }
+
   const handlePlay = useCallback(() => {
     try {
-      window.dispatchEvent(new CustomEvent("pause-all-sounds", { detail: { exceptId: sound.id } }))
       if (!audioUrl) return
 
-      if (!audioRef.current || audioRef.current.src !== audioUrl) {
-        audioRef.current = new Audio(audioUrl)
-        audioRef.current.onended = () => setIsPlaying(false)
-        audioRef.current.onpause = () => setIsPlaying(false)
-        audioRef.current.preload = "metadata"
-      } else {
-        audioRef.current.currentTime = 0
+      if (isPlayingRef.current) {
+        if (audioRef.current) {
+          try { audioRef.current.pause(); audioRef.current.currentTime = 0 } catch { /* ignore */ }
+        }
+        syncIsPlaying(false)
+        return
       }
 
-      audioRef.current.play().then(() => {
-        setIsPlaying(true)
+      window.dispatchEvent(new CustomEvent("pause-all-sounds", { detail: { exceptId: sound.id } }))
+
+      const audio = new Audio(audioUrl)
+      audio.setAttribute("playsinline", "true")
+      audio.onended = () => syncIsPlaying(false)
+      audioRef.current = audio
+
+      const p = audio.play()
+      if (p && typeof p.then === "function") {
+        p.then(() => {
+          syncIsPlaying(true)
+          if (onRainEffect && imageUrl) onRainEffect(imageUrl)
+        }).catch(() => syncIsPlaying(false))
+      } else {
+        syncIsPlaying(true)
         if (onRainEffect && imageUrl) onRainEffect(imageUrl)
-      }).catch(() => {})
+      }
+
       setIsPressed(true)
       setTimeout(() => setIsPressed(false), 200)
     } catch {
@@ -67,13 +84,20 @@ export default function KidsCardSound({
   useEffect(() => {
     const handler = (e: Event) => {
       const ev = e as CustomEvent<{ exceptId: number }>
-      if (ev.detail?.exceptId !== sound.id && audioRef.current) {
-        audioRef.current.pause()
-        setIsPlaying(false)
+      if (ev.detail?.exceptId !== sound.id) {
+        if (audioRef.current) {
+          try { audioRef.current.pause(); audioRef.current.currentTime = 0 } catch { /* ignore */ }
+        }
+        syncIsPlaying(false)
       }
     }
     window.addEventListener("pause-all-sounds", handler as EventListener)
-    return () => window.removeEventListener("pause-all-sounds", handler as EventListener)
+    return () => {
+      window.removeEventListener("pause-all-sounds", handler as EventListener)
+      if (audioRef.current) {
+        try { audioRef.current.pause(); audioRef.current.currentTime = 0 } catch { /* ignore */ }
+      }
+    }
   }, [sound.id])
 
   const getButtonColor = () => {

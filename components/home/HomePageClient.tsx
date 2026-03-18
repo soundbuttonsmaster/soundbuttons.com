@@ -8,7 +8,12 @@ import AutoLoadingNewSoundsSection from "@/components/home/AutoLoadingNewSoundsS
 
 const AboutContent = dynamic(
   () => import("@/components/home/AboutContent").then((m) => m.default),
-  { ssr: true, loading: () => <div className="min-h-[200px]" aria-hidden /> }
+  {
+    // Disable SSR for AboutContent to avoid hydration mismatches caused by
+    // third-party scripts or DOM mutations around the long-form content.
+    ssr: false,
+    loading: () => <div className="min-h-[200px]" aria-hidden />,
+  }
 )
 import { getStrings } from "@/lib/i18n/strings"
 import type { Sound } from "@/lib/types/sound"
