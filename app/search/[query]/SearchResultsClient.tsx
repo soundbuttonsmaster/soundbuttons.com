@@ -98,7 +98,7 @@ export default function SearchResultsClient({
         </div>
       </PageHero>
 
-      <div className="mv-leaderboard w-full min-h-0" aria-hidden="true" />
+      <div className="mv-leaderboard w-full min-h-[250px]" aria-hidden="true" />
 
       <div className="py-8 bg-background">
         <div className="w-full max-w-7xl mx-auto px-4">
