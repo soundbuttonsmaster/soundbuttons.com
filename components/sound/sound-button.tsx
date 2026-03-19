@@ -68,6 +68,36 @@ const setResolvedPlaybackUrl = (soundId: number, url: string) => {
   resolvedUrlCache.set(soundId, { url, expires: Date.now() + RESOLVED_URL_TTL_MS });
 };
 
+// Cache recently played Audio elements for instant replay when switching sounds
+const MAX_PLAYED_CACHE = 14;
+const playedAudioCache = new Map<number, HTMLAudioElement>();
+
+function addToPlayedCache(soundId: number, audio: HTMLAudioElement) {
+  if (!audio || audio.readyState < 2) return;
+  if (playedAudioCache.has(soundId)) {
+    const old = playedAudioCache.get(soundId)!;
+    if (old !== audio) {
+      try { old.pause(); old.removeAttribute('src'); old.load(); } catch { /* ignore */ }
+    }
+    playedAudioCache.delete(soundId); // re-insert to move to end (newest)
+  }
+  while (playedAudioCache.size >= MAX_PLAYED_CACHE) {
+    const firstKey = playedAudioCache.keys().next().value;
+    if (firstKey === undefined) break;
+    const el = playedAudioCache.get(firstKey);
+    if (el) { try { el.pause(); el.removeAttribute('src'); el.load(); } catch { /* ignore */ } }
+    playedAudioCache.delete(firstKey);
+  }
+  playedAudioCache.set(soundId, audio);
+}
+
+function getFromPlayedCache(soundId: number): HTMLAudioElement | null {
+  const el = playedAudioCache.get(soundId);
+  if (!el || el.readyState < 2) return null;
+  playedAudioCache.delete(soundId);
+  return el;
+}
+
 const normalizeAudioUrl = (sound: Sound): string | null => {
   const sf = (sound as any).sound_file;
   // Prefer sound.sound_file when it's a full URL or blob (for TTS preview)
@@ -90,15 +120,15 @@ const CompactSoundButton: React.FC<CompactSoundButtonProps> = ({ sound, isAboveT
   const [isFavorite, setIsFavorite] = useState(false);
   const [isLiked, setIsLiked] = useState(!!(sound as { is_liked?: boolean }).is_liked);
   const [likesCount, setLikesCount] = useState(sound.likes_count ?? 0);
-  const [isLoading, setIsLoading] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const preloadAudioRef = useRef<HTMLAudioElement | null>(null);
+  const preloadSoundIdRef = useRef<number | null>(null);
   // Ref mirrors isPlaying so handlePlay can read current value without being
   // recreated on every state change (avoids useEffect cleanup killing audio).
   const isPlayingRef = useRef(false);
   const tokenRef = useRef(token);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const loadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastTouchAtRef = useRef<number>(0);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -155,6 +185,39 @@ const CompactSoundButton: React.FC<CompactSoundButtonProps> = ({ sound, isAboveT
     [detailPathProp, sound.name, sound.id]
   );
 
+  // Preload audio on hover/touch so click can start instantly. No preload on page load.
+  const startPreload = useCallback(() => {
+    const url = normalizeAudioUrl(sound);
+    if (!url) return;
+    if (preloadAudioRef.current && preloadSoundIdRef.current === sound.id) return;
+    if (preloadAudioRef.current) {
+      try {
+        preloadAudioRef.current.pause();
+        preloadAudioRef.current.removeAttribute('src');
+        preloadAudioRef.current.load();
+      } catch { /* ignore */ }
+      preloadAudioRef.current = null;
+      preloadSoundIdRef.current = null;
+    }
+    const a = new Audio(url);
+    a.preload = 'auto';
+    a.setAttribute('playsinline', 'true');
+    a.setAttribute('webkit-playsinline', 'true');
+    preloadAudioRef.current = a;
+    preloadSoundIdRef.current = sound.id;
+  }, [sound.id]);
+
+  const clearPreload = useCallback(() => {
+    if (!preloadAudioRef.current) return;
+    try {
+      preloadAudioRef.current.pause();
+      preloadAudioRef.current.removeAttribute('src');
+      preloadAudioRef.current.load();
+    } catch { /* ignore */ }
+    preloadAudioRef.current = null;
+    preloadSoundIdRef.current = null;
+  }, []);
+
   // Stable callback - never changes between renders so the useEffect below
   // only mounts/unmounts once per sound.id, not on every isPlaying flip.
   const handlePlay = useCallback(() => {
@@ -173,64 +236,133 @@ const CompactSoundButton: React.FC<CompactSoundButtonProps> = ({ sound, isAboveT
       return;
     }
 
-    // If currently playing → stop
+    // If same sound is playing → restart from beginning instantly (no wait)
     if (isPlayingRef.current) {
       const existing = audioRef.current;
       if (existing) {
-        try { existing.pause(); existing.currentTime = 0; } catch { /* ignore */ }
+        try {
+          existing.currentTime = 0;
+          existing.play();
+          if (tokenRef.current) apiClient.recordPlay(sound.id, tokenRef.current).catch(() => {});
+        } catch { /* ignore */ }
       }
-      syncIsPlaying(false);
-      setIsLoading(false);
       return;
     }
 
     // Stop any other sounds globally
     window.dispatchEvent(new CustomEvent('pause-all-sounds', { detail: { exceptId: sound.id } }));
 
-    // Create a fresh audio element every play so there are no stale src/state issues
-    const audio = new Audio(audioUrl);
+    let audio: HTMLAudioElement;
+    const cached = getFromPlayedCache(sound.id);
+    const preloaded = preloadAudioRef.current;
+    const preloadIsForThisSound = preloaded && preloadSoundIdRef.current === sound.id && preloaded.readyState >= 2;
+
+    if (cached) {
+      audio = cached;
+      audio.currentTime = 0;
+      audio.onended = () => {
+        syncIsPlaying(false);
+        setIsPressed(false);
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        addToPlayedCache(sound.id, audio);
+        window.dispatchEvent(new CustomEvent('sound-ended', { detail: { soundId: sound.id } }));
+      };
+      audioRef.current = audio;
+      setIsPressed(true);
+      const playPromise = audio.play();
+      if (playPromise?.then) {
+        playPromise.then(() => {
+          syncIsPlaying(true);
+          setIsPressed(false);
+          if (tokenRef.current) apiClient.recordPlay(sound.id, tokenRef.current).catch(() => {});
+        }).catch(() => { syncIsPlaying(false); setIsPressed(false); });
+      } else {
+        syncIsPlaying(true);
+        setIsPressed(false);
+        if (tokenRef.current) apiClient.recordPlay(sound.id, tokenRef.current).catch(() => {});
+      }
+      return;
+    }
+
+    if (preloadIsForThisSound) {
+      audio = preloaded;
+      preloadAudioRef.current = null;
+      preloadSoundIdRef.current = null;
+      audio.currentTime = 0;
+      audio.onended = () => {
+        syncIsPlaying(false);
+        setIsPressed(false);
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        addToPlayedCache(sound.id, audio);
+        window.dispatchEvent(new CustomEvent('sound-ended', { detail: { soundId: sound.id } }));
+      };
+      audioRef.current = audio;
+      setIsPressed(true);
+      const playPromise = audio.play();
+      if (playPromise && typeof playPromise.then === 'function') {
+        playPromise
+          .then(() => {
+            syncIsPlaying(true);
+            setIsPressed(false);
+            if (tokenRef.current) apiClient.recordPlay(sound.id, tokenRef.current).catch(() => {});
+          })
+          .catch(() => {
+            syncIsPlaying(false);
+            setIsPressed(false);
+          });
+      } else {
+        syncIsPlaying(true);
+        setIsPressed(false);
+        if (tokenRef.current) apiClient.recordPlay(sound.id, tokenRef.current).catch(() => {});
+      }
+      return;
+    }
+
+    // Discard preload for another sound; cache it if ready for instant play later
+    if (preloadAudioRef.current && preloadSoundIdRef.current != null) {
+      const discarding = preloadAudioRef.current;
+      if (discarding.readyState >= 2) {
+        addToPlayedCache(preloadSoundIdRef.current, discarding);
+      } else {
+        try {
+          discarding.pause();
+          discarding.removeAttribute('src');
+          discarding.load();
+        } catch { /* ignore */ }
+      }
+      preloadAudioRef.current = null;
+      preloadSoundIdRef.current = null;
+    }
+
+    audio = new Audio(audioUrl);
     audio.preload = 'auto';
-    // No crossOrigin - would trigger CORS preflight and block playback if server
-    // doesn't return Access-Control-Allow-Origin headers.
     audio.setAttribute('playsinline', 'true');
     audio.setAttribute('webkit-playsinline', 'true');
     audio.onended = () => {
       syncIsPlaying(false);
-      setIsLoading(false);
       setIsPressed(false);
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      if (loadingTimeoutRef.current) clearTimeout(loadingTimeoutRef.current);
+      addToPlayedCache(sound.id, audio);
       window.dispatchEvent(new CustomEvent('sound-ended', { detail: { soundId: sound.id } }));
     };
     audioRef.current = audio;
-
     setIsPressed(true);
-    setIsLoading(true);
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    if (loadingTimeoutRef.current) clearTimeout(loadingTimeoutRef.current);
-    loadingTimeoutRef.current = setTimeout(() => setIsLoading(false), 3000);
 
     const playPromise = audio.play();
     if (playPromise && typeof playPromise.then === 'function') {
       playPromise
         .then(() => {
           syncIsPlaying(true);
-          setIsLoading(false);
           setIsPressed(false);
-          if (loadingTimeoutRef.current) clearTimeout(loadingTimeoutRef.current);
           if (tokenRef.current) apiClient.recordPlay(sound.id, tokenRef.current).catch(() => {});
         })
         .catch(() => {
           syncIsPlaying(false);
-          setIsLoading(false);
           setIsPressed(false);
-          if (loadingTimeoutRef.current) clearTimeout(loadingTimeoutRef.current);
         });
     } else {
       syncIsPlaying(true);
-      setIsLoading(false);
       setIsPressed(false);
-      if (loadingTimeoutRef.current) clearTimeout(loadingTimeoutRef.current);
       if (tokenRef.current) apiClient.recordPlay(sound.id, tokenRef.current).catch(() => {});
     }
   // Only depends on sound.id — NOT isPlaying/token, so this never gets recreated
@@ -286,14 +418,15 @@ const CompactSoundButton: React.FC<CompactSoundButtonProps> = ({ sound, isAboveT
     const handlePauseAll = (e: Event) => {
       const customEvent = e as CustomEvent<{ exceptId: number | null }>;
       if (customEvent.detail?.exceptId !== sound.id) {
-        if (audioRef.current) {
+        const current = audioRef.current;
+        if (current) {
           try {
-            audioRef.current.pause();
-            audioRef.current.currentTime = 0;
+            current.pause();
+            current.currentTime = 0;
+            addToPlayedCache(sound.id, current);
           } catch { /* ignore */ }
         }
         syncIsPlaying(false);
-        setIsLoading(false);
         setIsPressed(false);
       }
     };
@@ -313,7 +446,6 @@ const CompactSoundButton: React.FC<CompactSoundButtonProps> = ({ sound, isAboveT
       window.removeEventListener('pause-all-sounds', handlePauseAll as EventListener);
       window.removeEventListener('play-sound-auto', handleAutoPlay as EventListener);
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      if (loadingTimeoutRef.current) clearTimeout(loadingTimeoutRef.current);
       if (audioRef.current) {
         try {
           audioRef.current.pause();
@@ -412,12 +544,17 @@ const CompactSoundButton: React.FC<CompactSoundButtonProps> = ({ sound, isAboveT
             if (Date.now() - lastTouchAtRef.current < 400) return;
             handlePlay();
           }}
+          onMouseEnter={startPreload}
           onMouseDown={() => setIsPressed(true)}
           onMouseUp={() => setIsPressed(false)}
-          onMouseLeave={() => setIsPressed(false)}
+          onMouseLeave={() => {
+            setIsPressed(false);
+            clearPreload();
+          }}
           onTouchStart={() => {
             setIsPressed(true);
             lastTouchAtRef.current = Date.now();
+            startPreload();
           }}
           onTouchEnd={(e) => {
             e.preventDefault();
@@ -525,43 +662,6 @@ const CompactSoundButton: React.FC<CompactSoundButtonProps> = ({ sound, isAboveT
               )}
             </g>
           </svg>
-
-          {/* Loading spinner ring around buttons */}
-          {isLoading && (
-            <div
-              className="loading-ring"
-              style={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: `${svgSize + 20}px`,
-                height: `${svgSize + 20}px`,
-                pointerEvents: 'none',
-                zIndex: 10
-              }}
-            >
-              <svg
-                width={svgSize + 20}
-                height={svgSize + 20}
-                style={{ display: 'block' }}
-              >
-                <circle
-                  cx={(svgSize + 20) / 2}
-                  cy={(svgSize + 20) / 2}
-                  r={(svgSize + 20) / 2 - 3}
-                  fill="none"
-                  stroke={innerHex}
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeDasharray={`${Math.PI * (svgSize + 20)}`}
-                  strokeDashoffset={`${Math.PI * (svgSize + 20) * 0.75}`}
-                  opacity="0.6"
-                  className="loading-spinner"
-                />
-              </svg>
-            </div>
-          )}
         </div>
       </div>
       <style jsx>{`
@@ -612,34 +712,6 @@ const CompactSoundButton: React.FC<CompactSoundButtonProps> = ({ sound, isAboveT
         /* SVG container - no transitions needed as we handle it in the group */
         .sound-button-container svg {
           transition: none !important;
-        }
-
-        /* Loading spinner animation */
-        .loading-ring {
-          animation: fadeIn 0.2s ease-in;
-        }
-
-        .loading-spinner {
-          animation: spin 1s linear infinite;
-          transform-origin: center;
-        }
-
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-
-        @keyframes spin {
-          from {
-            transform: rotate(0deg);
-          }
-          to {
-            transform: rotate(360deg);
-          }
         }
       `}</style>
 
