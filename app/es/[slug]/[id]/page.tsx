@@ -8,7 +8,13 @@ import { getCategoryById } from "@/lib/constants/categories"
 import { SITE, getLocaleBase } from "@/lib/constants/site"
 import { generateSlug } from "@/lib/utils/slug"
 import { toTitleCase, getNameForTitle, getDisplaySoundName } from "@/lib/utils"
-export const revalidate = 60
+import { getTopSoundParams } from "@/lib/api/static-params"
+
+export const revalidate = 300
+
+export async function generateStaticParams() {
+  return getTopSoundParams()
+}
 
 function isMobileDevice(userAgent: string | null): boolean {
   if (!userAgent) return false
@@ -87,12 +93,6 @@ export default async function EsSoundDetailPage({ params }: Props) {
     youMightLikeSounds = (data ?? []).filter((s) => s.id !== sound.id).slice(0, 40)
   } catch {
     youMightLikeSounds = []
-  }
-
-  try {
-    await apiClient.updateViews(sound.id)
-  } catch {
-    // ignore
   }
 
   let initialComments: SoundComment[] = []

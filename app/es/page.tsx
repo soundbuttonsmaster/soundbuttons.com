@@ -5,7 +5,7 @@ import HomePageClient from "@/components/home/HomePageClient"
 import { SITE, getLocaleBase } from "@/lib/constants/site"
 import { generateSlug } from "@/lib/utils/slug"
 
-export const revalidate = 60
+export const revalidate = 300
 
 const BASE = getLocaleBase("es")
 

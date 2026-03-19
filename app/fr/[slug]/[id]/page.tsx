@@ -9,8 +9,13 @@ import { generateSlug } from "@/lib/utils/slug"
 import { toTitleCase, getNameForTitle } from "@/lib/utils"
 import { SITE, getLocaleBase } from "@/lib/constants/site"
 import { getDisplaySoundName } from "@/lib/utils"
+import { getTopSoundParams } from "@/lib/api/static-params"
 
-export const revalidate = 60
+export const revalidate = 300
+
+export async function generateStaticParams() {
+  return getTopSoundParams()
+}
 
 function isMobileDevice(userAgent: string | null): boolean {
   if (!userAgent) return false
@@ -79,8 +84,6 @@ export default async function FrSoundDetailPage({ params }: Props) {
     const { data } = await apiClient.getNewSounds(1, 50)
     youMightLikeSounds = (data ?? []).filter((s) => s.id !== sound.id).slice(0, 40)
   } catch { youMightLikeSounds = [] }
-
-  try { await apiClient.updateViews(sound.id) } catch { /* ignore */ }
 
   let initialComments: SoundComment[] = []
   let initialCommentsTotal = 0

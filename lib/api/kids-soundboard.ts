@@ -39,8 +39,10 @@ export interface KidsSoundboardsResponse {
   previous: string | null
 }
 
+const CACHE_REVALIDATE = 300
+
 async function fetchJson<T>(url: string): Promise<T> {
-  const res = await fetch(url, { cache: "no-store" })
+  const res = await fetch(url, { next: { revalidate: CACHE_REVALIDATE } })
   if (!res.ok) throw new Error(`API error ${res.status}`)
   return res.json()
 }

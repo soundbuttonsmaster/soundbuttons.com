@@ -5,7 +5,7 @@ import KidsSoundboardClient from "./KidsSoundboardClient"
 
 const BASE = SITE.baseUrl
 
-export const dynamic = "force-dynamic"
+export const revalidate = 300
 
 export default async function KidsSoundboardPage() {
   const headersList = await headers()

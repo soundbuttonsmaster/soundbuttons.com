@@ -5,7 +5,7 @@ import { SITE } from "@/lib/constants/site"
 import { apiClient } from "@/lib/api/client"
 import SearchResultsClient from "./SearchResultsClient"
 
-export const revalidate = 60
+export const revalidate = 300
 
 const BASE = SITE.baseUrl
 const PAGE_SIZE = 35

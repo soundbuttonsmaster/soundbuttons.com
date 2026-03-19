@@ -5,7 +5,7 @@ import { apiClient } from "@/lib/api/client"
 import { SITE, getLocaleBase } from "@/lib/constants/site"
 import SearchResultsClient from "@/app/search/[query]/SearchResultsClient"
 
-export const revalidate = 60
+export const revalidate = 300
 
 const PAGE_SIZE = 35
 

@@ -4,7 +4,7 @@ import { SITE } from "@/lib/constants/site"
 import { generateSlug } from "@/lib/utils/slug"
 import HomePageClient from "@/components/home/HomePageClient"
 
-export const revalidate = 60
+export const revalidate = 300
 
 const HOME_TITLE = "Sound Buttons - 9,99,999+ Meme Soundboard Unblocked"
 const HOME_DESCRIPTION =

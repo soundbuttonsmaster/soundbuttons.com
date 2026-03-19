@@ -5,7 +5,7 @@ import { soundEffectsApi } from "@/lib/api/sound-effects"
 import { SITE } from "@/lib/constants/site"
 import { generateSlug } from "@/lib/utils/slug"
 
-export const revalidate = 60
+export const revalidate = 300
 
 interface SoundEffectPageProps {
   params: Promise<{ slug: string; id: string }>
@@ -98,12 +98,6 @@ export default async function SoundEffectDetailPage({ params }: SoundEffectPageP
     )
   } catch {
     relatedEffects = []
-  }
-
-  try {
-    await soundEffectsApi.incrementViews(soundEffect.id)
-  } catch {
-    // ignore
   }
 
   const base = SITE.baseUrl

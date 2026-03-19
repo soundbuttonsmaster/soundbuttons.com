@@ -71,6 +71,10 @@ export default function SoundDetailClient({
   const [showShareModal, setShowShareModal] = useState(false)
   const [showEmbedModal, setShowEmbedModal] = useState(false)
 
+  useEffect(() => {
+    apiClient.updateViews(sound.id).catch(() => {})
+  }, [sound.id])
+
   const sd = useMemo(() => getStrings(localeProp).soundDetail, [localeProp])
   const nav = useMemo(() => getStrings(localeProp).nav, [localeProp])
   const prefix = localePrefix !== undefined && localePrefix !== "" ? localePrefix : (localeProp === "en" ? "" : `/${localeProp}`)

@@ -7,13 +7,18 @@ import { getCategoryById } from "@/lib/constants/categories"
 import { SITE } from "@/lib/constants/site"
 import { generateSlug } from "@/lib/utils/slug"
 import { toTitleCase, getNameForTitle, getDisplaySoundName } from "@/lib/utils"
+import { getTopSoundParams } from "@/lib/api/static-params"
 
 function isMobileDevice(userAgent: string | null): boolean {
   if (!userAgent) return false
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)
 }
 
-export const revalidate = 60
+export const revalidate = 300
+
+export async function generateStaticParams() {
+  return getTopSoundParams()
+}
 
 interface SoundPageProps {
   params: Promise<{ slug: string; id: string }>
@@ -133,12 +138,6 @@ export default async function SoundDetailPage({ params }: SoundPageProps) {
     youMightLikeSounds = (data ?? []).filter((s) => s.id !== sound.id).slice(0, 40)
   } catch {
     youMightLikeSounds = []
-  }
-
-  try {
-    await apiClient.updateViews(sound.id)
-  } catch {
-    // ignore
   }
 
   let initialComments: SoundComment[] = []

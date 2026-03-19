@@ -76,6 +76,10 @@ export default function SoundEffectDetailClient({
   }
 
   useEffect(() => {
+    soundEffectsApi.incrementViews(soundEffect.id).catch(() => {})
+  }, [soundEffect.id])
+
+  useEffect(() => {
     const pauseAll = (e: Event) => {
       const ev = e as CustomEvent<{ exceptId: number }>
       if (ev.detail?.exceptId !== soundEffect.id) {

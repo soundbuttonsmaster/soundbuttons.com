@@ -96,7 +96,7 @@ export const apiClient = {
     pageSize = 44
   ): Promise<{ data: ProcessedSound[]; meta: { current_page: number; last_page: number; total_items: number } }> {
     const url = `${API_BASE_URL}/sounds/trending?page=${page}&page_size=${pageSize}`
-    const res = await fetch(url, { next: { revalidate: 60 } })
+    const res = await fetch(url, { next: { revalidate: 300 } })
     if (!res.ok) return { data: [], meta: { current_page: page, last_page: 1, total_items: 0 } }
     const json = (await res.json()) as SoundResponse
     return { data: extractSounds(json), meta: extractMeta(json, page) }
@@ -107,7 +107,7 @@ export const apiClient = {
     pageSize = 22
   ): Promise<{ data: ProcessedSound[]; meta: { current_page: number; last_page: number; total_items: number } }> {
     const url = `${API_BASE_URL}/sounds/new?page=${page}&page_size=${pageSize}`
-    const res = await fetch(url, { next: { revalidate: 60 } })
+    const res = await fetch(url, { next: { revalidate: 300 } })
     if (!res.ok) return { data: [], meta: { current_page: page, last_page: 1, total_items: 0 } }
     const json = (await res.json()) as SoundResponse
     return { data: extractSounds(json), meta: extractMeta(json, page) }
@@ -115,7 +115,7 @@ export const apiClient = {
 
   /** Fetch single sound by ID */
   async getSoundById(id: number): Promise<{ data: ProcessedSound | null }> {
-    const res = await fetch(`${API_BASE_URL}/sounds/${id}`, { next: { revalidate: 60 } })
+    const res = await fetch(`${API_BASE_URL}/sounds/${id}`, { next: { revalidate: 300 } })
     if (!res.ok) return { data: null }
     const json = (await res.json()) as {
       status?: boolean
@@ -139,7 +139,7 @@ export const apiClient = {
   async getRelatedSounds(soundId: number, categoryId: number): Promise<{ data: ProcessedSound[] }> {
     const res = await fetch(
       `${API_BASE_URL}/sounds/related/${soundId}/${categoryId}`,
-      { next: { revalidate: 60 } }
+      { next: { revalidate: 300 } }
     )
     if (!res.ok) return { data: [] }
     const json = (await res.json()) as SoundResponse
@@ -217,7 +217,7 @@ export const apiClient = {
   }> {
     const res = await fetch(
       `${API_BASE_URL}/streak/leaderboard?offset=${offset}&limit=${limit}`,
-      { next: { revalidate: 60 } }
+      { next: { revalidate: 300 } }
     )
     if (!res.ok) return { results: [], total: 0 }
     const json = (await res.json()) as {
@@ -237,7 +237,7 @@ export const apiClient = {
     pageSize = 50
   ): Promise<{ data: ProcessedSound[]; meta: { current_page: number; last_page: number; total_items: number } }> {
     const url = `${API_BASE_URL}/sounds/search/${encodeURIComponent(query)}?page=${page}&limit=${pageSize}`
-    const res = await fetch(url, { next: { revalidate: 60 } })
+    const res = await fetch(url, { next: { revalidate: 300 } })
     if (!res.ok) return { data: [], meta: { current_page: page, last_page: 1, total_items: 0 } }
     const json = (await res.json()) as SoundResponse
     return { data: extractSounds(json), meta: extractMeta(json, page, pageSize) }
@@ -561,7 +561,7 @@ export const apiClient = {
     all_time: { id: number; name: string; total_views: number }[]
   }> {
     try {
-      const res = await fetch(`${API_BASE_URL}/leaderboard`, { next: { revalidate: 60 } })
+      const res = await fetch(`${API_BASE_URL}/leaderboard`, { next: { revalidate: 300 } })
       if (!res.ok)
         return { daily: [], weekly: [], all_time: [] }
       const json = (await res.json()) as {
@@ -618,7 +618,7 @@ export const apiClient = {
   /** Sound categories for upload (GET /api/categories). Used for soundFile upload category selection. */
   async getSoundCategories(): Promise<{ id: number; categoryName: string }[]> {
     try {
-      const res = await fetch(`${API_BASE_URL}/categories`, { cache: "no-store" })
+      const res = await fetch(`${API_BASE_URL}/categories`, { next: { revalidate: 3600 } })
       if (!res.ok) return []
       const data = (await res.json()) as { status?: boolean; categories?: { id: number; categoryName: string }[] }
       const list = data.categories ?? []
@@ -823,7 +823,7 @@ export async function fetchSoundCommentsServer(
   try {
     const res = await fetch(
       `${API_BASE_URL}/sounds/${soundId}/comments?page=${page}&page_size=${pageSize}`,
-      { next: { revalidate: 60 } }
+      { next: { revalidate: 300 } }
     )
     if (!res.ok) return { results: [], total_count: 0 }
     const data = (await res.json()) as { results?: SoundComment[]; total_count?: number }
