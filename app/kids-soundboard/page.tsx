@@ -1,19 +1,13 @@
-import { headers } from "next/headers"
 import { kidsSoundboardApi } from "@/lib/api/kids-soundboard"
 import { SITE } from "@/lib/constants/site"
 import KidsSoundboardClient from "./KidsSoundboardClient"
 
 const BASE = SITE.baseUrl
+const PAGE_SIZE = 36
 
 export const revalidate = 300
 
 export default async function KidsSoundboardPage() {
-  const headersList = await headers()
-  const userAgent = headersList.get("user-agent") ?? ""
-  const isMobile =
-    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(userAgent)
-
-  const PAGE_SIZE = isMobile ? 18 : 36
   let initialCategories: Awaited<ReturnType<typeof kidsSoundboardApi.getCategories>> = []
   let initialSounds: Awaited<ReturnType<typeof kidsSoundboardApi.getPaginated>>["data"] = []
   let hasNext = false
@@ -52,7 +46,7 @@ export default async function KidsSoundboardPage() {
         initialSounds={initialSounds}
         initialHasNext={hasNext}
         initialTotalCount={totalCount}
-        isMobileDevice={isMobile}
+        isMobileDevice={false}
       />
     </>
   )

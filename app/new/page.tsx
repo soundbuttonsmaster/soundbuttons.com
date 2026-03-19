@@ -1,4 +1,3 @@
-import { headers } from "next/headers"
 import { apiClient } from "@/lib/api/client"
 import NewPageClient from "./NewPageClient"
 
@@ -6,24 +5,8 @@ export const revalidate = 300
 
 const PAGE_SIZE = 35
 
-function slugify(str: string): string {
-  if (!str) return ""
-  return str
-    .toLowerCase()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/[\s_-]+/g, "-")
-    .replace(/^-+|-+$/g, "") || "sound"
-}
-
 export default async function NewPage() {
-  const headersList = await headers()
-  const userAgent = headersList.get("user-agent") ?? ""
-  const mobileHint = headersList.get("sec-ch-ua-mobile")
-  const isMobile =
-    mobileHint === "?1" ||
-    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(userAgent)
-
-  const initialCount = isMobile ? 20 : 35
+  const initialCount = PAGE_SIZE
   let initialSounds: Awaited<ReturnType<typeof apiClient.getNewSounds>>["data"] = []
   let meta = { current_page: 1, last_page: 1, total_items: 0 }
 
@@ -40,7 +23,7 @@ export default async function NewPage() {
       <NewPageClient
         initialSounds={initialSounds}
         initialMeta={meta}
-        isMobileDevice={isMobile}
+        isMobileDevice={false}
       />
     </>
   )

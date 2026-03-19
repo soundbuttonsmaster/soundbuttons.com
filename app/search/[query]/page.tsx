@@ -1,6 +1,5 @@
 import type { Metadata } from "next"
 import { redirect } from "next/navigation"
-import { headers } from "next/headers"
 import { SITE } from "@/lib/constants/site"
 import { apiClient } from "@/lib/api/client"
 import SearchResultsClient from "./SearchResultsClient"
@@ -121,12 +120,6 @@ export default async function SearchResultsPage({
     redirect("/search")
   }
 
-  const headersList = await headers()
-  const userAgent = headersList.get("user-agent") ?? ""
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(
-    userAgent
-  )
-
   let initialSounds: Awaited<ReturnType<typeof apiClient.searchSounds>>["data"] = []
   let meta = { current_page: 1, last_page: 1, total_items: 0 }
 
@@ -165,7 +158,7 @@ export default async function SearchResultsPage({
         searchQuery={sanitizedQuery}
         initialSounds={initialSounds}
         initialMeta={meta}
-        isMobileDevice={isMobile}
+        isMobileDevice={false}
       />
     </>
   )
