@@ -40,7 +40,7 @@ export const metadata: Metadata = {
   },
   appleWebApp: {
     capable: true,
-    title: "SoundButtons",
+    title: "Sound Buttons - 9,99,999+ Meme Soundboard Unblocked",
     statusBarStyle: "black-translucent",
   },
 };

@@ -81,7 +81,7 @@ export const metadata: Metadata = {
   formatDetection: { telephone: false },
   appleWebApp: {
     capable: true,
-    title: "SoundButtons",
+    title: HOME_TITLE,
     statusBarStyle: "default",
   },
   other: {
