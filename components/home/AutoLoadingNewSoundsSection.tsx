@@ -389,9 +389,7 @@ const AutoLoadingNewSoundsSection = forwardRef<
                               <SoundButton
                                 key={sound.id}
                                 sound={sound}
-                                isAboveTheFold={
-                                  index < (isMobileDevice ? 16 : 44)
-                                }
+                                isAboveTheFold={false}
                                 isMobileDevice={isMobileDevice}
                                 detailPath={
                                   locale === "en"
@@ -435,9 +433,7 @@ const AutoLoadingNewSoundsSection = forwardRef<
                               <SoundButton
                                 key={sound.id}
                                 sound={sound}
-                                isAboveTheFold={
-                                  index < (isMobileDevice ? 16 : 44)
-                                }
+                                isAboveTheFold={false}
                                 isMobileDevice={isMobileDevice}
                                 detailPath={
                                   locale === "en"
