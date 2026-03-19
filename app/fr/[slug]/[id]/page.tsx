@@ -12,6 +12,7 @@ import { getDisplaySoundName } from "@/lib/utils"
 import { getTopSoundParams } from "@/lib/api/static-params"
 
 export const revalidate = 300
+export const dynamicParams = true
 
 export async function generateStaticParams() {
   return getTopSoundParams()

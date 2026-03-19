@@ -1,14 +1,18 @@
 /**
  * Slug utilities for sound URLs - format: /sound-name/{id}
+ * Uses ASCII-only slugs for compatibility with HTTP headers, cache keys, and build systems.
+ * Non-Latin names (Arabic, etc.) fall back to "sound" - pages are identified by ID.
  */
 
 export function generateSlug(name: string): string {
   if (!name) return ""
-  return name
+  const ascii = name
+    .trim()
     .toLowerCase()
     .replace(/[^\w\s-]/g, "")
     .replace(/[\s_-]+/g, "-")
     .replace(/^-+|-+$/g, "")
+  return ascii || "sound"
 }
 
 export function getSoundDetailPath(name: string, id: number): string {

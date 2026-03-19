@@ -3,7 +3,7 @@
 import { useRef, useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { ArrowDownToLine } from "lucide-react"
+import { ArrowDownToLine, Copy, Check } from "lucide-react"
 import { soundEffectsApi } from "@/lib/api/sound-effects"
 import type { SoundEffect } from "@/lib/api/sound-effects"
 import { generateSlug, tagToSearchSlug } from "@/lib/utils/slug"
@@ -15,6 +15,7 @@ interface SoundEffectCardProps {
 export default function SoundEffectCard({ effect }: SoundEffectCardProps) {
   const router = useRouter()
   const [isPlaying, setIsPlaying] = useState(false)
+  const [copied, setCopied] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const isPlayingRef = useRef(false)
   const audioUrl = soundEffectsApi.getSoundFileUrl(effect)
@@ -36,6 +37,36 @@ export default function SoundEffectCard({ effect }: SoundEffectCardProps) {
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
+  }
+
+  const handleCopyLink = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    e.nativeEvent.stopImmediatePropagation()
+    const link = typeof window !== "undefined" ? `${window.location.origin}${detailPath}` : detailPath
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(link)
+      } else {
+        const ta = document.createElement("textarea")
+        ta.value = link
+        ta.style.cssText = "position:fixed;left:-9999px;top:0"
+        document.body.appendChild(ta)
+        ta.select()
+        document.execCommand("copy")
+        document.body.removeChild(ta)
+      }
+    } catch {
+      const ta = document.createElement("textarea")
+      ta.value = link
+      ta.style.cssText = "position:fixed;left:-9999px;top:0"
+      document.body.appendChild(ta)
+      ta.select()
+      document.execCommand("copy")
+      document.body.removeChild(ta)
+    }
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1500)
   }
 
   const handlePlayPause = (e: React.MouseEvent) => {
@@ -133,6 +164,15 @@ export default function SoundEffectCard({ effect }: SoundEffectCardProps) {
         <button
           type="button"
           className="ml-2 min-w-[44px] min-h-[44px] p-2 rounded-full hover:bg-muted flex items-center justify-center flex-shrink-0"
+          onClick={handleCopyLink}
+          aria-label="Copy link"
+          title="Copy link"
+        >
+          {copied ? <Check className="w-5 h-5 text-green-600" /> : <Copy className="w-5 h-5" />}
+        </button>
+        <button
+          type="button"
+          className="ml-1 min-w-[44px] min-h-[44px] p-2 rounded-full hover:bg-muted flex items-center justify-center flex-shrink-0"
           onClick={(e) => {
             e.stopPropagation()
             handleDownload(e)

@@ -15,6 +15,7 @@ function isMobileDevice(userAgent: string | null): boolean {
 }
 
 export const revalidate = 300
+export const dynamicParams = true
 
 export async function generateStaticParams() {
   return getTopSoundParams()
