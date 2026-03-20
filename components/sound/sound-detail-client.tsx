@@ -139,19 +139,20 @@ export default function SoundDetailClient({
           <nav aria-label="Breadcrumb" className="mb-3 flex justify-center">
             <ol className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm text-slate-500 dark:text-slate-400">
               <li>
-                <Link href={prefix || "/"} className="transition-colors hover:text-slate-900 dark:hover:text-white">
+                <Link prefetch={false} href={prefix || "/"} className="transition-colors hover:text-slate-900 dark:hover:text-white">
                   {nav.home}
                 </Link>
               </li>
               <li aria-hidden="true">/</li>
               <li>
-                <Link href={`${prefix}/new`} className="transition-colors hover:text-slate-900 dark:hover:text-white">
+                <Link prefetch={false} href={`${prefix}/new`} className="transition-colors hover:text-slate-900 dark:hover:text-white">
                   {sd.newSounds}
                 </Link>
               </li>
               <li aria-hidden="true">/</li>
               <li>
                 <Link
+                  prefetch={false}
                   href={categoryLink}
                   className="transition-colors hover:text-slate-900 dark:hover:text-white"
                 >
@@ -177,6 +178,7 @@ export default function SoundDetailClient({
                 </p>
                 <div className="flex flex-wrap items-center justify-center gap-2 text-xs">
                   <Link
+                    prefetch={false}
                     href={categoryLink}
                     className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 font-medium text-slate-700 transition-colors hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600"
                   >
@@ -330,24 +332,28 @@ export default function SoundDetailClient({
                 <h2 className="mb-3 text-base font-semibold text-slate-900 dark:text-white">{sd.exploreMoreSounds}</h2>
                 <div className="flex flex-wrap gap-2">
                   <Link
+                    prefetch={false}
                     href={categoryLink}
                     className="inline-flex h-9 items-center rounded-lg bg-slate-900 px-3 text-sm font-medium text-white transition-colors hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
                   >
                     {sd.moreCategorySounds.replace("{category}", categoryName)}
                   </Link>
                   <Link
+                    prefetch={false}
                     href={`${prefix}/trends`}
                     className="inline-flex h-9 items-center rounded-lg bg-slate-100 px-3 text-sm font-medium text-slate-800 transition-colors hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
                   >
                     {sd.trending}
                   </Link>
                   <Link
+                    prefetch={false}
                     href={`${prefix}/new`}
                     className="inline-flex h-9 items-center rounded-lg bg-slate-100 px-3 text-sm font-medium text-slate-800 transition-colors hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
                   >
                     {sd.newSounds}
                   </Link>
                   <Link
+                    prefetch={false}
                     href={`${prefix}/categories`}
                     className="inline-flex h-9 items-center rounded-lg bg-slate-100 px-3 text-sm font-medium text-slate-800 transition-colors hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
                   >

@@ -459,27 +459,20 @@ const SoundListWithRef = forwardRef(function SoundListInner<T extends { id: numb
                           {                          useCompactView ? (
                             <SoundButton
                               sound={sound as unknown as Sound}
-                              isAboveTheFold={
-                                index < (isMobileDevice ? 12 : 44)
-                              }
+                              isAboveTheFold={false}
                               isMobileDevice={isMobileDevice}
                               detailPath={effectiveGetDetailPath?.(sound)}
                             />
                           ) : useCardView && customCardComponent ? (
                             React.createElement(customCardComponent, {
                               sound,
-                              isAboveTheFold:
-                                index < (isMobileDevice ? 12 : 18),
+                              isAboveTheFold: false,
                               onRainEffect,
                             })
                           ) : (
                             <SoundButton
                               sound={sound as unknown as Sound}
-                              isAboveTheFold={
-                                useCardView
-                                  ? index < (isMobileDevice ? 12 : 18)
-                                  : index < 10
-                              }
+                              isAboveTheFold={false}
                               isMobileDevice={isMobileDevice}
                               detailPath={effectiveGetDetailPath?.(sound)}
                             />

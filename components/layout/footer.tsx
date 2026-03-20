@@ -63,20 +63,20 @@ export default function Footer() {
               {f.specialPages}
             </h3>
             <ul className="space-y-2">
-              <li><Link href={getLocalizedHref("/", locale)} className="text-gray-300 hover:text-white transition-colors">{f.home}</Link></li>
-              <li><Link href={getLocalizedHref("/sound-buttons-unblocked", locale)} className="text-gray-300 hover:text-white transition-colors">{f.soundButtonsUnblocked}</Link></li>
-              <li><Link href={getLocalizedHref("/sound-buttons-unblocked-for-school", locale)} className="text-gray-300 hover:text-white transition-colors">{f.soundButtonsForSchool}</Link></li>
-              <li><Link href={getLocalizedHref("/soundboard", locale)} className="text-gray-300 hover:text-white transition-colors">{f.soundboard}</Link></li>
-              <li><Link href={getLocalizedHref("/text-to-sound", locale)} className="text-gray-300 hover:text-white transition-colors">{f.textToSound}</Link></li>
-              <li><Link href={getLocalizedHref("/create-sound", locale)} className="text-gray-300 hover:text-white transition-colors">{f.createSound}</Link></li>
-              <li><Link href={getLocalizedHref("/play-random", locale)} className="text-gray-300 hover:text-white transition-colors">{f.playRandom}</Link></li>
-              <li><Link href={getLocalizedHref("/new", locale)} className="text-gray-300 hover:text-white transition-colors">{f.newSoundButtons}</Link></li>
-              <li><Link href={getLocalizedHref("/trends", locale)} className="text-gray-300 hover:text-white transition-colors">{f.trending}</Link></li>
-              <li><Link href={getLocalizedHref("/reviews", locale)} className="text-gray-300 hover:text-white transition-colors">{f.userReviews}</Link></li>
-              <li><Link href={getLocalizedHref("/kids-soundboard", locale)} className="text-gray-300 hover:text-white transition-colors">{f.kidsSoundboard}</Link></li>
-              <li><Link href={getLocalizedHref("/sound-effects", locale)} className="text-gray-300 hover:text-white transition-colors">{f.soundEffects}</Link></li>
-              <li><Link href={getLocalizedHref("/login", locale)} className="text-gray-300 hover:text-white transition-colors">{f.signIn}</Link></li>
-              <li><Link href={getLocalizedHref("/register", locale)} className="text-gray-300 hover:text-white transition-colors">{f.createAccount}</Link></li>
+              <li><Link prefetch={false} href={getLocalizedHref("/", locale)} className="text-gray-300 hover:text-white transition-colors">{f.home}</Link></li>
+              <li><Link prefetch={false} href={getLocalizedHref("/sound-buttons-unblocked", locale)} className="text-gray-300 hover:text-white transition-colors">{f.soundButtonsUnblocked}</Link></li>
+              <li><Link prefetch={false} href={getLocalizedHref("/sound-buttons-unblocked-for-school", locale)} className="text-gray-300 hover:text-white transition-colors">{f.soundButtonsForSchool}</Link></li>
+              <li><Link prefetch={false} href={getLocalizedHref("/soundboard", locale)} className="text-gray-300 hover:text-white transition-colors">{f.soundboard}</Link></li>
+              <li><Link prefetch={false} href={getLocalizedHref("/text-to-sound", locale)} className="text-gray-300 hover:text-white transition-colors">{f.textToSound}</Link></li>
+              <li><Link prefetch={false} href={getLocalizedHref("/create-sound", locale)} className="text-gray-300 hover:text-white transition-colors">{f.createSound}</Link></li>
+              <li><Link prefetch={false} href={getLocalizedHref("/play-random", locale)} className="text-gray-300 hover:text-white transition-colors">{f.playRandom}</Link></li>
+              <li><Link prefetch={false} href={getLocalizedHref("/new", locale)} className="text-gray-300 hover:text-white transition-colors">{f.newSoundButtons}</Link></li>
+              <li><Link prefetch={false} href={getLocalizedHref("/trends", locale)} className="text-gray-300 hover:text-white transition-colors">{f.trending}</Link></li>
+              <li><Link prefetch={false} href={getLocalizedHref("/reviews", locale)} className="text-gray-300 hover:text-white transition-colors">{f.userReviews}</Link></li>
+              <li><Link prefetch={false} href={getLocalizedHref("/kids-soundboard", locale)} className="text-gray-300 hover:text-white transition-colors">{f.kidsSoundboard}</Link></li>
+              <li><Link prefetch={false} href={getLocalizedHref("/sound-effects", locale)} className="text-gray-300 hover:text-white transition-colors">{f.soundEffects}</Link></li>
+              <li><Link prefetch={false} href={getLocalizedHref("/login", locale)} className="text-gray-300 hover:text-white transition-colors">{f.signIn}</Link></li>
+              <li><Link prefetch={false} href={getLocalizedHref("/register", locale)} className="text-gray-300 hover:text-white transition-colors">{f.createAccount}</Link></li>
             </ul>
           </div>
 
@@ -89,6 +89,7 @@ export default function Footer() {
               {FOOTER_CATEGORIES.map((category) => (
                 <li key={category.id}>
                   <Link
+                    prefetch={false}
                     href={getLocalizedHref(`/categories/${category.slug}`, locale)}
                     className="text-gray-300 hover:text-white transition-colors"
                   >
@@ -97,7 +98,7 @@ export default function Footer() {
                 </li>
               ))}
               <li>
-                <Link href={getLocalizedHref("/categories", locale)} className="text-white hover:text-gray-300 transition-colors font-medium">
+                <Link prefetch={false} href={getLocalizedHref("/categories", locale)} className="text-white hover:text-gray-300 transition-colors font-medium">
                   {f.viewAllCategories}
                 </Link>
               </li>
@@ -110,11 +111,11 @@ export default function Footer() {
               {f.support}
             </h3>
             <ul className="space-y-2">
-              <li><Link href={getLocalizedHref("/about-us", locale)} className="text-gray-300 hover:text-white transition-colors">{f.aboutUs}</Link></li>
-              <li><Link href={getLocalizedHref("/contact-us", locale)} className="text-gray-300 hover:text-white transition-colors">{f.contactUs}</Link></li>
-              <li><Link href={getLocalizedHref("/privacy-policy", locale)} className="text-gray-300 hover:text-white transition-colors">{f.privacyPolicy}</Link></li>
-              <li><Link href={getLocalizedHref("/terms-of-use", locale)} className="text-gray-300 hover:text-white transition-colors">{f.termsOfUse}</Link></li>
-              <li><Link href={getLocalizedHref("/sitemap", locale)} className="text-gray-300 hover:text-white transition-colors">{f.siteMap}</Link></li>
+              <li><Link prefetch={false} href={getLocalizedHref("/about-us", locale)} className="text-gray-300 hover:text-white transition-colors">{f.aboutUs}</Link></li>
+              <li><Link prefetch={false} href={getLocalizedHref("/contact-us", locale)} className="text-gray-300 hover:text-white transition-colors">{f.contactUs}</Link></li>
+              <li><Link prefetch={false} href={getLocalizedHref("/privacy-policy", locale)} className="text-gray-300 hover:text-white transition-colors">{f.privacyPolicy}</Link></li>
+              <li><Link prefetch={false} href={getLocalizedHref("/terms-of-use", locale)} className="text-gray-300 hover:text-white transition-colors">{f.termsOfUse}</Link></li>
+              <li><Link prefetch={false} href={getLocalizedHref("/sitemap", locale)} className="text-gray-300 hover:text-white transition-colors">{f.siteMap}</Link></li>
             </ul>
           </div>
 

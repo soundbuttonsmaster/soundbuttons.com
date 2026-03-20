@@ -729,7 +729,7 @@ const CompactSoundButton: React.FC<CompactSoundButtonProps> = ({ sound, isAboveT
       {!hideLabel && (
         <Link
           href={detailUrl}
-          prefetch={isAboveTheFold}
+          prefetch={false}
           className="text-center block w-full max-w-[90px] sm:max-w-[95px] md:max-w-[100px] lg:max-w-[104px]"
           style={{
             boxSizing: 'border-box',

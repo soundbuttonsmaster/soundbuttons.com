@@ -162,7 +162,7 @@ export default function Header() {
       <header className="sticky top-0 z-[9999999] w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:bg-slate-950/95 dark:supports-[backdrop-filter]:dark:bg-slate-950/80 border-slate-200 dark:border-slate-800">
         <div className="relative flex h-14 w-full items-center justify-between gap-4 px-4 sm:px-6">
           {/* Logo - left */}
-          <Link href={getLocalizedHref("/", locale)} className="relative z-10 flex shrink-0 items-center">
+          <Link prefetch={false} href={getLocalizedHref("/", locale)} className="relative z-10 flex shrink-0 items-center">
             <span className="text-base font-bold tracking-tight text-slate-900 dark:text-white sm:text-lg">
               SOUND BUTTONS
             </span>
@@ -174,7 +174,7 @@ export default function Header() {
             aria-label="Main navigation"
           >
             {navBeforeLinks.map((link) => (
-              <Link key={link.href} href={link.href} className={navLinkClass}>
+              <Link prefetch={false} key={link.href} href={link.href} className={navLinkClass}>
                 {link.name}
               </Link>
             ))}
@@ -200,6 +200,7 @@ export default function Header() {
               >
                 {categories.map((cat) => (
                   <Link
+                    prefetch={false}
                     key={cat.id}
                     href={getLocalizedHref(`/categories/${cat.slug}`, locale)}
                     role="menuitem"
@@ -233,6 +234,7 @@ export default function Header() {
               >
                 {addMoreFunLinks.map((link) => (
                   <Link
+                    prefetch={false}
                     key={link.href}
                     href={link.href}
                     role="menuitem"
@@ -250,6 +252,7 @@ export default function Header() {
           <div className="relative z-10 flex shrink-0 items-center gap-2 sm:gap-3">
             {isHome && (
               <Link
+                prefetch={false}
                 href={getLocalizedHref("/streak", locale)}
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-orange-500 hover:bg-orange-50 dark:text-orange-400 dark:hover:bg-orange-950/50"
                 aria-label="Streak"
@@ -320,6 +323,7 @@ export default function Header() {
                     </div>
                     <div className="py-1">
                       <Link
+                        prefetch={false}
                         href={getLocalizedHref("/streak", locale)}
                         onClick={() => setUserDropdownOpen(false)}
                         className="flex items-center gap-2.5 px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
@@ -329,6 +333,7 @@ export default function Header() {
                         Streak
                       </Link>
                       <Link
+                        prefetch={false}
                         href={getLocalizedHref("/profile", locale)}
                         onClick={() => setUserDropdownOpen(false)}
                         className="flex items-center gap-2.5 px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
@@ -338,6 +343,7 @@ export default function Header() {
                         {nav.myProfile}
                       </Link>
                       <Link
+                        prefetch={false}
                         href={getLocalizedHref("/my-soundboard", locale)}
                         onClick={() => setUserDropdownOpen(false)}
                         className="flex items-center gap-2.5 px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
@@ -347,6 +353,7 @@ export default function Header() {
                         {nav.mySoundboard}
                       </Link>
                       <Link
+                        prefetch={false}
                         href={getLocalizedHref("/favorites", locale)}
                         onClick={() => setUserDropdownOpen(false)}
                         className="flex items-center gap-2.5 px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
@@ -356,6 +363,7 @@ export default function Header() {
                         {nav.myFavorites}
                       </Link>
                       <Link
+                        prefetch={false}
                         href={getLocalizedHref("/upload-sound", locale)}
                         onClick={() => setUserDropdownOpen(false)}
                         className="flex items-center gap-2.5 px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
@@ -411,6 +419,7 @@ export default function Header() {
               </div>
             ) : (
               <Link
+                prefetch={false}
                 href={getLocalizedHref("/register", locale)}
                 className="hidden shrink-0 rounded-lg bg-slate-900 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200 lg:inline-flex"
               >
@@ -473,6 +482,7 @@ export default function Header() {
               </form>
               {navBeforeLinks.map((link) => (
                 <Link
+                  prefetch={false}
                   key={link.href}
                   href={link.href}
                   className="block rounded-lg px-4 py-3 text-base font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
@@ -495,6 +505,7 @@ export default function Header() {
                   <div className="ml-4 mt-1 space-y-1 border-l border-slate-200 pl-4 dark:border-slate-700">
                     {categories.map((cat) => (
                       <Link
+                        prefetch={false}
                         key={cat.id}
                         href={getLocalizedHref(`/categories/${cat.slug}`, locale)}
                         className="block py-2 text-sm text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
@@ -523,6 +534,7 @@ export default function Header() {
                   <div className="ml-4 mt-1 space-y-1 border-l border-slate-200 pl-4 dark:border-slate-700">
                     {addMoreFunLinks.map((link) => (
                       <Link
+                        prefetch={false}
                         key={link.href}
                         href={link.href}
                         className="block py-2 text-sm text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
@@ -547,6 +559,7 @@ export default function Header() {
                       )}
                     </p>
                     <Link
+                      prefetch={false}
                       href={getLocalizedHref("/streak", locale)}
                       className="flex items-center gap-2.5 rounded-lg px-4 py-3 text-base font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                       onClick={() => setMobileMenuOpen(false)}
@@ -555,6 +568,7 @@ export default function Header() {
                       Streak
                     </Link>
                     <Link
+                      prefetch={false}
                       href={getLocalizedHref("/profile", locale)}
                       className="flex items-center gap-2.5 rounded-lg px-4 py-3 text-base font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                       onClick={() => setMobileMenuOpen(false)}
@@ -563,6 +577,7 @@ export default function Header() {
                       {nav.myProfile}
                     </Link>
                     <Link
+                      prefetch={false}
                       href={getLocalizedHref("/my-soundboard", locale)}
                       className="flex items-center gap-2.5 rounded-lg px-4 py-3 text-base font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                       onClick={() => setMobileMenuOpen(false)}
@@ -571,6 +586,7 @@ export default function Header() {
                       {nav.mySoundboard}
                     </Link>
                     <Link
+                      prefetch={false}
                       href={getLocalizedHref("/favorites", locale)}
                       className="flex items-center gap-2.5 rounded-lg px-4 py-3 text-base font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                       onClick={() => setMobileMenuOpen(false)}
@@ -579,6 +595,7 @@ export default function Header() {
                       {nav.myFavorites}
                     </Link>
                     <Link
+                      prefetch={false}
                       href={getLocalizedHref("/upload-sound", locale)}
                       className="flex items-center gap-2.5 rounded-lg px-4 py-3 text-base font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                       onClick={() => setMobileMenuOpen(false)}
@@ -601,6 +618,7 @@ export default function Header() {
                 ) : (
                   <>
                     <Link
+                      prefetch={false}
                       href={getLocalizedHref("/login", locale)}
                       className="block rounded-lg px-4 py-3 text-base font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                       onClick={() => setMobileMenuOpen(false)}
@@ -608,6 +626,7 @@ export default function Header() {
                       {nav.login}
                     </Link>
                     <Link
+                      prefetch={false}
                       href={getLocalizedHref("/register", locale)}
                       className="mt-2 block rounded-lg bg-slate-900 px-4 py-3 text-center text-base font-medium text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
                       onClick={() => setMobileMenuOpen(false)}

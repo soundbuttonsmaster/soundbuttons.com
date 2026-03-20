@@ -130,9 +130,9 @@ export default function SoundEffectDetailClient({
       <div className="min-h-screen bg-background">
         <main className="w-full max-w-4xl mx-auto px-4 py-6">
           <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-x-2 text-sm text-muted-foreground">
-            <Link href="/" className="hover:text-foreground">Home</Link>
+            <Link prefetch={false} href="/" className="hover:text-foreground">Home</Link>
             <span>/</span>
-            <Link href="/sound-effects" className="hover:text-foreground">Sound Effects</Link>
+            <Link prefetch={false} href="/sound-effects" className="hover:text-foreground">Sound Effects</Link>
             <span>/</span>
             <span className="font-medium text-foreground" aria-current="page">{soundEffect.soundName}</span>
           </nav>

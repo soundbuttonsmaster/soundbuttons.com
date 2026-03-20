@@ -59,6 +59,7 @@ function LinkList({
       {links.map((link) => (
         <li key={link.path}>
           <Link
+            prefetch={false}
             href={link.path}
             className="text-primary hover:underline flex items-center"
           >
@@ -116,6 +117,7 @@ export default function SitemapPage() {
                   {CATEGORIES.map((category) => (
                     <li key={category.id}>
                       <Link
+                        prefetch={false}
                         href={`/categories/${category.slug}`}
                         className="text-primary hover:underline flex items-center"
                       >
