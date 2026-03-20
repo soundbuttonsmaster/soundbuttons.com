@@ -51,7 +51,9 @@ const AutoLoadingTrendingSection = forwardRef<
     const home = getStrings(locale).home
     const sectionTitle = title ?? home.trendingTitle
     const viewAllLabel = home.viewAll
+    // Mobile: 4 lines × 4 = 16 sounds. Desktop: 4 lines × 11 = 44
     const initialDisplayCount = isMobileDevice ? 16 : 44
+    const initialLines = isMobileDevice ? 4 : 4
     const [sounds, setSounds] = useState<Sound[]>(
       initialSounds.slice(0, initialDisplayCount)
     )
@@ -389,7 +391,7 @@ const AutoLoadingTrendingSection = forwardRef<
               {!hasLoadedOnce ? (
                 <div>
                   <div>
-                    {Array.from({ length: 4 }, (_, lineIndex) => {
+                    {Array.from({ length: initialLines }, (_, lineIndex) => {
                       const lineStartIndex = lineIndex * soundsPerRow
                       const lineEndIndex = Math.min(
                         lineStartIndex + soundsPerRow,

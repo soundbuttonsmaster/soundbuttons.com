@@ -39,7 +39,9 @@ const AutoLoadingNewSoundsSection = forwardRef<
   const sectionTitle = title ?? home.newTitle
   const viewAllLabel = home.viewAll
   const newPath = locale === "en" ? "/new" : `/${locale}/new`
+  // Mobile: 2 lines × 4 = 8 sounds. Desktop: 2 lines × 11 = 22
   const initialDisplayCount = isMobileDevice ? 8 : 22
+  const initialLines = isMobileDevice ? 2 : 2
   const [sounds, setSounds] = useState<Sound[]>(
     initialSounds.slice(0, initialDisplayCount)
   )
@@ -368,7 +370,7 @@ const AutoLoadingNewSoundsSection = forwardRef<
             {!hasLoadedOnce ? (
               <div>
                 <div>
-                  {Array.from({ length: 2 }, (_, lineIndex) => {
+                  {Array.from({ length: initialLines }, (_, lineIndex) => {
                     const lineStartIndex = lineIndex * soundsPerRow
                     const lineEndIndex = Math.min(
                       lineStartIndex + soundsPerRow,

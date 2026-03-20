@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo } from "react"
+import { useMemo, useState, useEffect } from "react"
 import dynamic from "next/dynamic"
 import SearchBar from "@/components/search-bar"
 import AutoLoadingTrendingSection from "@/components/home/AutoLoadingTrendingSection"
@@ -33,11 +33,22 @@ export default function HomePageClient({
   initialTrendingSounds,
   initialNewSounds,
   initialTrendingMeta,
-  isMobileDevice,
+  isMobileDevice: isMobileDeviceProp,
   locale = "en",
 }: HomePageClientProps) {
   const home = useMemo(() => getStrings(locale).home, [locale])
   const localePrefix = locale === "en" ? "" : `/${locale}`
+
+  // Client-side mobile detection when server sends false (e.g. English homepage without headers())
+  const [isMobileDevice, setIsMobileDevice] = useState(isMobileDeviceProp)
+  useEffect(() => {
+    if (typeof window !== "undefined" && !isMobileDeviceProp) {
+      setIsMobileDevice(window.innerWidth <= 768)
+      const handleResize = () => setIsMobileDevice(window.innerWidth <= 768)
+      window.addEventListener("resize", handleResize)
+      return () => window.removeEventListener("resize", handleResize)
+    }
+  }, [isMobileDeviceProp])
 
   return (
     <>
